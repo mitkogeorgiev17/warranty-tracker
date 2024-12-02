@@ -1,0 +1,88 @@
+# Java and Maven files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+hs_err_pid*
+replay_pid*
+
+# IntelliJ files
+.idea/
+*.iml
+*.ipr
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea_modules/
+.idea/replstate.xml
+.idea/sonarlint/
+.idea/markdown-navigator.xml
+.idea/markdown-navigator-enh.xml
+.idea/markdown-navigator/
+.idea/httpRequests
+.idea/codestream.xml
+.idea/**/aws.xml
+.idea/**/mongoSettings.xml
+.idea/**/azureSettings.xml
+.idea/caches/build_file_checksums.ser
+
+# IntelliJ - File-based project format
+*.iws
+out/
+
+# CMake
+cmake-build-*/
+
+# Java class
+*.class
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Java Archive files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+
+# IDE-specific files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# System files
+.DS_Store
