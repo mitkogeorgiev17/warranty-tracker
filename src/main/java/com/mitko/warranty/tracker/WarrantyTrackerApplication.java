@@ -2,12 +2,14 @@ package com.mitko.warranty.tracker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
-public class SampleProjectApplication {
+@ConfigurationPropertiesScan
+public class WarrantyTrackerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SampleProjectApplication.class, args);
+		SpringApplication.run(WarrantyTrackerApplication.class, args);
 	}
 
 }
