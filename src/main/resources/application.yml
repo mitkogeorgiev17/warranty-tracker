@@ -22,4 +22,7 @@ baseUrls:
   keycloak: http://localhost:8081/realms/WarrantyTracker
 
 keycloak:
+  code-url: ${baseUrls.keycloak}/protocol/openid-connect/auth?client_id=${keycloak.client-id}&response_type=code
+  token-endpoint: ${baseUrls.keycloak}/protocol/openid-connect/token
+  client-id: ${KEYCLOAK.CLIENT_ID}
   client-secret: ${KEYCLOAK.CLIENT_SECRET}
