@@ -2,8 +2,8 @@ package com.mitko.warranty.tracker.authentication;
 
 import com.mitko.warranty.tracker.authentication.model.AuthenticationCommand;
 import com.mitko.warranty.tracker.authentication.model.AuthenticationResponse;
-import com.mitko.warranty.tracker.authentication.model.KeycloakResponse;
 import com.mitko.warranty.tracker.config.properties.KeycloakProperties;
+import com.mitko.warranty.tracker.exception.custom.AuthorizationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+
+import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
@@ -28,7 +30,7 @@ public class AuthenticationService {
         return keycloakProperties.getCodeUrl();
     }
 
-    public AuthenticationResponse authenticate(@Valid AuthenticationCommand command) {
+    public Map<String, String> authenticate(@Valid AuthenticationCommand command) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "authorization_code");
         formData.add("client_id", keycloakProperties.getClientId());
@@ -43,13 +45,12 @@ public class AuthenticationService {
                 .body(formData)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (req, res) -> {
-                    // TODO: Custom exception
-                    throw new RuntimeException("Error occurred while receiving Keycloak token.");
+                    throw new AuthorizationException("Error occurred while receiving Keycloak token.");
         })
-                .body(KeycloakResponse.class);
+                .body(AuthenticationResponse.class);
 
         if (authResponse != null && isNotBlank(authResponse.accessToken()))
-            return new AuthenticationResponse(authResponse.accessToken());
+            return Map.of("token", authResponse.accessToken());
         else
             throw new RuntimeException("Error occurred while receiving Keycloak token.");
     }
