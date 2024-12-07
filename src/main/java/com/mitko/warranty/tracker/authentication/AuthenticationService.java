@@ -3,6 +3,7 @@ package com.mitko.warranty.tracker.authentication;
 import com.mitko.warranty.tracker.authentication.model.AuthenticationCommand;
 import com.mitko.warranty.tracker.authentication.model.AuthenticationResponse;
 import com.mitko.warranty.tracker.config.properties.KeycloakProperties;
+import com.mitko.warranty.tracker.exception.custom.AuthorizationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +45,7 @@ public class AuthenticationService {
                 .body(formData)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (req, res) -> {
-                    // TODO: Custom exception
-                    throw new RuntimeException("Error occurred while receiving Keycloak token.");
+                    throw new AuthorizationException("Error occurred while receiving Keycloak token.");
         })
                 .body(AuthenticationResponse.class);
 

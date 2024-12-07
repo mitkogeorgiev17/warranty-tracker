@@ -1,5 +1,6 @@
 package com.mitko.warranty.tracker.account;
 
+import com.mitko.warranty.tracker.exception.custom.AuthorizationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
@@ -10,8 +11,7 @@ public class AuthenticationUtils {
         if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
             return jwtAuthenticationToken.getToken().getClaims();
         } else {
-            // TODO: Custom exception
-            throw new IllegalArgumentException("Authentication object is not a JwtAuthenticationToken");
+            throw new AuthorizationException("Authentication object is not a JwtAuthenticationToken");
         }
     }
 }
