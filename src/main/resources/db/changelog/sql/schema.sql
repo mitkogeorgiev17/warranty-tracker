@@ -3,9 +3,10 @@
 -- changeset mitko:create_users_table
 CREATE TABLE USERS (
     ID VARCHAR(128) PRIMARY KEY NOT NULL,
+    USERNAME VARCHAR(64) NOT NULL,
+    EMAIL VARCHAR(128) NOT NULL,
     FIRST_NAME VARCHAR(64) NOT NULL,
-    LAST_NAME VARCHAR(64) NOT NULL,
-    EMAIL VARCHAR(128) NOT NULL
+    LAST_NAME VARCHAR(64) NOT NULL
 );
 
 --changeset mitko:create_warranties_table
