@@ -3,16 +3,13 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${DB.USERNAME}
     password: ${DB.PASSWORD}
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/warranty_tracker
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${baseUrls.keycloak}
           jwt-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
-  liquibase:
-    enabled: true
-    change-log: classpath:/db/changelog/changelog-master.yaml
 
 baseUrls:
   keycloak: http://localhost:8081/realms/WarrantyTracker
