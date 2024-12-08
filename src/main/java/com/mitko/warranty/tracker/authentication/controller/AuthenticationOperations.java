@@ -2,6 +2,7 @@ package com.mitko.warranty.tracker.authentication.controller;
 
 import com.mitko.warranty.tracker.authentication.model.AuthenticationCommand;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,8 @@ public interface AuthenticationOperations {
     @ApiResponse(responseCode = "200", description = "Code received.")
     String getCodeUrl();
 
-    @Operation(summary = "Authenticates a user with a code grant against Keycloak and returns JWT.")
-    @ApiResponse(responseCode = "200", description = "Authentication successful.")
+    @ApiResponse(responseCode = "200", description = "Authentication successful, access token returned.")
+    @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication failed.", content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "500", description = "Internal server error.")
     Map<String, String> authenticate(@RequestBody AuthenticationCommand command);
 }
