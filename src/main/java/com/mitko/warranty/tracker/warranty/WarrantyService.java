@@ -50,7 +50,9 @@ public class WarrantyService {
                 .setStartDate(command.startDate())
                 .setEndDate(command.endDate())
                 .setStatus(getStatus(command.endDate()))
+                .setUser(user)
                 .setNote(command.note())
+
                 .setCreatedAt(LocalDateTime.now());
 
         var savedWarranty = warrantyRepository.save(warranty);

@@ -1,5 +1,6 @@
 package com.mitko.warranty.tracker.warranty.model;
 
+import com.mitko.warranty.tracker.account.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -45,6 +48,13 @@ public class Warranty {
 
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+    @ManyToOne(
+            cascade = ALL,
+            fetch = EAGER
+    )
+    @JoinColumn(name = "USER_ID")
+    private User user;
 
     @Override
     public final boolean equals(Object obj) {
