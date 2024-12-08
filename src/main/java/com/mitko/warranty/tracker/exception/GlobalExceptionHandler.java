@@ -1,5 +1,6 @@
 package com.mitko.warranty.tracker.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -34,13 +35,22 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.CONFLICT.value());
+        response.put("error", HttpStatus.CONFLICT.getReasonPhrase());
+        response.put("message", "SQL Error occurred.");
+
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put("status", HttpStatus.BAD_REQUEST.value());
         response.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
 
-        // Collect validation errors
         String errorDetails = ex.getBindingResult()
                 .getAllErrors()
                 .stream()

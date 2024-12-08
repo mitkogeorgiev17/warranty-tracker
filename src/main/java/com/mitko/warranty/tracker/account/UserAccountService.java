@@ -3,14 +3,16 @@ package com.mitko.warranty.tracker.account;
 import com.mitko.warranty.tracker.account.model.User;
 import com.mitko.warranty.tracker.account.model.UserAccountResponse;
 import com.mitko.warranty.tracker.mapper.UserAccountMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import static com.mitko.warranty.tracker.account.AuthenticationUtils.getClaims;
+import static com.mitko.warranty.tracker.authentication.AuthenticationUtils.getClaims;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class UserAccountService {

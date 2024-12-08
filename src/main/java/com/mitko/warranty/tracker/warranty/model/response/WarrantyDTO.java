@@ -1,5 +1,6 @@
-package com.mitko.warranty.tracker.warranty.model;
+package com.mitko.warranty.tracker.warranty.model.response;
 
+import com.mitko.warranty.tracker.warranty.model.WarrantyStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
