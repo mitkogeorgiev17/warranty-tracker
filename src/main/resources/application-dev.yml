@@ -1,4 +1,9 @@
 spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   datasource:
     driver-class-name: org.postgresql.Driver
     username: ${DB.USERNAME}
@@ -23,3 +28,8 @@ keycloak:
   client-id: warranty-tracker-local
   client-secret: ${KEYCLOAK.CLIENT_SECRET}
   admin-client-secret: ${KEYCLOAK.ADMIN_CLIENT_SECRET}
+
+cloudinary:
+  name: dbw5gmuas
+  api-key: 951285131297993
+  api-secret: ${CLOUDINARY.SECRET}

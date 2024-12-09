@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.ACTIVE;
 import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.EXPIRED;
@@ -84,5 +85,19 @@ public class WarrantyService {
         var now = LocalDate.now();
 
         return now.isBefore(endDate) ? ACTIVE : EXPIRED;
+    }
+
+    public List<WarrantyDTO> getAllUserWarranties(Authentication authentication) {
+        log.info("Receiving all user warranties for user {}.", authentication.getName());
+
+        if (!userRepository.existsById(authentication.getName())) {
+            throw new UserNotFoundException(authentication.getName());
+        }
+
+        var warranties = warrantyRepository.findAllByUser_Id(authentication.getName());
+
+        log.info("Warranties received successfully.");
+
+        return mapper.toDto(warranties);
     }
 }

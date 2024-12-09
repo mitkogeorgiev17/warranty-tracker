@@ -1,6 +1,7 @@
 package com.mitko.warranty.tracker.warranty.model;
 
 import com.mitko.warranty.tracker.account.model.User;
+import com.mitko.warranty.tracker.file.model.WarrantyFile;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static jakarta.persistence.CascadeType.ALL;
@@ -48,6 +51,13 @@ public class Warranty {
 
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            mappedBy = "warranty"
+    )
+    private List<WarrantyFile> files = new ArrayList<>();
 
     @ManyToOne(
             cascade = ALL,

@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = WarrantyFileMapper.class)
 public interface WarrantyMapper {
     @Mapping(source = "note", target = "metadata.note")
     @Mapping(source = "createdAt", target = "metadata.createdAt")

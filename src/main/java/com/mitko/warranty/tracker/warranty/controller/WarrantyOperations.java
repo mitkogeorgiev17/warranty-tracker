@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
+
 @Tag(name = "Warranty Operations", description = "Endpoints for creating and managing warranty records.")
 public interface WarrantyOperations {
     @Operation(summary = "Create a new warranty", description = "Creates a new warranty and attaches it to the currently authenticated user. The warranty includes name, start date, end date, notes, and status.")
@@ -16,4 +18,9 @@ public interface WarrantyOperations {
     @ApiResponse(responseCode = "404", description = "User not found in the system.")
     @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     WarrantyDTO createWarranty(@RequestBody CreateWarrantyCommand command, Authentication authentication);
+
+    @Operation(summary = "Receives all user's warranties.")
+    @ApiResponse(responseCode = "200", description = "Warranties received")
+    @ApiResponse(responseCode = "404", description = "User / Warranties not found.")
+    List<WarrantyDTO> listUserWarranties(Authentication authentication);
 }
