@@ -1,4 +1,4 @@
-package com.mitko.warranty.tracker.account;
+package com.mitko.warranty.tracker.authentication;
 
 import com.mitko.warranty.tracker.exception.custom.AuthorizationException;
 import org.springframework.security.core.Authentication;

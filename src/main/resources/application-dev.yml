@@ -1,4 +1,9 @@
 spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   datasource:
     driver-class-name: org.postgresql.Driver
     username: ${DB.USERNAME}
@@ -10,6 +15,9 @@ spring:
         jwt:
           issuer-uri: ${baseUrls.keycloak}
           jwt-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/changelog-master.yaml
 
 baseUrls:
   keycloak: http://localhost:8081/realms/WarrantyTracker
@@ -20,3 +28,8 @@ keycloak:
   client-id: warranty-tracker-local
   client-secret: ${KEYCLOAK.CLIENT_SECRET}
   admin-client-secret: ${KEYCLOAK.ADMIN_CLIENT_SECRET}
+
+cloudinary:
+  name: dbw5gmuas
+  api-key: 951285131297993
+  api-secret: ${CLOUDINARY.SECRET}

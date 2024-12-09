@@ -1,13 +1,13 @@
 package com.mitko.warranty.tracker.mapper;
 
 import com.mitko.warranty.tracker.warranty.model.Warranty;
-import com.mitko.warranty.tracker.warranty.model.WarrantyDTO;
+import com.mitko.warranty.tracker.warranty.model.response.WarrantyDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = WarrantyFileMapper.class)
 public interface WarrantyMapper {
     @Mapping(source = "note", target = "metadata.note")
     @Mapping(source = "createdAt", target = "metadata.createdAt")

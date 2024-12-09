@@ -1,10 +1,13 @@
-package com.mitko.warranty.tracker.warranty.model;
+package com.mitko.warranty.tracker.warranty.model.response;
 
+import com.mitko.warranty.tracker.file.model.WarrantyFileDTO;
+import com.mitko.warranty.tracker.warranty.model.WarrantyStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
@@ -15,6 +18,7 @@ public class WarrantyDTO {
     private LocalDate endDate;
     private WarrantyStatus status;
     private WarrantyMetadata metadata;
+    private List<WarrantyFileDTO> files;
 
     @Data
     @Accessors(chain = true)

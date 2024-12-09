@@ -3,6 +3,11 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
-  liquibase:
-    enabled: true
-    change-log: classpath:/db/changelog/changelog-master.yaml
+  output:
+    ansi:
+      enabled: always
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2MB
+      max-request-size: 2MB

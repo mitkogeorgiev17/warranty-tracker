@@ -12,22 +12,23 @@ import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
 
 @Configuration
 public class OpenApiConfig {
-
-    private static final String SECURITY_SCHEME_NAME = "BearerAuth";
-
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title("Warranty Tracker API")
-                        .description("API documentation for the Warranty Tracker application")
+                        .description("""
+                                API documentation for the Warranty Tracker application
+                                """)
                         .version("1.0.0"))
-                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
+                .addSecurityItem(new SecurityRequirement().addList("BearerAuthentication"))
                 .components(new Components()
-                        .addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()
-                                .name(SECURITY_SCHEME_NAME)
-                                .type(HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")));
+                        .addSecuritySchemes("BearerAuthentication", securityScheme()));
+    }
+
+    private SecurityScheme securityScheme() {
+        return new SecurityScheme().type(HTTP)
+                .bearerFormat("JWT")
+                .scheme("bearer");
     }
 }
