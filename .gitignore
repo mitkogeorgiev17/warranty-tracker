@@ -86,3 +86,8 @@ lerna-debug.log*
 
 # System files
 .DS_Store
+
+#Docker
+db-data
+docker-compose.yml
+init-scripts/
