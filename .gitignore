@@ -88,6 +88,6 @@ lerna-debug.log*
 .DS_Store
 
 #Docker
-db-data
-docker-compose.yml
-init-scripts/
+docker/db-data
+docker/docker-compose.yml
+docker/init-scripts/
