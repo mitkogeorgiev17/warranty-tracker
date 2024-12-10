@@ -3,10 +3,12 @@ package com.mitko.warranty.tracker.warranty;
 import com.mitko.warranty.tracker.account.UserRepository;
 import com.mitko.warranty.tracker.exception.custom.UserNotFoundException;
 import com.mitko.warranty.tracker.exception.custom.WarrantyBadRequest;
+import com.mitko.warranty.tracker.exception.custom.WarrantyNotFoundException;
 import com.mitko.warranty.tracker.mapper.WarrantyMapper;
 import com.mitko.warranty.tracker.warranty.model.Warranty;
 import com.mitko.warranty.tracker.warranty.model.WarrantyStatus;
 import com.mitko.warranty.tracker.warranty.model.request.CreateWarrantyCommand;
+import com.mitko.warranty.tracker.warranty.model.request.UpdateWarrantyCommand;
 import com.mitko.warranty.tracker.warranty.model.response.WarrantyDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,15 +34,16 @@ public class WarrantyService {
 
     /**
      * Creates a new warranty record in the DB. Validates the request for invalid dates.
-     * @param command contains required info for saving absence: Name, Start date, End date, Notes (optional)
+     *
+     * @param command        contains required info for saving absence: Name, Start date, End date, Notes (optional)
      * @param authentication attaches the saved warranty to the logged user (extracted from the Authentication)
-     * @throws UserNotFoundException if authenticated user is not existent in DB.
      * @return Warranty mapped to a DTO
+     * @throws UserNotFoundException if authenticated user is not existent in DB.
      * @see WarrantyDTO
      */
     public WarrantyDTO createWarranty(CreateWarrantyCommand command, Authentication authentication) {
         var user = userRepository.findById(authentication.getName())
-                        .orElseThrow(() -> new UserNotFoundException(authentication.getName()));
+                .orElseThrow(() -> new UserNotFoundException(authentication.getName()));
 
         log.info("Saving new warranty. Name: {}. User: {}", command.name(), user.getUsername());
 
@@ -65,8 +68,9 @@ public class WarrantyService {
 
     /**
      * Validates a warranty request body for invalid data.
-     * @throws WarrantyBadRequest if dates are invalid.
+     *
      * @param command
+     * @throws WarrantyBadRequest if dates are invalid.
      */
     private void validate(CreateWarrantyCommand command) {
         log.info("Validating warranty.");
@@ -99,5 +103,46 @@ public class WarrantyService {
         log.info("Warranties received successfully.");
 
         return mapper.toDto(warranties);
+    }
+
+    public WarrantyDTO getById(long warrantyId, Authentication authentication) {
+        log.info("Receiving a warranty with ID {}.", warrantyId);
+
+        return mapper.toDto(
+                warrantyRepository.findByIdAndUser_Id(warrantyId, authentication.getName())
+                        .orElseThrow(() -> new WarrantyNotFoundException(warrantyId))
+        );
+    }
+
+    public WarrantyDTO updateWarranty(UpdateWarrantyCommand command, Authentication authentication) {
+        log.info("Updating warranty with ID {}.", command.warrantyId());
+
+        var warranty = warrantyRepository.findByIdAndUser_Id(command.warrantyId(), authentication.getName())
+                .orElseThrow(() -> new WarrantyNotFoundException(command.warrantyId()));
+
+        warranty
+                .setName(command.name() != null ? command.name() : warranty.getName())
+                .setStartDate(command.startDate() != null ? command.startDate() : warranty.getStartDate())
+                .setEndDate(command.endDate() != null ? command.endDate() : warranty.getEndDate())
+                .setStatus(command.status() != null ? command.status() : warranty.getStatus())
+                .setNote(command.note() != null ? command.note() : warranty.getNote())
+                .setUpdatedAt(LocalDateTime.now());
+
+        var savedWarranty = warrantyRepository.save(warranty);
+
+        log.info("Warranty updated successfully.");
+
+        return mapper.toDto(savedWarranty);
+    }
+
+    public void deleteWarranty(long warrantyId, Authentication authentication) {
+        log.info("Deleting warranty with ID {}.", warrantyId);
+
+        var warranty = warrantyRepository.findByIdAndUser_Id(warrantyId, authentication.getName())
+                .orElseThrow(() -> new WarrantyNotFoundException(warrantyId));
+
+        warrantyRepository.delete(warranty);
+
+        log.info("Warranty deleted successfully.");
     }
 }
