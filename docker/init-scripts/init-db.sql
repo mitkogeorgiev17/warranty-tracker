@@ -1,0 +1,9 @@
+CREATE USER dev WITH PASSWORD 'dev';
+CREATE USER kc WITH PASSWORD 'kc';
+
+CREATE SCHEMA IF NOT EXISTS keycloak AUTHORIZATION kc;
+
+CREATE SCHEMA IF NOT EXISTS development AUTHORIZATION dev;
+
+ALTER USER dev SET search_path TO development;
+ALTER USER kc SET search_path TO keycloak;

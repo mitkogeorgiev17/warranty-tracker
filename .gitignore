@@ -89,5 +89,7 @@ lerna-debug.log*
 
 #Docker
 docker/db-data
-docker/docker-compose.yml
-docker/init-scripts/
+
+# Node modules and build files
+ui/node_modules/
+ui/build/
