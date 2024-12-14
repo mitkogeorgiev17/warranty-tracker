@@ -1,10 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
 
-.container {
-  background-color: #23232c !important;
-  color: white !important;
-}
-
 .lexend-thin {
     font-family: "Lexend", sans-serif;
     font-optical-sizing: auto;
