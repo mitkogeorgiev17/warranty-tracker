@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+
+.container {
+  background-color: #23232c !important;
+  color: white !important;
+}
+
+.lexend-thin {
+    font-family: "Lexend", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 120;
+    font-style: normal;
+  }
+
+.lexend-normal {
+    font-family: "Lexend", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+  }
+
+.lexend-bold {
+    font-family: "Lexend", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
