@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "../../App.css";
 import "./HomePage.css";
 import logo from "../../assets/vault-logo-simplistic.svg";
@@ -5,8 +6,19 @@ import addImg from "../../assets/add.svg";
 import scanImg from "../../assets/scan.svg";
 import folderImg from "../../assets/folder.svg";
 import Header from "../../components/Header";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
+  const jwt = sessionStorage.getItem("jwt");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!jwt) {
+      console.error("Unauthorized: No JWT token found.");
+      navigate("/unauthorized");
+    }
+  });
+
   return (
     <>
       <Header />

@@ -10,12 +10,12 @@ function LoginPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (sessionStorage.getItem("token")) {
+    if (sessionStorage.getItem("jwt")) {
       console.log("Token found in session storage. Redirecting to home page.");
 
       navigate("/home");
     }
-  });
+  }, []);
 
   const getCodeUrl = async () => {
     try {
@@ -55,9 +55,9 @@ function LoginPage() {
         },
       });
 
-      const token = tokenResponse.data.token;
-      if (token) {
-        sessionStorage.setItem("token", token);
+      const jwt = tokenResponse.data.token;
+      if (jwt) {
+        sessionStorage.setItem("jwt", jwt);
         console.log("Token stored in sessionStorage.");
 
         navigate("/home");
