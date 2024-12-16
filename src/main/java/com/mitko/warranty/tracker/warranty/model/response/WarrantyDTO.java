@@ -17,6 +17,7 @@ public class WarrantyDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private WarrantyStatus status;
+    private String category;
     private WarrantyMetadata metadata;
     private List<WarrantyFileDTO> files;
 

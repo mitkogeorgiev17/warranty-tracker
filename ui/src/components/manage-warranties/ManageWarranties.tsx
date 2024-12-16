@@ -2,8 +2,19 @@ import logo from "../../assets/vault-logo-simplistic.svg";
 import addImg from "../../assets/add.svg";
 import scanImg from "../../assets/scan.svg";
 import folderImg from "../../assets/folder.svg";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function ManageWarranties() {
+  const navigate = useNavigate();
+
+  const handleWarrantiesClick = () => {
+    navigate("/warranties");
+  };
+
+  const handleAddClick = () => {
+    navigate("/warranties/add");
+  };
+
   return (
     <>
       <nav className="navbar">
@@ -19,7 +30,11 @@ function ManageWarranties() {
       </nav>
 
       <div className="container-fluid d-flex flex-column align-items-center text-center mt-5">
-        <div className="card add-card mb-4" style={{ width: "70vw" }}>
+        <div
+          onClick={handleAddClick}
+          className="card add-card mb-4"
+          style={{ width: "70vw" }}
+        >
           <img
             src={addImg}
             className="card-img-top mx-auto pt-3"
@@ -39,7 +54,11 @@ function ManageWarranties() {
             <p className="card-text">Scan a warranty</p>
           </div>
         </div>
-        <div className="card manage-card mb-4" style={{ width: "70vw" }}>
+        <div
+          onClick={handleWarrantiesClick}
+          className="card manage-card mb-4"
+          style={{ width: "70vw" }}
+        >
           <img
             src={folderImg}
             className="card-img-top mx-auto pt-3"

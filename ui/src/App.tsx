@@ -4,6 +4,8 @@ import LoginPage from "./pages/login/LoginPage";
 import HomePage from "./pages/home/HomePage";
 import UnauthorizedPage from "./pages/unauthorized/UnauthorizedPage";
 import ErrorPage from "./pages/error/ErrorPage";
+import WarrantiesPage from "./pages/warranties/WarrantiesPage";
+import AddWarrantyPage from "./pages/add-warranty/AddWarrantyPage";
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/error" element={<ErrorPage />} />
+        <Route path="/warranties" element={<WarrantiesPage />} />
+        <Route path="/warranties/add" element={<AddWarrantyPage />} />
       </Routes>
     </Router>
   );
