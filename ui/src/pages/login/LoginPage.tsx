@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import "../../App.css";
 import "./LoginPage.css";
 import logo from "../../assets/vault-logo-simplistic.svg";
-import axios from "axios";
+import axiosApi from "../../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../../config/apiConstants";
 import { useNavigate } from "react-router-dom";
 
@@ -17,18 +17,20 @@ function LoginPage() {
     }
   }, []);
 
-  const getCodeUrl = async () => {
-    try {
-      const endpoint = ENDPOINTS.CODE_URL;
-      const response = await axios({
-        method: endpoint.method,
-        url: `${API_BASE_URL}${endpoint.path}`,
-        responseType: "text",
+  const getCodeUrl = () => {
+    const endpoint = ENDPOINTS.CODE_URL;
+
+    axiosApi({
+      method: endpoint.method,
+      url: `${API_BASE_URL}${endpoint.path}`,
+      responseType: "text",
+    })
+      .then((response) => {
+        window.location.href = response.data;
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
       });
-      window.location.href = response.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
   };
 
   useEffect(() => {
@@ -40,31 +42,30 @@ function LoginPage() {
     }
   }, []);
 
-  const fetchTokenWithCode = async (code: string) => {
-    try {
-      const endpoint = ENDPOINTS.AUTHENTICATE;
+  const fetchTokenWithCode = (code: string) => {
+    const endpoint = ENDPOINTS.AUTHENTICATE;
 
-      const tokenResponse = await axios({
-        method: endpoint.method,
-        url: `${API_BASE_URL}${endpoint.path}`,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: {
-          code: code,
-        },
+    axiosApi({
+      method: endpoint.method,
+      url: `${API_BASE_URL}${endpoint.path}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        code: code,
+      },
+    })
+      .then((tokenResponse) => {
+        const jwt = tokenResponse.data.token;
+        if (jwt) {
+          sessionStorage.setItem("jwt", jwt);
+          console.log("Token stored in sessionStorage.");
+          navigate("/home");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching token:", error);
       });
-
-      const jwt = tokenResponse.data.token;
-      if (jwt) {
-        sessionStorage.setItem("jwt", jwt);
-        console.log("Token stored in sessionStorage.");
-
-        navigate("/home");
-      }
-    } catch (error) {
-      console.error("Error fetching token:", error);
-    }
   };
 
   return (

@@ -5,23 +5,78 @@ import logo from "../../assets/vault-logo-simplistic.svg";
 import addImg from "../../assets/add.svg";
 import scanImg from "../../assets/scan.svg";
 import folderImg from "../../assets/folder.svg";
-import Header from "../../components/Header";
+import UserGreeting from "../../components/UserGreeting";
+import { API_BASE_URL, ENDPOINTS } from "../../config/apiConstants";
 import { useNavigate } from "react-router-dom";
+import axiosApi from "../../config/axiosApiConfig";
+
+function getUser(jwt: string) {
+  const endpoint = ENDPOINTS.ACCOUNT;
+
+  return axiosApi({
+    method: endpoint.method,
+    url: `${API_BASE_URL}${endpoint.path}`,
+    responseType: "json",
+    headers: { Authorization: `Bearer ${jwt}` },
+  })
+    .then((response) => {
+      localStorage.setItem("user", JSON.stringify(response.data));
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching account:", error);
+      return null;
+    });
+}
 
 function HomePage() {
-  const jwt = sessionStorage.getItem("jwt");
   const navigate = useNavigate();
+  const [user, setUser] = useState<{ username: string } | null>(null);
+
+  const jwt = sessionStorage.getItem("jwt");
 
   useEffect(() => {
     if (!jwt) {
       console.error("Unauthorized: No JWT token found.");
       navigate("/unauthorized");
+      return;
     }
-  });
+
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      try {
+        const parsedUser = JSON.parse(userString);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error("Error parsing user data from localStorage:", error);
+        localStorage.removeItem("user");
+        navigate("/unauthorized");
+      }
+    } else {
+      getUser(jwt)
+        .then((fetchedUser) => {
+          if (fetchedUser) {
+            setUser(fetchedUser);
+            localStorage.setItem("user", JSON.stringify(fetchedUser));
+          } else {
+            navigate("/unauthorized");
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user:", error);
+          navigate("/unauthorized");
+        });
+    }
+  }, [jwt, navigate]);
+
+  if (!user) {
+    navigate("/unauthorized");
+    return null;
+  }
 
   return (
     <>
-      <Header />
+      <UserGreeting username={user.username} />
       <nav className="navbar">
         <div className="container-fluid flex-column justify-content-center pt-5">
           <img
@@ -30,7 +85,7 @@ function HomePage() {
             className="mb-4"
             style={{ width: "5vh" }}
           />
-          <h2 className="lexend-bold fs-1">My warranties</h2>
+          <h2 className="text-bold fs-1">My warranties</h2>
         </div>
       </nav>
 
