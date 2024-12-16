@@ -1,4 +1,3 @@
-import "./UnauthorizedPage.css";
 import "../../App.css";
 import unauthorizedImg from "../../assets/unauthorized-access.png";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ function UnauthorizedPage() {
   const navigate = useNavigate();
 
   const handleRetryButton = () => {
+    sessionStorage.removeItem("jwt");
     navigate("/login");
   };
 

@@ -80,12 +80,12 @@ function LoginPage() {
           className="mb-5"
           style={{ width: "150px" }}
         />
-        <h1 className="mb-3 mt-4 text-center lexend-bold">
+        <h1 className="mb-3 mt-4 text-center text-bold">
           Welcome to <br />
           Warranty Vault!
         </h1>
         <button
-          className="mt-2 px-5 btn btn-light btn-lg lexend-bold"
+          className="mt-2 px-5 btn btn-light btn-lg text-bold"
           onClick={getCodeUrl}
         >
           Sign in
