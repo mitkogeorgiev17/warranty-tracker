@@ -18,6 +18,10 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog-master.yaml
+  docker:
+    compose:
+      enabled: true
+      file: docker/docker-compose-dev.yml
 
 baseUrls:
   keycloak: http://localhost:8081/realms/WarrantyTracker

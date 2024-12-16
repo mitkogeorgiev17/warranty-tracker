@@ -1,0 +1,15 @@
+.card-text {
+    font-family: "Lexend", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 350;
+    font-style: normal;
+    font-size: large;
+}
+
+.card {
+    background-color: #9797ff25;
+    color: white;
+    border-color: #9797ff;
+    border-radius: 18px;
+    border-width: 2px;
+}
