@@ -50,8 +50,8 @@ WarrantyList.propTypes = {
     PropTypes.shape({
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
-      startDate: PropTypes.instanceOf(Date),
-      endDate: PropTypes.instanceOf(Date),
+      startDate: PropTypes.string.isRequired,
+      endDate: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
       metadata: PropTypes.shape({
         note: PropTypes.string,

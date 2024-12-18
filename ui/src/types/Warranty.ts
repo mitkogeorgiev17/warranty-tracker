@@ -1,8 +1,8 @@
 export interface Warranty {
     id: number,
     name: string,
-    startDate: Date,
-    endDate: Date,
+    startDate: string,
+    endDate: string,
     status: string,
     category: string,
     metadata?: WarrantyMetadata | null,
@@ -11,8 +11,8 @@ export interface Warranty {
 
 interface WarrantyMetadata {
     note: string,
-    createdAt: Date,
-    updatedAt: Date
+    createdAt: string,
+    updatedAt: string
 }
 
 interface WarrantyFile {
