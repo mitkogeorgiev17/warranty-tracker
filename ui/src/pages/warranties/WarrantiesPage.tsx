@@ -1,6 +1,6 @@
 import "./WarrantiesPage.css";
 import WarrantyList from "../../components/warranty-list/WarrantyList";
-import WarrantyListHeader from "../../components/warranty-list/WarrantyListHeader";
+import MenuHeader from "../../components/menu-header/MenuHeader";
 import { Warranty } from "../../types/Warranty";
 
 function WarrantiesPage() {
@@ -41,7 +41,7 @@ function WarrantiesPage() {
 
   return (
     <>
-      <WarrantyListHeader />
+      <MenuHeader text="Your warranties" />
       <WarrantyList items={warrantyList} />
     </>
   );

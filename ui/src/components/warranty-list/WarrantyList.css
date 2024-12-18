@@ -14,14 +14,15 @@ ul {
     min-width: 10vw;
     max-width: 10vw;
     border-radius: 10px;
+    border-color: #9797ff;
 }
 
 .btn-update {
-    background-color: rgb(255, 203, 105);
+    background-color: rgba(255, 166, 0, 0.8);
 }
 
 .btn-delete {
-    background-color: rgb(255, 42, 42);
+    background-color: rgba(255, 42, 42, 0.7);
 }
 
 .back-arrow {

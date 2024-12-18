@@ -1,8 +1,13 @@
 import backArrowImg from "../../assets/back-arrow.svg";
-import "./WarrantyList.css";
+import "../warranty-list/WarrantyList.css";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
-function WarrantyListHeader() {
+interface HeaderProps {
+  text: string;
+}
+
+function MenuHeader(props: HeaderProps) {
   const navigate = useNavigate();
 
   const handleBackArrowClick = () => {
@@ -17,10 +22,14 @@ function WarrantyListHeader() {
           className="back-arrow"
           src={backArrowImg}
         />
-        <h2 className="text-bold">Your warranties</h2>
+        <h2 className="text-bold">{props.text}</h2>
       </div>
     </>
   );
 }
 
-export default WarrantyListHeader;
+MenuHeader.propTypes = {
+  text: PropTypes.string.isRequired,
+};
+
+export default MenuHeader;
