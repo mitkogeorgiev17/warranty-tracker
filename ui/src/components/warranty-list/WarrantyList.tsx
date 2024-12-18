@@ -1,7 +1,6 @@
 import editImg from "../../assets/edit-icon.svg";
 import deleteImg from "../../assets/delete-icon.svg";
 import "./WarrantyList.css";
-import * as PropTypes from "prop-types";
 import { Warranty } from "../../types/Warranty";
 
 interface WarrantyListProps {
@@ -44,28 +43,5 @@ function WarrantyList(props: WarrantyListProps) {
     </>
   );
 }
-
-WarrantyList.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired,
-      metadata: PropTypes.shape({
-        note: PropTypes.string,
-        createdAt: PropTypes.string,
-        updatedAt: PropTypes.string,
-      }),
-      files: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.number.isRequired,
-          file: PropTypes.string.isRequired,
-        })
-      ),
-    })
-  ).isRequired,
-};
 
 export default WarrantyList;
