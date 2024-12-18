@@ -12,6 +12,8 @@ const ENDPOINTS: Record<string, ApiEndpoint> = {
   CODE_URL: { path: '/auth/code', method: 'GET' },
   AUTHENTICATE: { path: '/auth/authenticate', method: 'POST' },
   ACCOUNT: { path: '/account/', method: 'POST' },
+
+  GET_WARRANTIES: { path: '/warranties/', method: 'GET'}
 };
 
 export { API_BASE_URL, ENDPOINTS };

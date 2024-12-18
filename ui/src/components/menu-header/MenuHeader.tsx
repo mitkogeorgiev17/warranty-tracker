@@ -1,7 +1,6 @@
 import backArrowImg from "../../assets/back-arrow.svg";
 import "../warranty-list/WarrantyList.css";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 
 interface HeaderProps {
   text: string;
@@ -27,9 +26,5 @@ function MenuHeader(props: HeaderProps) {
     </>
   );
 }
-
-MenuHeader.propTypes = {
-  text: PropTypes.string.isRequired,
-};
 
 export default MenuHeader;
