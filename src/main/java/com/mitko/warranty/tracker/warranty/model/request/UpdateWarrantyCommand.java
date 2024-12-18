@@ -15,6 +15,7 @@ public record UpdateWarrantyCommand(
         LocalDate endDate,
         WarrantyStatus status,
         @Size(min = 2, max = 2048, message = "Note size must be between 2 and 2048 symbols.")
-        String note
+        String note,
+        String category
 ) {
 }

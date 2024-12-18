@@ -14,6 +14,7 @@ public record CreateWarrantyCommand(
         @NotNull(message = "Provide start date.")
         LocalDate startDate,
         @NotNull(message = "Provide end date.")
-        LocalDate endDate
+        LocalDate endDate,
+        String category
 ) {
 }
