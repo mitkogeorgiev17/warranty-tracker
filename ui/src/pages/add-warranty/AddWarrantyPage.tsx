@@ -1,5 +1,11 @@
+import MenuHeader from "../../components/menu-header/MenuHeader";
+
 function AddWarrantyPage() {
-  return <></>;
+  return (
+    <>
+      <MenuHeader text="Add warranty" />
+    </>
+  );
 }
 
 export default AddWarrantyPage;
