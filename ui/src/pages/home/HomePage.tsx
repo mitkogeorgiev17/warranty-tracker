@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import "../../App.css";
-import "./HomePage.css";
-import logo from "../../assets/vault-logo-simplistic.svg";
-import addImg from "../../assets/add.svg";
-import scanImg from "../../assets/scan.svg";
-import folderImg from "../../assets/folder.svg";
-import UserGreeting from "../../components/UserGreeting";
+import axiosApi from "../../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../../config/apiConstants";
 import { useNavigate } from "react-router-dom";
-import axiosApi from "../../config/axiosApiConfig";
+import { User } from "../../types/User";
+import "../../App.css";
+import "./HomePage.css";
+import UserGreeting from "../../components/UserGreeting";
+import ManageWarranties from "../../components/manage-warranties/ManageWarranties";
 
 function getUser(jwt: string) {
   const endpoint = ENDPOINTS.ACCOUNT;
@@ -31,7 +29,7 @@ function getUser(jwt: string) {
 
 function HomePage() {
   const navigate = useNavigate();
-  const [user, setUser] = useState<{ username: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const jwt = sessionStorage.getItem("jwt");
 
@@ -76,51 +74,8 @@ function HomePage() {
 
   return (
     <>
-      <UserGreeting username={user.username} />
-      <nav className="navbar">
-        <div className="container-fluid flex-column justify-content-center pt-5">
-          <img
-            src={logo}
-            alt="Vault Logo"
-            className="mb-4"
-            style={{ width: "5vh" }}
-          />
-          <h2 className="text-bold fs-1">My warranties</h2>
-        </div>
-      </nav>
-
-      <div className="container-fluid d-flex flex-column align-items-center text-center mt-5">
-        <div className="card add-card mb-4" style={{ width: "70vw" }}>
-          <img
-            src={addImg}
-            className="card-img-top mx-auto pt-3"
-            style={{ width: "5vh" }}
-          />
-          <div className="card-body">
-            <p className="card-text">Manually add a warranty</p>
-          </div>
-        </div>
-        <div className="card scan-card mb-4" style={{ width: "70vw" }}>
-          <img
-            src={scanImg}
-            className="card-img-top mx-auto pt-3"
-            style={{ width: "5vh" }}
-          />
-          <div className="card-body">
-            <p className="card-text">Scan a warranty</p>
-          </div>
-        </div>
-        <div className="card manage-card mb-4" style={{ width: "70vw" }}>
-          <img
-            src={folderImg}
-            className="card-img-top mx-auto pt-3"
-            style={{ width: "5vh" }}
-          />
-          <div className="card-body">
-            <p className="card-text">Manage warranties</p>
-          </div>
-        </div>
-      </div>
+      <UserGreeting username={user.firstName} />
+      <ManageWarranties />
     </>
   );
 }

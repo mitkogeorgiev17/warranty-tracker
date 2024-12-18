@@ -1,5 +1,3 @@
-import "./UserGreeting.css";
-
 interface UserGreetingProps {
   username: string;
 }

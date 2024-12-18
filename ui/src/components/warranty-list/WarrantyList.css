@@ -1,0 +1,30 @@
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.warranty-header {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+  }
+
+.btn {
+    min-width: 10vw;
+    max-width: 10vw;
+    border-radius: 10px;
+    border-color: #9797ff;
+}
+
+.btn-update {
+    background-color: rgba(255, 166, 0, 0.8);
+}
+
+.btn-delete {
+    background-color: rgba(255, 42, 42, 0.7);
+}
+
+.back-arrow {
+    max-width: 5vw;
+}

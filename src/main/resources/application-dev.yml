@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${DB.USERNAME}
     password: ${DB.PASSWORD}
-    url: jdbc:postgresql://localhost:5432/warranty_tracker
+    url: jdbc:postgresql://localhost:5432/warranty_tracker?currentSchema=development
   security:
     oauth2:
       resourceserver:

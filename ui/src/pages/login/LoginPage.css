@@ -3,6 +3,9 @@
     background-color: #9797ff;
     border: none;
     box-shadow: 5px 5px 5px hsl(0, 0%, 0%, 0.1);
+    display: flex;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .btn-light:hover {

@@ -1,5 +1,6 @@
 package com.mitko.warranty.tracker.warranty.model.response;
 
+import com.mitko.warranty.tracker.category.CategoryName;
 import com.mitko.warranty.tracker.file.model.WarrantyFileDTO;
 import com.mitko.warranty.tracker.warranty.model.WarrantyStatus;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class WarrantyDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private WarrantyStatus status;
+    private CategoryName category;
     private WarrantyMetadata metadata;
     private List<WarrantyFileDTO> files;
 

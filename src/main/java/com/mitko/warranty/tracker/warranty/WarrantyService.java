@@ -1,6 +1,8 @@
 package com.mitko.warranty.tracker.warranty;
 
 import com.mitko.warranty.tracker.account.UserRepository;
+import com.mitko.warranty.tracker.category.Category;
+import com.mitko.warranty.tracker.category.CategoryRepository;
 import com.mitko.warranty.tracker.exception.custom.UserNotFoundException;
 import com.mitko.warranty.tracker.exception.custom.WarrantyBadRequest;
 import com.mitko.warranty.tracker.exception.custom.WarrantyNotFoundException;
@@ -30,6 +32,7 @@ import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.EXPIRED;
 public class WarrantyService {
     private final WarrantyRepository warrantyRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final WarrantyMapper mapper;
 
     /**
@@ -56,6 +59,7 @@ public class WarrantyService {
                 .setStatus(getStatus(command.endDate()))
                 .setUser(user)
                 .setNote(command.note())
+                .setCategory(command.category() != null ? findCategory(command.category()) : null)
 
                 .setCreatedAt(LocalDateTime.now());
 
@@ -64,6 +68,15 @@ public class WarrantyService {
         log.info("Warranty saved successfully.");
 
         return mapper.toDto(savedWarranty);
+    }
+
+    private Category findCategory(String name) {
+        return categoryRepository.findByName(name)
+                .orElseGet(() -> createNewCategory(name));
+    }
+
+    private Category createNewCategory(String name) {
+        return categoryRepository.save(new Category().setName(name));
     }
 
     /**
