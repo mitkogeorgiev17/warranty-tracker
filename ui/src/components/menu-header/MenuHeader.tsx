@@ -15,11 +15,12 @@ function MenuHeader(props: HeaderProps) {
 
   return (
     <>
-      <div className="container pt-4 d-flex flex-wrap justify-content-between px-4 mb-4 ">
+      <div className="container pt-4 d-flex  justify-content-between px-4 mb-4 ">
         <img
           onClick={handleBackArrowClick}
           className="back-arrow"
           src={backArrowImg}
+          style={{ width: "7vw", maxWidth: "100%", display: "block" }}
         />
         <h2 className="text-bold">{props.text}</h2>
       </div>
