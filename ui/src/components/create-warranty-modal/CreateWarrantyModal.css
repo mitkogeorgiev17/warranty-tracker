@@ -1,3 +1,16 @@
 .warranty-form {
     max-width: 80vw;
 }
+
+.required-field {
+    color: rgba(255, 0, 0, 0.692);
+  }
+  
+  .required-field-warning {
+    color: red;
+    display: none;
+  }
+
+.btn-requirements-not-met {
+    opacity: 40%;
+}
