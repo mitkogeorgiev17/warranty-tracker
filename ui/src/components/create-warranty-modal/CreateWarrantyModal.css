@@ -14,3 +14,8 @@
 .btn-requirements-not-met {
     opacity: 40%;
 }
+
+input {
+  min-width: 80vw;
+  height: 5vh;
+}
