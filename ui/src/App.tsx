@@ -6,20 +6,24 @@ import UnauthorizedPage from "./pages/unauthorized/UnauthorizedPage";
 import ErrorPage from "./pages/error/ErrorPage";
 import WarrantiesPage from "./pages/warranties/WarrantiesPage";
 import AddWarrantyPage from "./pages/add-warranty/AddWarrantyPage";
+import { Toaster } from "sonner";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/unauthorized" element={<UnauthorizedPage />} />
-        <Route path="/error" element={<ErrorPage />} />
-        <Route path="/warranties" element={<WarrantiesPage />} />
-        <Route path="/warranties/add" element={<AddWarrantyPage />} />
-      </Routes>
-    </Router>
+    <>
+      <Toaster className="sonner-toast" position="bottom-center" richColors />
+      <Router>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+          <Route path="/error" element={<ErrorPage />} />
+          <Route path="/warranties" element={<WarrantiesPage />} />
+          <Route path="/warranties/add" element={<AddWarrantyPage />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

@@ -4,9 +4,13 @@ export interface Warranty {
     startDate: string,
     endDate: string,
     status: string,
-    category: string,
+    category: Category,
     metadata?: WarrantyMetadata | null,
     files?: WarrantyFile[] | null
+}
+
+interface Category {
+    name: string
 }
 
 interface WarrantyMetadata {
