@@ -13,7 +13,10 @@ const ENDPOINTS: Record<string, ApiEndpoint> = {
   AUTHENTICATE: { path: '/auth/authenticate', method: 'POST' },
   ACCOUNT: { path: '/account/', method: 'POST' },
 
-  GET_WARRANTIES: { path: '/warranties/', method: 'GET'}
+  GET_WARRANTIES: { path: '/warranties/', method: 'GET'},
+  CREATE_WARRANTY: { path: '/warranties/', method: 'POST'},
+  UPDATE_WARRANTY: { path: '/warranties/', method: 'PUT'},
+  DELETE_WARRANTY: { path: '/warranties/', method: 'DELETE'}
 };
 
 export { API_BASE_URL, ENDPOINTS };

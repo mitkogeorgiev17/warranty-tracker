@@ -24,7 +24,7 @@ function WarrantyList(props: WarrantyListProps) {
         </div>
         <div className="card-body py-1">
           {warranty.category != null && (
-            <p className="pb-0 mb-0">Category: {warranty.category}</p>
+            <p className="pb-0 mb-0">Category: {warranty.category.name}</p>
           )}
           <p className="pb-0 mb-0">Status: {warranty.status}</p>
           <p className="pb-0 mb-1">

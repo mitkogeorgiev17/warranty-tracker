@@ -3,6 +3,7 @@ package com.mitko.warranty.tracker.file.controller;
 import com.mitko.warranty.tracker.file.WarrantyFileService;
 import com.mitko.warranty.tracker.file.model.WarrantyFileDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ public class WarrantyFileController implements WarrantyFileOperations {
 
     @Override
     @PostMapping(value = "/{warrantyId}", consumes = { "multipart/form-data" })
+    @ResponseStatus(HttpStatus.CREATED)
     public WarrantyFileDTO addFile(@PathVariable("warrantyId") long warrantyId, @RequestParam("file") MultipartFile file, Authentication authentication) throws IOException {
         return service.addFile(warrantyId, file, authentication);
     }

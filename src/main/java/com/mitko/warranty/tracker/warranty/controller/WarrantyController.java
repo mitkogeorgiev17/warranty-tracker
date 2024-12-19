@@ -6,6 +6,7 @@ import com.mitko.warranty.tracker.warranty.model.request.UpdateWarrantyCommand;
 import com.mitko.warranty.tracker.warranty.model.response.WarrantyDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class WarrantyController implements WarrantyOperations {
 
     @Override
     @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
     public WarrantyDTO createWarranty(@Valid @RequestBody CreateWarrantyCommand command, Authentication authentication) {
         return service.createWarranty(command, authentication);
     }
@@ -37,12 +39,14 @@ public class WarrantyController implements WarrantyOperations {
 
     @Override
     @PutMapping("/")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public WarrantyDTO updateWarranty(UpdateWarrantyCommand command, Authentication authentication) {
         return service.updateWarranty(command, authentication);
     }
 
     @Override
     @DeleteMapping("/{warrantyId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWarranty(@PathVariable("warrantyId") long warrantyId, Authentication authentication) {
         service.deleteWarranty(warrantyId, authentication);
     }
