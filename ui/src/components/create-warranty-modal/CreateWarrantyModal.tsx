@@ -4,13 +4,14 @@ import addIcon from "../../assets/add-icon.svg";
 import axiosApi from "../../config/axiosApiConfig";
 import { ENDPOINTS, API_BASE_URL } from "../../config/apiConstants";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface createWarrantyCommand {
   name: string;
   startDate: Date;
   endDate: Date;
-  notes: string;
-  category: string;
+  notes: string | null;
+  category: string | null;
 }
 
 const defaultFormData = {
@@ -21,7 +22,10 @@ const defaultFormData = {
   category: "",
 };
 
-function createWarranty(createWarrantyCommand: createWarrantyCommand) {
+function createWarranty(
+  createWarrantyCommand: createWarrantyCommand,
+  navigate: any
+) {
   const endpoint = ENDPOINTS.CREATE_WARRANTY;
   axiosApi({
     method: endpoint.method,
@@ -29,8 +33,10 @@ function createWarranty(createWarrantyCommand: createWarrantyCommand) {
     data: createWarrantyCommand,
   })
     .then((response) => {
-      if (response.status == 201)
+      if (response.status == 201) {
         toast.success("Warranty created successfully.");
+        navigate("/warranties/");
+      }
     })
     .catch((error) => {
       switch (error.status) {
@@ -48,6 +54,7 @@ function createWarranty(createWarrantyCommand: createWarrantyCommand) {
 }
 
 function CreateWarrantyModal() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState(defaultFormData);
   const { name, startDate, endDate, notes, category } = formData;
 
@@ -78,6 +85,7 @@ function CreateWarrantyModal() {
       ...formData,
       startDate: new Date(formData.startDate),
       endDate: new Date(formData.endDate),
+      category: !formData.category ? null : formData.category,
     };
 
     if (
@@ -87,7 +95,7 @@ function CreateWarrantyModal() {
     ) {
       toast.warning("Please fill in the required fields.");
     } else {
-      createWarranty(warrantyCommand);
+      createWarranty(warrantyCommand, navigate);
       setFormData(defaultFormData);
     }
   };
