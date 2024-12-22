@@ -15,6 +15,7 @@ public record CreateWarrantyCommand(
         LocalDate startDate,
         @NotNull(message = "Provide end date.")
         LocalDate endDate,
+        @Size(min = 2, max = 64, message = "Category size should be between 2 and 64 symbols.")
         String category
 ) {
 }

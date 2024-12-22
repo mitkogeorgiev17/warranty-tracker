@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -63,10 +62,7 @@ public class Warranty {
     )
     private List<WarrantyFile> files = new ArrayList<>();
 
-    @ManyToOne(
-            cascade = ALL,
-            fetch = EAGER
-    )
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "USER_ID")
     private User user;
 

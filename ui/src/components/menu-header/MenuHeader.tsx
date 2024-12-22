@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   text: string;
+  backButtonRedirect: string;
 }
 
 function MenuHeader(props: HeaderProps) {
   const navigate = useNavigate();
 
   const handleBackArrowClick = () => {
-    navigate("/home");
+    navigate(props.backButtonRedirect);
   };
 
   return (

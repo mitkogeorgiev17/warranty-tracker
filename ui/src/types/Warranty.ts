@@ -9,7 +9,7 @@ export interface Warranty {
     files?: WarrantyFile[] | null
 }
 
-interface Category {
+export interface Category {
     name: string
 }
 
