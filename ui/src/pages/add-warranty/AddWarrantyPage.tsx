@@ -4,7 +4,7 @@ import CreateWarrantyModal from "../../components/create-warranty-modal/CreateWa
 function AddWarrantyPage() {
   return (
     <>
-      <MenuHeader text="Add warranty" />
+      <MenuHeader text="Add warranty" backButtonRedirect="/home" />
       <CreateWarrantyModal />
     </>
   );

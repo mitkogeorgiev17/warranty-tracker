@@ -100,6 +100,10 @@ function CreateWarrantyModal() {
     }
   };
 
+  const handleCategoryClick = () => {
+    navigate("/categories");
+  };
+
   return (
     <>
       <div className="container d-flex flex-column justify-content-center align-items-center pt-4 warranty-form">
@@ -164,6 +168,7 @@ function CreateWarrantyModal() {
               id="category"
               value={category}
               onChange={onChange}
+              onClick={handleCategoryClick}
             />
           </div>
 
