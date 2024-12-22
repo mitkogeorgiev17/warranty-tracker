@@ -19,4 +19,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             LIMIT 10
             """)
     List<Category> findTop10ByOrderByWarrantiesSizeDesc();
+
+    @Query("""
+            SELECT c
+            FROM Warranty w
+            JOIN w.category c
+            WHERE w.user.id = :userId
+            """)
+    List<Category> findAllUserCategories(String userId);
 }
