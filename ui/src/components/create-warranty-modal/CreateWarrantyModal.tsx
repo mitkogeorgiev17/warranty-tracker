@@ -6,7 +6,7 @@ import { ENDPOINTS, API_BASE_URL } from "../../config/apiConstants";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-interface createWarrantyCommand {
+export interface CreateWarrantyCommand {
   name: string;
   startDate: Date;
   endDate: Date;
@@ -23,7 +23,7 @@ const defaultFormData = {
 };
 
 function createWarranty(
-  createWarrantyCommand: createWarrantyCommand,
+  createWarrantyCommand: CreateWarrantyCommand,
   navigate: any
 ) {
   const endpoint = ENDPOINTS.CREATE_WARRANTY;
@@ -81,7 +81,7 @@ function CreateWarrantyModal() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const warrantyCommand: createWarrantyCommand = {
+    const warrantyCommand: CreateWarrantyCommand = {
       ...formData,
       startDate: new Date(formData.startDate),
       endDate: new Date(formData.endDate),

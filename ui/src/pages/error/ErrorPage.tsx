@@ -4,11 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 function ErrorPage() {
   const navigate = useNavigate();
-
   const handleRetryButton = () => {
     navigate("/home");
   };
-
   return (
     <>
       <div className="container d-flex align-items-center justify-content-center vh-100">
@@ -24,12 +22,14 @@ function ErrorPage() {
           <p className="col-lg-6 mx-auto mb-4 text-normal">
             Please try again later.
           </p>
-          <button
-            className="btn btn-light text-normal px-5 mt-3"
-            onClick={handleRetryButton}
-          >
-            Homepage
-          </button>
+          <div className="d-flex justify-content-center">
+            <button
+              className="btn btn-light text-normal px-5 mt-3"
+              onClick={handleRetryButton}
+            >
+              Homepage
+            </button>
+          </div>
         </div>
       </div>
     </>
