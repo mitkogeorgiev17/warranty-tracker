@@ -23,7 +23,7 @@ function WarrantiesPage() {
 
   return (
     <>
-      <MenuHeader text="Your warranties" />
+      <MenuHeader text="Your warranties" backButtonRedirect="/home" />
       <WarrantyList items={warranties} />
     </>
   );

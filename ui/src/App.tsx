@@ -6,6 +6,7 @@ import UnauthorizedPage from "./pages/unauthorized/UnauthorizedPage";
 import ErrorPage from "./pages/error/ErrorPage";
 import WarrantiesPage from "./pages/warranties/WarrantiesPage";
 import AddWarrantyPage from "./pages/add-warranty/AddWarrantyPage";
+import ChooseCategoryPage from "./pages/choose-category/ChooseCategoryPage";
 import { Toaster } from "sonner";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/error" element={<ErrorPage />} />
           <Route path="/warranties" element={<WarrantiesPage />} />
           <Route path="/warranties/add" element={<AddWarrantyPage />} />
+          <Route path="/categories" element={<ChooseCategoryPage />} />
         </Routes>
       </Router>
     </>

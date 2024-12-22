@@ -1,12 +1,15 @@
 package com.mitko.warranty.tracker.category;
 
+import com.mitko.warranty.tracker.warranty.model.Warranty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -23,6 +26,9 @@ public class Category {
 
     @Column(name = "NAME")
     private String name;
+
+    @OneToMany(mappedBy = "category")
+    private Set<Warranty> warranties = new HashSet<>();
 
     @Override
     public final boolean equals(Object obj) {
