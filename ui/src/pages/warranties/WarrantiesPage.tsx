@@ -5,8 +5,10 @@ import { Warranty } from "../../types/Warranty";
 import { API_BASE_URL, ENDPOINTS } from "../../config/apiConstants";
 import axiosApi from "../../config/axiosApiConfig";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function WarrantiesPage() {
+  const navigate = useNavigate();
   const [warranties, setWarranties] = useState<Warranty[]>([]);
 
   useEffect(() => {
@@ -16,7 +18,12 @@ function WarrantiesPage() {
       url: `${API_BASE_URL}${endpoint.path}`,
     })
       .then((response) => setWarranties(response.data))
-      .catch((error) => console.error("Error fetching warranties:", error));
+      .catch((error) => {
+        if (error.status === 401) {
+          navigate("/unauthorized");
+        }
+        console.error("Error fetching warranties:", error);
+      });
   }, []);
 
   console.log(warranties);

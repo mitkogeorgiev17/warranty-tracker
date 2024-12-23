@@ -1,4 +1,3 @@
-import MenuHeader from "../../components/menu-header/MenuHeader";
 import CategoryList from "../../components/category-list/CategoryList";
 import { useEffect, useState } from "react";
 import { Category } from "../../types/Warranty";
@@ -45,12 +44,12 @@ function ChooseCategoryPage() {
 
   return (
     <>
-      <MenuHeader text="Choose category" backButtonRedirect="/warranties/add" />
       <CategoryList
         items={categories}
         showUserCategories={showUserCategories}
         handleMostUsedCategoriesClick={handleMostUsedCategoriesClick}
         handleUserCategoriesClick={handleUserCategoriesClick}
+        createWarrantyCommand={null}
       />
     </>
   );
