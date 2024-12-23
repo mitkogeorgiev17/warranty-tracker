@@ -19,3 +19,18 @@ ul {
     background-color: #9794fc79;
     color: rgba(255, 255, 255, 0.507);
 }
+
+.btn-requirements-not-met {
+    opacity: 40%;
+}
+
+input {
+    border: none;
+    color: white;
+    background-color: #3e3d5d;
+}
+
+input:focus {
+    border: none;
+    outline: none;
+}

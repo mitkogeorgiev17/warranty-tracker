@@ -2,7 +2,9 @@ import "./CategoryList.css";
 import { Category } from "../../types/Warranty";
 import { CreateWarrantyCommand } from "../create-warranty-modal/CreateWarrantyModal";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import backArrowImg from "../../assets/back-arrow.svg";
+import addImg from "../../assets/add-icon.svg";
 
 interface CategoryListProps {
   createWarrantyCommand: CreateWarrantyCommand | null;
@@ -15,6 +17,7 @@ interface CategoryListProps {
 function CategoryList(props: CategoryListProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [categoryInput, setCategoryInput] = useState("");
   const createWarrantyCommand =
     (location.state?.createWarrantyCommand as CreateWarrantyCommand) ??
     props.createWarrantyCommand;
@@ -25,6 +28,19 @@ function CategoryList(props: CategoryListProps) {
     navigate("/warranties/add", {
       state: { createWarrantyCommand },
     });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCategoryInput(e.target.value);
+  };
+
+  const handleAddCategoryClick = () => {
+    if (categoryInput.trim()) {
+      createWarrantyCommand.category = categoryInput;
+      navigate("/warranties/add", {
+        state: { createWarrantyCommand: createWarrantyCommand },
+      });
+    }
   };
 
   const categoriesList = props.items.map((category) => (
@@ -74,7 +90,25 @@ function CategoryList(props: CategoryListProps) {
         </button>
       </div>
       <div className="container d-flex justify-content-center pt-4">
-        <ul>{categoriesList}</ul>
+        <ul>
+          <div className="container category-container my-2 d-flex justify-content-left align-items-center">
+            <input
+              type="text"
+              className="text-normal px-0"
+              placeholder="Enter category"
+              id="categoryInput"
+              value={categoryInput}
+              onChange={handleInputChange}
+            />
+            <img
+              src={addImg}
+              className={categoryInput.trim() ? "" : "btn-requirements-not-met"}
+              style={{ height: "5vh" }}
+              onClick={handleAddCategoryClick}
+            />
+          </div>
+          {categoriesList}
+        </ul>
       </div>
     </>
   );
