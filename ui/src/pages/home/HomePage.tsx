@@ -8,9 +8,8 @@ import "./HomePage.css";
 import UserGreeting from "../../components/UserGreeting";
 import ManageWarranties from "../../components/manage-warranties/ManageWarranties";
 
-function getUser(jwt: string) {
+function getUser(jwt: string, navigate: ReturnType<typeof useNavigate>) {
   const endpoint = ENDPOINTS.ACCOUNT;
-  const navigate = useNavigate();
 
   return axiosApi({
     method: endpoint.method,
@@ -56,7 +55,7 @@ function HomePage() {
         navigate("/unauthorized");
       }
     } else {
-      getUser(jwt)
+      getUser(jwt, navigate)
         .then((fetchedUser) => {
           if (fetchedUser) {
             setUser(fetchedUser);

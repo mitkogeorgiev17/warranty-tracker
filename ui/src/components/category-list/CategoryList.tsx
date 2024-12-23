@@ -15,8 +15,9 @@ interface CategoryListProps {
 function CategoryList(props: CategoryListProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const createWarrantyCommand = location.state
-    ?.createWarrantyCommand as CreateWarrantyCommand;
+  const createWarrantyCommand =
+    (location.state?.createWarrantyCommand as CreateWarrantyCommand) ??
+    props.createWarrantyCommand;
 
   const handleCategoryClick = (categoryName: string) => {
     createWarrantyCommand.category = categoryName;
