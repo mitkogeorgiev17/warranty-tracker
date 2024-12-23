@@ -10,6 +10,7 @@ import ManageWarranties from "../../components/manage-warranties/ManageWarrantie
 
 function getUser(jwt: string) {
   const endpoint = ENDPOINTS.ACCOUNT;
+  const navigate = useNavigate();
 
   return axiosApi({
     method: endpoint.method,
@@ -22,6 +23,10 @@ function getUser(jwt: string) {
       return response.data;
     })
     .catch((error) => {
+      if (error.status === 401) {
+        navigate("/unauthorized");
+      }
+
       console.error("Error fetching account:", error);
       return null;
     });

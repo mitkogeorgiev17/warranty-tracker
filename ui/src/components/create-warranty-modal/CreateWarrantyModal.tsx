@@ -4,7 +4,7 @@ import addIcon from "../../assets/add-icon.svg";
 import axiosApi from "../../config/axiosApiConfig";
 import { ENDPOINTS, API_BASE_URL } from "../../config/apiConstants";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export interface CreateWarrantyCommand {
   name: string;
@@ -14,13 +14,19 @@ export interface CreateWarrantyCommand {
   category: string | null;
 }
 
-const defaultFormData = {
-  name: "",
-  startDate: "",
-  endDate: "",
-  notes: "",
-  category: "",
-};
+const location = useLocation();
+const createWarrantyCommand = location.state
+  ?.createWarrantyCommand as CreateWarrantyCommand;
+
+const defaultFormData = createWarrantyCommand
+  ? createWarrantyCommand
+  : {
+      name: "",
+      startDate: "",
+      endDate: "",
+      notes: "",
+      category: "",
+    };
 
 function createWarranty(
   createWarrantyCommand: CreateWarrantyCommand,
@@ -40,6 +46,9 @@ function createWarranty(
     })
     .catch((error) => {
       switch (error.status) {
+        case 401:
+          navigate("/unauthorized");
+          break;
         case 400:
           toast.error("Failed to create warranty.");
           break;
@@ -101,7 +110,17 @@ function CreateWarrantyModal() {
   };
 
   const handleCategoryClick = () => {
-    navigate("/categories");
+    navigate("/categories", {
+      state: {
+        createWarrantyCommand: {
+          name: formData.name,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          notes: formData.notes,
+          category: formData.category,
+        },
+      },
+    });
   };
 
   return (

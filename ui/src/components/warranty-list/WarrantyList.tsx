@@ -7,12 +7,14 @@ import { API_BASE_URL, ENDPOINTS } from "../../config/apiConstants";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
+import { useNavigate } from "react-router-dom";
 
 interface WarrantyListProps {
   items: Warranty[];
 }
 
 function WarrantyList(props: WarrantyListProps) {
+  const navigate = useNavigate();
   const [warranties, setWarranties] = useState(props.items);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -42,6 +44,10 @@ function WarrantyList(props: WarrantyListProps) {
         }
       })
       .catch((error) => {
+        if (error.status === 401) {
+          navigate("/unauthorized");
+        }
+
         console.error("Error deleting warranty:", error);
         toast.error("Warranty could not be deleted.");
       })

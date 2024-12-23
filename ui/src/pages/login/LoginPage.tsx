@@ -29,6 +29,9 @@ function LoginPage() {
         window.location.href = response.data;
       })
       .catch((error) => {
+        if (error.status === 401) {
+          navigate("/unauthorized");
+        }
         console.error("Error fetching data:", error);
       });
   };
@@ -64,6 +67,9 @@ function LoginPage() {
         }
       })
       .catch((error) => {
+        if (error.status === 401) {
+          navigate("/unauthorized");
+        }
         console.error("Error fetching token:", error);
       });
   };
