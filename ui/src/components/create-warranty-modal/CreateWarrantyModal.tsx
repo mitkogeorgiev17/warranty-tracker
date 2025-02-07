@@ -12,6 +12,7 @@ export interface CreateWarrantyCommand {
   endDate: Date;
   notes: string | null;
   category: string | null;
+  file: File | null;
 }
 
 function CreateWarrantyModal() {
@@ -29,10 +30,11 @@ function CreateWarrantyModal() {
         endDate: "",
         notes: "",
         category: "",
+        file: null,
       };
 
   const [formData, setFormData] = useState(defaultFormData);
-  const { name, startDate, endDate, notes, category } = formData;
+  const { name, startDate, endDate, notes, category, file } = formData;
 
   const addBtn = useRef<HTMLImageElement>(null);
 
@@ -41,10 +43,36 @@ function CreateWarrantyModal() {
   ) => {
     const endpoint = ENDPOINTS.CREATE_WARRANTY;
     try {
+      // Create FormData if there's a file to upload
+      const formDataToSend = new FormData();
+
+      // Append all form fields
+      formDataToSend.append("name", createWarrantyCommand.name);
+      formDataToSend.append(
+        "startDate",
+        createWarrantyCommand.startDate.toISOString()
+      );
+      formDataToSend.append(
+        "endDate",
+        createWarrantyCommand.endDate.toISOString()
+      );
+      if (createWarrantyCommand.notes) {
+        formDataToSend.append("notes", createWarrantyCommand.notes);
+      }
+      if (createWarrantyCommand.category) {
+        formDataToSend.append("category", createWarrantyCommand.category);
+      }
+      if (createWarrantyCommand.file) {
+        formDataToSend.append("file", createWarrantyCommand.file);
+      }
+
       const response = await axiosApi({
         method: endpoint.method,
         url: `${API_BASE_URL}${endpoint.path}`,
-        data: createWarrantyCommand,
+        data: formDataToSend,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (response.status === 201) {
@@ -87,6 +115,14 @@ function CreateWarrantyModal() {
     });
   };
 
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFormData((prevState) => ({
+      ...prevState,
+      file: file,
+    }));
+  };
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const warrantyCommand: CreateWarrantyCommand = {
@@ -118,6 +154,7 @@ function CreateWarrantyModal() {
           endDate: formData.endDate,
           notes: formData.notes,
           category: formData.category,
+          file: formData.file,
         },
       },
     });
@@ -167,17 +204,6 @@ function CreateWarrantyModal() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label text-bold">Notes</label>
-          <textarea
-            className="form-control"
-            id="notes"
-            style={{ height: "10vh" }}
-            value={notes}
-            onChange={onChange}
-          />
-        </div>
-
-        <div className="mb-3">
           <label className="form-label text-bold">Category</label>
           <input
             type="text"
@@ -190,13 +216,43 @@ function CreateWarrantyModal() {
           />
         </div>
 
-        <div className="d-flex justify-content-center pt-5">
+        <div className="mb-3">
+          <label className="form-label text-bold">Notes</label>
+          <textarea
+            className="form-control"
+            id="notes"
+            style={{ height: "10vh" }}
+            value={notes}
+            onChange={onChange}
+          />
+        </div>
+
+        <div className="d-flex flex-column align-items-center mt-4">
+          <label className="d-flex justify-content-center btn btn-secondary px-5 bg-transparent text-bold">
+            Upload File
+            <input
+              id="file"
+              type="file"
+              className="d-none"
+              onChange={onFileChange}
+            />
+          </label>
+          {file && (
+            <span className="mt-2 text-normal">
+              Selected: {file.name}
+              <br />
+              Size: {(file.size / 1024).toFixed(0)} KB
+            </span>
+          )}
+        </div>
+
+        <div className="d-flex justify-content-center pt-4">
           <button type="submit" style={{ background: "none", border: "none" }}>
             <img
               src={addIcon}
               ref={addBtn}
               className="btn-requirements-not-met"
-              style={{ height: "20vh" }}
+              style={{ height: "18vh" }}
               alt="Add Icon"
             />
           </button>
