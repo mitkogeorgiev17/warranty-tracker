@@ -21,7 +21,20 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/v1.0.0/auth/**").permitAll()
+                                .requestMatchers(
+                                        // Swagger
+                                        "/v3/api-docs",
+                                        "/v3/api-docs/**",
+                                        "/v3/api-docs.yaml",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/webjars/**",
+                                        "/swagger-resources/**",
+                                        "/configuration/**",
+
+                                        // Authentication
+                                        "/api/v1.0.0/auth/**"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(
