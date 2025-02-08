@@ -12,7 +12,7 @@ export interface CreateWarrantyCommand {
   endDate: Date;
   notes: string | null;
   category: string | null;
-  file: File | null;
+  files: File[];
 }
 
 function CreateWarrantyModal() {
@@ -30,53 +30,80 @@ function CreateWarrantyModal() {
         endDate: "",
         notes: "",
         category: "",
-        file: null,
+        files: [],
       };
 
   const [formData, setFormData] = useState(defaultFormData);
-  const { name, startDate, endDate, notes, category, file } = formData;
+  const { name, startDate, endDate, notes, category, files } = formData;
 
   const addBtn = useRef<HTMLImageElement>(null);
+
+  const addWarrantyFiles = async (warrantyId: number, files: File[]) => {
+    const endpoint = ENDPOINTS.ADD_WARRANTY_FILES;
+    try {
+      const formData = new FormData();
+
+      files.forEach((file) => {
+        formData.append("file", file);
+      });
+
+      await axiosApi({
+        method: endpoint.method,
+        url: `${API_BASE_URL}${endpoint.path}${warrantyId}`,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success("Files uploaded successfully.");
+    } catch (error: any) {
+      switch (error.status) {
+        case 401:
+          navigate("/unauthorized");
+          break;
+        case 400:
+        case 500:
+        default:
+          toast.error("Failed to add warranty files.");
+          break;
+      }
+    }
+  };
 
   const createWarranty = async (
     createWarrantyCommand: CreateWarrantyCommand
   ) => {
     const endpoint = ENDPOINTS.CREATE_WARRANTY;
     try {
-      // Create FormData if there's a file to upload
-      const formDataToSend = new FormData();
-
-      // Append all form fields
-      formDataToSend.append("name", createWarrantyCommand.name);
-      formDataToSend.append(
-        "startDate",
-        createWarrantyCommand.startDate.toISOString()
-      );
-      formDataToSend.append(
-        "endDate",
-        createWarrantyCommand.endDate.toISOString()
-      );
-      if (createWarrantyCommand.notes) {
-        formDataToSend.append("notes", createWarrantyCommand.notes);
-      }
-      if (createWarrantyCommand.category) {
-        formDataToSend.append("category", createWarrantyCommand.category);
-      }
-      if (createWarrantyCommand.file) {
-        formDataToSend.append("file", createWarrantyCommand.file);
-      }
+      // Send only the warranty data without files
+      const warrantyData = {
+        name: createWarrantyCommand.name,
+        startDate: createWarrantyCommand.startDate.toISOString(),
+        endDate: createWarrantyCommand.endDate.toISOString(),
+        notes: createWarrantyCommand.notes,
+        category: createWarrantyCommand.category,
+      };
 
       const response = await axiosApi({
         method: endpoint.method,
         url: `${API_BASE_URL}${endpoint.path}`,
-        data: formDataToSend,
+        data: warrantyData,
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       });
 
       if (response.status === 201) {
         toast.success("Warranty created successfully.");
+
+        // Handle file uploads separately if there are files
+        if (createWarrantyCommand.files.length > 0) {
+          const warrantyId = response.data.id;
+
+          addWarrantyFiles(warrantyId, formData.files);
+        }
+
         navigate("/warranties/");
       }
     } catch (error: any) {
@@ -116,10 +143,20 @@ function CreateWarrantyModal() {
   };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
+    const fileList = e.target.files;
+    if (fileList) {
+      const newFiles = Array.from(fileList);
+      setFormData((prevState) => ({
+        ...prevState,
+        files: [...prevState.files, ...newFiles],
+      }));
+    }
+  };
+
+  const removeFile = (index: number) => {
     setFormData((prevState) => ({
       ...prevState,
-      file: file,
+      files: prevState.files.filter((_, i) => i !== index),
     }));
   };
 
@@ -154,7 +191,7 @@ function CreateWarrantyModal() {
           endDate: formData.endDate,
           notes: formData.notes,
           category: formData.category,
-          file: formData.file,
+          files: formData.files,
         },
       },
     });
@@ -229,20 +266,35 @@ function CreateWarrantyModal() {
 
         <div className="d-flex flex-column align-items-center mt-4">
           <label className="d-flex justify-content-center btn btn-secondary px-5 bg-transparent text-bold">
-            Upload File
+            Upload Files
             <input
-              id="file"
+              id="files"
               type="file"
               className="d-none"
               onChange={onFileChange}
+              multiple
             />
           </label>
-          {file && (
-            <span className="mt-2 text-normal">
-              Selected: {file.name}
-              <br />
-              Size: {(file.size / 1024).toFixed(0)} KB
-            </span>
+          {files.length > 0 && (
+            <div className="mt-2 text-normal">
+              {files.map((file, index) => (
+                <div
+                  key={index}
+                  className="d-flex align-items-center gap-2 mb-1"
+                >
+                  <span>
+                    {file.name} ({(file.size / 1024).toFixed(0)} KB)
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-danger"
+                    onClick={() => removeFile(index)}
+                  >
+                    ✖
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
