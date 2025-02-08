@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -30,37 +32,53 @@ public class WarrantyFileService {
     /**
      * Adds a file to  a warranty by ID. File is uploaded to Cloudinary and the URL is saved in the DB.
      * @param warrantyId ID of warranty we add the file to
-     * @param file MultipartFile being uploaded
+     * @param files List of files being uploaded
      * @param authentication
      * @return file mapped to a DTO
      * @see WarrantyFileDTO
      * // TODO Change file storage provider (or use newer version)
      */
-    public WarrantyFileDTO addFile(long warrantyId, MultipartFile file, Authentication authentication) throws IOException {
+    public List<WarrantyFileDTO> addFiles(long warrantyId, List<MultipartFile> files, Authentication authentication) throws IOException {
         log.info("Adding a file to warranty with ID {}.", warrantyId);
 
         var warranty = warrantyRepository.findByIdAndUser_Id(warrantyId, authentication.getName())
                 .orElseThrow(() -> new WarrantyNotFoundException(warrantyId));
 
         try {
-            String fileUrl = uploadFile(file);
+            List<String> fileUrls = uploadFiles(files);
 
-            var newFile = new WarrantyFile()
-                    .setFile(fileUrl)
-                    .setWarranty(warranty);
+            var newFiles = new ArrayList<WarrantyFile>();
 
-            var savedFile = repository.save(newFile);
+            for (String fileUrl : fileUrls) {
+                newFiles.add(
+                        new WarrantyFile()
+                                .setWarranty(warranty)
+                                .setFile(fileUrl)
+                );
+            }
+
+            var savedFiles = repository.saveAll(newFiles);
 
             log.info("File added successfully.");
 
-            return mapper.toDto(savedFile);
+            return mapper.toDto(savedFiles);
         } catch (IOException ex) {
             throw new WarrantyFileBadRequestException("Error occurred while uploading file. Message: " + ex.getMessage());
         }
     }
 
     private String uploadFile(MultipartFile file) throws IOException {
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of());
+        var uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of());
         return uploadResult.get("url").toString();
+    }
+
+    private List<String> uploadFiles(List<MultipartFile> files) throws IOException {
+        List<String> urls = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            urls.add(uploadFile(file));
+        }
+
+        return urls;
     }
 }
