@@ -73,6 +73,22 @@ public class WarrantyFileService {
         }
     }
 
+    public void deleteAllByFileIDs(long warrantyId, List<String> filesIDs, Authentication authentication) {
+        log.info("Removing {} file(s) for warranty with ID {}.", filesIDs.size(), warrantyId);
+
+        var files = repository.findAllByWarrantyIdAndIdIn(warrantyId, filesIDs);
+
+        deleteAllFilesWithIdsIn(
+                files
+                        .stream()
+                        .map(WarrantyFile::getFileId)
+                        .toList()
+        );
+        repository.deleteAll(files);
+
+        log.info("{} files removed successfully from warranty with ID {}.", files.size(), warrantyId);
+    }
+
     private Map<String, String> uploadFile(MultipartFile file) throws IOException {
         var uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of());
         return Map.of(
