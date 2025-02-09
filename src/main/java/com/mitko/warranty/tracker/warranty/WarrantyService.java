@@ -6,6 +6,8 @@ import com.mitko.warranty.tracker.category.CategoryRepository;
 import com.mitko.warranty.tracker.exception.custom.UserNotFoundException;
 import com.mitko.warranty.tracker.exception.custom.WarrantyBadRequest;
 import com.mitko.warranty.tracker.exception.custom.WarrantyNotFoundException;
+import com.mitko.warranty.tracker.file.WarrantyFileService;
+import com.mitko.warranty.tracker.file.model.WarrantyFile;
 import com.mitko.warranty.tracker.mapper.WarrantyMapper;
 import com.mitko.warranty.tracker.warranty.model.Warranty;
 import com.mitko.warranty.tracker.warranty.model.WarrantyStatus;
@@ -30,6 +32,7 @@ import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.EXPIRED;
 @RequiredArgsConstructor
 @Slf4j
 public class WarrantyService {
+    private final WarrantyFileService warrantyFileService;
     private final WarrantyRepository warrantyRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -154,6 +157,12 @@ public class WarrantyService {
         var warranty = warrantyRepository.findByIdAndUser_Id(warrantyId, authentication.getName())
                 .orElseThrow(() -> new WarrantyNotFoundException(warrantyId));
 
+        var warrantyFilesIDs = warranty.getFiles()
+                .stream()
+                .map(WarrantyFile::getFileId)
+                .toList();
+
+        warrantyFileService.deleteAllFilesWithIdsIn(warrantyFilesIDs);
         warrantyRepository.delete(warranty);
 
         log.info("Warranty deleted successfully.");

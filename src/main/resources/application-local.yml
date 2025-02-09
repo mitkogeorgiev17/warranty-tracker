@@ -1,14 +1,16 @@
 spring:
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
+        hibernate.default_schema: ${spring.datasource.schema}
   datasource:
     driver-class-name: org.postgresql.Driver
     username: ${DB.USERNAME}
     password: ${DB.PASSWORD}
-    url: jdbc:postgresql://localhost:5432/warranty_tracker?currentSchema=development
+    url: jdbc:postgresql://localhost:5432/warranty_tracker
+    schema: development
   security:
     oauth2:
       resourceserver:
@@ -18,6 +20,7 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog-master.yaml
+    default-schema: ${spring.datasource.schema}
   docker:
     compose:
       enabled: true

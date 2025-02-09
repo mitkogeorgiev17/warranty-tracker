@@ -2,6 +2,7 @@ package com.mitko.warranty.tracker.file;
 
 import com.cloudinary.Cloudinary;
 import com.mitko.warranty.tracker.exception.custom.WarrantyFileBadRequestException;
+import com.mitko.warranty.tracker.exception.custom.WarrantyFileNotFoundException;
 import com.mitko.warranty.tracker.exception.custom.WarrantyNotFoundException;
 import com.mitko.warranty.tracker.file.model.WarrantyFile;
 import com.mitko.warranty.tracker.file.model.WarrantyFileDTO;
@@ -15,52 +16,111 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static com.cloudinary.Cloudinary.emptyMap;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class WarrantyFileService {
+    private static final String URL = "url";
+    private static final String PUBLIC_ID = "public_id";
+
     private final Cloudinary cloudinary;
     private final WarrantyFileRepository repository;
     private final WarrantyRepository warrantyRepository;
     private final WarrantyFileMapper mapper;
 
     /**
-     * Adds a file to  a warranty by ID. File is uploaded to Cloudinary and the URL is saved in the DB.
-     * @param warrantyId ID of warranty we add the file to
-     * @param file MultipartFile being uploaded
+     * Adds a file to  a warranty by ID. File is uploaded to Cloudinary and the URL and Public ID are  saved in the DB.
+     * @param warrantyId ID of warranty we add the filePath to
+     * @param files List of files being uploaded
      * @param authentication
      * @return file mapped to a DTO
      * @see WarrantyFileDTO
-     * // TODO Change file storage provider (or use newer version)
      */
-    public WarrantyFileDTO addFile(long warrantyId, MultipartFile file, Authentication authentication) throws IOException {
-        log.info("Adding a file to warranty with ID {}.", warrantyId);
+    public List<WarrantyFileDTO> addFiles(long warrantyId, List<MultipartFile> files, Authentication authentication) throws IOException {
+        log.info("Adding a filePath to warranty with ID {}.", warrantyId);
 
         var warranty = warrantyRepository.findByIdAndUser_Id(warrantyId, authentication.getName())
                 .orElseThrow(() -> new WarrantyNotFoundException(warrantyId));
 
         try {
-            String fileUrl = uploadFile(file);
+            List<Map<String,String>> filesData = uploadFiles(files);
 
-            var newFile = new WarrantyFile()
-                    .setFile(fileUrl)
-                    .setWarranty(warranty);
+            var newFiles = new ArrayList<WarrantyFile>();
 
-            var savedFile = repository.save(newFile);
+            for (var entry : filesData) {
+                newFiles.add(
+                        new WarrantyFile()
+                                .setWarranty(warranty)
+                                .setFilePath(entry.get(URL))
+                                .setFileId(entry.get(PUBLIC_ID))
+                );
+            }
+
+            var savedFiles = repository.saveAll(newFiles);
 
             log.info("File added successfully.");
 
-            return mapper.toDto(savedFile);
+            return mapper.toDto(savedFiles);
         } catch (IOException ex) {
-            throw new WarrantyFileBadRequestException("Error occurred while uploading file. Message: " + ex.getMessage());
+            throw new WarrantyFileBadRequestException("Error occurred while uploading filePath. Message: " + ex.getMessage());
         }
     }
 
-    private String uploadFile(MultipartFile file) throws IOException {
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of());
-        return uploadResult.get("url").toString();
+    public void deleteAllByFileIDs(long warrantyId, List<String> filesIDs, Authentication authentication) {
+        log.info("Removing {} file(s) for warranty with ID {}.", filesIDs.size(), warrantyId);
+
+        var files = repository.findAllByWarrantyIdAndIdIn(warrantyId, filesIDs);
+
+        deleteAllFilesWithIdsIn(
+                files
+                        .stream()
+                        .map(WarrantyFile::getFileId)
+                        .toList()
+        );
+        repository.deleteAll(files);
+
+        log.info("{} files removed successfully from warranty with ID {}.", files.size(), warrantyId);
+    }
+
+    private Map<String, String> uploadFile(MultipartFile file) throws IOException {
+        var uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of());
+        return Map.of(
+                uploadResult.get(URL).toString(),
+                uploadResult.get(PUBLIC_ID).toString()
+        );
+    }
+
+    private List<Map<String, String>> uploadFiles(List<MultipartFile> files) throws IOException {
+        List<Map<String, String>> filesData = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            filesData.add(uploadFile(file));
+        }
+
+        return filesData;
+    }
+
+    private boolean deleteByFileId(String fileId) {
+        try {
+            var result = cloudinary.uploader().destroy(fileId, emptyMap());
+
+            return result.get("result").equals("ok");
+        } catch (IOException e) {
+            throw new WarrantyFileNotFoundException(fileId);
+        }
+    }
+
+    public boolean deleteAllFilesWithIdsIn(List<String> fileIDs) {
+        for (String fileId : fileIDs) {
+            deleteByFileId(fileId);
+        }
+        return true;
     }
 }

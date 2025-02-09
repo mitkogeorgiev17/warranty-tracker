@@ -7,8 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Tag(name = "Warranty File Operations")
 public interface WarrantyFileOperations {
-    WarrantyFileDTO addFile(@Parameter(name = "warrantyId", example = "1") long warrantyId, MultipartFile file, Authentication authentication) throws IOException;
+    List<WarrantyFileDTO> addFiles(@Parameter(name = "warrantyId", example = "1") long warrantyId, List<MultipartFile> files, Authentication authentication) throws IOException;
 }

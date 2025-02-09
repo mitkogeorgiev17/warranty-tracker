@@ -18,7 +18,9 @@ const ENDPOINTS: Record<string, ApiEndpoint> = {
   UPDATE_WARRANTY: { path: '/warranties/', method: 'PUT'},
   DELETE_WARRANTY: { path: '/warranties/', method: 'DELETE'},
 
-  GET_MOST_USED_CATEGORIES: {path: '/categories', method: 'GET'},
+  ADD_WARRANTY_FILES: { path: '/warranties/files/', method: 'POST'},
+
+  GET_MOST_USED_CATEGORIES: {path: '/categories/', method: 'GET'},
   GET_USER_CATEGORIES: {path: '/categories/user', method: 'GET'}
 };
 

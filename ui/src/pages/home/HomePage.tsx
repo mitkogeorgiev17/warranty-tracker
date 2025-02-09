@@ -8,7 +8,7 @@ import "./HomePage.css";
 import UserGreeting from "../../components/UserGreeting";
 import ManageWarranties from "../../components/manage-warranties/ManageWarranties";
 
-function getUser(jwt: string) {
+function getUser(jwt: string, navigate: ReturnType<typeof useNavigate>) {
   const endpoint = ENDPOINTS.ACCOUNT;
 
   return axiosApi({
@@ -22,6 +22,10 @@ function getUser(jwt: string) {
       return response.data;
     })
     .catch((error) => {
+      if (error.status === 401) {
+        navigate("/unauthorized");
+      }
+
       console.error("Error fetching account:", error);
       return null;
     });
@@ -51,7 +55,7 @@ function HomePage() {
         navigate("/unauthorized");
       }
     } else {
-      getUser(jwt)
+      getUser(jwt, navigate)
         .then((fetchedUser) => {
           if (fetchedUser) {
             setUser(fetchedUser);
