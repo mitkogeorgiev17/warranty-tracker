@@ -23,8 +23,12 @@ public class WarrantyFile {
     @GeneratedValue(strategy = IDENTITY)
     private long id;
 
-    @Column(name = "FILE")
-    private String file;
+    @Column(name = "FILE_ID")
+    private String fileId;
+
+    @Column(name = "FILE_PATH")
+    private String filePath;
+
 
     @ManyToOne(fetch = LAZY)
     private Warranty warranty;

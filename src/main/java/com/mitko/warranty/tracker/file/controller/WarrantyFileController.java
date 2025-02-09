@@ -19,7 +19,7 @@ public class WarrantyFileController implements WarrantyFileOperations {
 
     @PostMapping(value = "/{warrantyId}", consumes = { "multipart/form-data" })
     @ResponseStatus(HttpStatus.CREATED)
-    public List<WarrantyFileDTO> addFiles(@PathVariable("warrantyId") long warrantyId, @RequestParam("file") List<MultipartFile> files, Authentication authentication) throws IOException {
+    public List<WarrantyFileDTO> addFiles(@PathVariable("warrantyId") long warrantyId, @RequestParam("filePath") List<MultipartFile> files, Authentication authentication) throws IOException {
         return service.addFiles(warrantyId, files, authentication);
     }
 }
