@@ -1,9 +1,9 @@
 spring:
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         hibernate.default_schema: ${spring.datasource.schema}
   datasource:
     driver-class-name: org.postgresql.Driver
