@@ -24,22 +24,22 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-@Table(name = "WARRANTIES")
+@Table(name = "warranties")
 public class Warranty {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private long id;
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "START_DATE")
+    @Column(name = "start_date")
     private LocalDate startDate;
 
-    @Column(name = "END_DATE")
+    @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "STATUS")
+    @Column(name = "status")
     @Enumerated(STRING)
     private WarrantyStatus status;
 

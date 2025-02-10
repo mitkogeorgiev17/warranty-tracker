@@ -4,7 +4,7 @@ spring:
     properties:
       hibernate:
         format_sql: false
-        hibernate.default_schema: ${spring.datasource.schema}
+        default_schema: ${spring.datasource.schema}
   datasource:
     driver-class-name: org.postgresql.Driver
     username: ${DB.USERNAME}

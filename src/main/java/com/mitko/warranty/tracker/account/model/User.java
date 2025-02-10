@@ -16,21 +16,21 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-@Table(name = "USERS")
+@Table(name = "users")
 public class User {
     @Id
     private String id;
 
-    @Column(name = "USERNAME")
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "EMAIL")
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "FIRST_NAME")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "LAST_NAME")
+    @Column(name = "last_name")
     private String lastName;
 
     @Override

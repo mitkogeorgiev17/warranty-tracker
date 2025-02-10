@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   postgres:
     container_name: postgres
@@ -21,8 +20,9 @@ services:
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/warranty_tracker
-      KC_DB_USERNAME: kc
-      KC_DB_PASSWORD: kc
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_DB_SCHEMA: keycloak
       KC_BOOTSTRAP_ADMIN_USERNAME: tempadmin
       KC_BOOTSTRAP_ADMIN_PASSWORD: tempadmin
     ports:
