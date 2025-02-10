@@ -17,16 +17,16 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-@Table(name = "FILES")
+@Table(name = "files")
 public class WarrantyFile {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private long id;
 
-    @Column(name = "FILE_ID")
+    @Column(name = "file_id")
     private String fileId;
 
-    @Column(name = "FILE_PATH")
+    @Column(name = "file_path")
     private String filePath;
 
 

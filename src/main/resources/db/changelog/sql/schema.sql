@@ -1,48 +1,48 @@
 --liquibase formatted sql
 
 -- changeset mitko:create_users_table
-CREATE TABLE USERS (
-    ID VARCHAR(128) PRIMARY KEY NOT NULL,
-    USERNAME VARCHAR(64) NOT NULL,
-    EMAIL VARCHAR(128) NOT NULL,
-    FIRST_NAME VARCHAR(64) NOT NULL,
-    LAST_NAME VARCHAR(64) NOT NULL
+create table users (
+    id varchar(128) primary key not null,
+    username varchar(64) not null,
+    email varchar(128) not null,
+    first_name varchar(64) not null,
+    last_name varchar(64) not null
 );
 
 --changeset mitko:create_categories_table
-CREATE TABLE CATEGORIES (
-    ID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    NAME VARCHAR(64) NOT NULL
+create table categories (
+    id int primary key generated always as identity,
+    name varchar(64) not null
 );
 
 --changeset mitko:create_warranties_table
-CREATE TABLE WARRANTIES (
-    ID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    NAME VARCHAR(64) NOT NULL,
-    START_DATE DATE NOT NULL,
-    END_DATE DATE NOT NULL,
-    STATUS VARCHAR(16) NOT NULL,
-    NOTE VARCHAR(2048),
-    CREATED_AT TIMESTAMP NOT NULL,
-    UPDATED_AT TIMESTAMP,
+create table warranties (
+    id int primary key generated always as identity,
+    name varchar(64) not null,
+    start_date date not null,
+    end_date date not null,
+    status varchar(16) not null,
+    note varchar(2048),
+    created_at timestamp not null,
+    updated_at timestamp,
 
-    CATEGORY_ID INT,
-    CONSTRAINT fk_category_id FOREIGN KEY (CATEGORY_ID) REFERENCES CATEGORIES(ID) ON DELETE SET NULL,
+    category_id int,
+    constraint fk_category_id foreign key (category_id) references categories(id) on delete set null,
 
-    USER_ID VARCHAR(128) NOT NULL,
-    CONSTRAINT fk_user_id FOREIGN KEY (USER_ID) REFERENCES USERS(ID)
+    user_id varchar(128) not null,
+    constraint fk_user_id foreign key (user_id) references users(id)
 );
 
 -- changeset mitko:create_warranty_files_table
-CREATE TABLE FILES (
-    ID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    FILE_ID TEXT NOT NULL,
-    FILE_PATH TEXT NOT NULL,
+create table files (
+    id int primary key generated always as identity,
+    file_id text not null,
+    file_path text not null,
 
-    WARRANTY_ID INT NOT NULL,
-    CONSTRAINT fk_warranty_id FOREIGN KEY (WARRANTY_ID) REFERENCES WARRANTIES(ID)
+    warranty_id int not null,
+    constraint fk_warranty_id foreign key (warranty_id) references warranties(id)
 );
 
 -- changeset mitko:create_user_warranty_name_index
-CREATE UNIQUE INDEX idx_user_warranty_name
-ON WARRANTIES (NAME, USER_ID);
+create unique index idx_user_warranty_name
+on warranties (name, user_id);

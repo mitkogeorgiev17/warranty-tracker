@@ -18,13 +18,13 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-@Table(name = "CATEGORIES")
+@Table(name = "categories")
 public class Category {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private long id;
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "category")
