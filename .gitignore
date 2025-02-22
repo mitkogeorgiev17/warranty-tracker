@@ -93,6 +93,8 @@ docker/db-data
 # Node modules and build files
 ui/node_modules/
 ui/build/
+web-ui/node_modules/
+web-ui/build/
 
 # Logs
 logs
