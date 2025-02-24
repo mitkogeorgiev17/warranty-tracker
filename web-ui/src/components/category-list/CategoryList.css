@@ -1,0 +1,36 @@
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.category-container {
+    min-width: 90vw;
+    min-height: 6vh;
+    background-color: #9794fc3b;
+    border: 1px solid rgba(255, 255, 255, 0.267);
+    border-radius: 10px;
+}
+
+.category-btn {
+    min-width: 44vw;
+}
+
+.btn-selected {
+    background-color: #9794fc79;
+    color: rgba(255, 255, 255, 0.507);
+}
+
+.btn-requirements-not-met {
+    opacity: 40%;
+}
+
+input {
+    border: none;
+    color: white;
+    background-color: #3e3d5d;
+}
+
+input:focus {
+    border: none;
+    outline: none;
+}

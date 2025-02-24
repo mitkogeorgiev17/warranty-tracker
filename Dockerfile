@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the Spring Boot jar into the container
-COPY ../target/warranty-tracker-0.0.1-SNAPSHOT.jar warranty-tracker-0.0.1-SNAPSHOT.jar
+COPY target/warranty-tracker-0.0.1-SNAPSHOT.jar warranty-tracker-0.0.1-SNAPSHOT.jar
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "warranty-tracker-0.0.1-SNAPSHOT.jar"]
