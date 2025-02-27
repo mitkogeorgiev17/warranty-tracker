@@ -21,11 +21,11 @@ ul {
 }
 
 .btn-update {
-    background-color: rgba(255, 182, 46, 0.7);
+    background-color: rgb(255, 171, 61);
 }
 
 .btn-delete {
-    background-color: rgba(255, 67, 67, 0.6);
+    background-color: rgb(255, 77, 77);
 }
 
 .back-arrow {

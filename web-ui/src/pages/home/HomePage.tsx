@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import axiosApi from "../../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../../config/apiConstants";
-import { useNavigate } from "react-router-dom";
 import { User } from "../../types/User";
 import "../../App.css";
 import "./HomePage.css";
 import UserGreeting from "../../components/user-greeting/UserGreeting";
-import ManageWarranties from "../../components/manage-warranties/ManageWarranties";
+
+import logo from "../../assets/vault-logo-simplistic.svg";
+import addImg from "../../assets/add-icon.svg";
+import scanImg from "../../assets/scan.svg";
+import folderImg from "../../assets/folder.svg";
+import { useNavigate } from "react-router-dom";
+import HomePageButton from "../../components/menu-navigation/HomePageButton";
 
 function getUser(jwt: string, navigate: ReturnType<typeof useNavigate>) {
   const endpoint = ENDPOINTS.ACCOUNT;
@@ -34,6 +39,18 @@ function getUser(jwt: string, navigate: ReturnType<typeof useNavigate>) {
 function HomePage() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
+
+  const handleWarrantiesClick = () => {
+    navigate("/warranties");
+  };
+
+  const handleAddClick = () => {
+    navigate("/warranties/add");
+  };
+
+  const handleScanClick = () => {
+    navigate("/warranties/scan");
+  };
 
   const jwt = sessionStorage.getItem("jwt");
 
@@ -79,7 +96,25 @@ function HomePage() {
   return (
     <>
       <UserGreeting username={user.firstName} />
-      <ManageWarranties />
+      <>
+        <nav className="navbar">
+          <div className="container-fluid flex-column justify-content-center pt-5">
+            <img
+              src={logo}
+              alt="Vault Logo"
+              className="mb-4"
+              style={{ width: "5vh" }}
+            />
+            <h2 className="text-bold fs-1">Manage warranties</h2>
+          </div>
+        </nav>
+
+        <div className="container-fluid d-flex flex-column align-items-center text-center mt-5">
+          <HomePageButton img={addImg} handleClick={handleAddClick} />
+          <HomePageButton img={scanImg} handleClick={handleScanClick} />
+          <HomePageButton img={folderImg} handleClick={handleWarrantiesClick} />
+        </div>
+      </>
     </>
   );
 }

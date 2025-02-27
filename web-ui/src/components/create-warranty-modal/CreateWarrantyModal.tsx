@@ -5,8 +5,10 @@ import axiosApi from "../../config/axiosApiConfig";
 import { ENDPOINTS, API_BASE_URL } from "../../config/apiConstants";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
+import uploadFileIcon from "../../assets/file-upload.svg";
+import WarrantyForm from "../warranty/WarrantyForm";
 
-export interface CreateWarrantyCommand {
+export interface Warranty {
   name: string;
   startDate: Date;
   endDate: Date;
@@ -20,14 +22,14 @@ function CreateWarrantyModal() {
   const navigate = useNavigate();
 
   const createWarrantyCommand = location.state
-    ?.createWarrantyCommand as CreateWarrantyCommand;
+    ?.createWarrantyCommand as Warranty;
 
-  const defaultFormData = createWarrantyCommand
+  const defaultFormData: Warranty = createWarrantyCommand
     ? createWarrantyCommand
     : {
         name: "",
-        startDate: "",
-        endDate: "",
+        startDate: new Date(),
+        endDate: new Date(),
         notes: "",
         category: "",
         files: [],
@@ -71,9 +73,7 @@ function CreateWarrantyModal() {
     }
   };
 
-  const createWarranty = async (
-    createWarrantyCommand: CreateWarrantyCommand
-  ) => {
+  const createWarranty = async (createWarrantyCommand: Warranty) => {
     const endpoint = ENDPOINTS.CREATE_WARRANTY;
     try {
       // Send only the warranty data without files
@@ -123,23 +123,17 @@ function CreateWarrantyModal() {
     }
   };
 
-  const onChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData((prevState) => {
-      const updatedState = {
-        ...prevState,
-        [e.target.id]: e.target.value,
-      };
+  const updateButtonState = (data: Warranty) => {
+    if (data.name && data.startDate && data.endDate) {
+      addBtn.current?.classList.remove("btn-requirements-not-met");
+    } else {
+      addBtn.current?.classList.add("btn-requirements-not-met");
+    }
+  };
 
-      if (updatedState.name && updatedState.startDate && updatedState.endDate) {
-        addBtn.current?.classList.remove("btn-requirements-not-met");
-      } else {
-        addBtn.current?.classList.add("btn-requirements-not-met");
-      }
-
-      return updatedState;
-    });
+  const handleFormChange = (updatedWarranty: Warranty) => {
+    setFormData(updatedWarranty);
+    updateButtonState(updatedWarranty);
   };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,7 +156,7 @@ function CreateWarrantyModal() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const warrantyCommand: CreateWarrantyCommand = {
+    const warrantyCommand: Warranty = {
       ...formData,
       startDate: new Date(formData.startDate),
       endDate: new Date(formData.endDate),
@@ -200,87 +194,32 @@ function CreateWarrantyModal() {
   return (
     <div className="container d-flex flex-column justify-content-center align-items-center pt-4 warranty-form">
       <form onSubmit={onSubmit}>
-        <div className="mb-3">
-          <label className="form-label text-bold">
-            Name <span className="required-field">*</span>
-          </label>
-          <input
-            type="text"
-            className="form-control text-normal mb-3"
-            id="name"
-            value={name}
-            onChange={onChange}
-            placeholder="Name your warranty"
-          />
-        </div>
+        <WarrantyForm
+          warranty={formData}
+          onChange={handleFormChange}
+          isReadOnly={false}
+        />
 
-        <div className="mb-3">
-          <label className="form-label text-bold">
-            Start Date <span className="required-field">*</span>
-          </label>
-          <input
-            type="date"
-            className="form-control"
-            id="startDate"
-            value={startDate}
-            onChange={onChange}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label text-bold">
-            End Date <span className="required-field">*</span>
-          </label>
-          <input
-            type="date"
-            className="form-control"
-            id="endDate"
-            value={endDate}
-            onChange={onChange}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label text-bold">Category</label>
-          <input
-            type="text"
-            placeholder="Choose category (Optional)"
-            className="form-control text-normal mb-3"
-            id="category"
-            value={category}
-            onChange={onChange}
-            onClick={handleCategoryClick}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label text-bold">Notes</label>
-          <textarea
-            className="form-control"
-            id="notes"
-            style={{ height: "10vh" }}
-            value={notes}
-            onChange={onChange}
-          />
-        </div>
-
-        <div className="d-flex flex-column align-items-center mt-4">
-          <label className="d-flex justify-content-center btn btn-secondary px-5 bg-transparent text-bold">
-            Upload Files
-            <input
-              id="files"
-              type="file"
-              className="d-none"
-              onChange={onFileChange}
-              multiple
-            />
-          </label>
+        <div className="d-flex flex-column justify-content-center align-items-center text-center mt-4">
+          <div className="btn btn-secondary px-5 py-2 bg-transparent text-bold d-flex justify-content-center">
+            <label className="d-flex justify-content-center align-items-center">
+              <img src={uploadFileIcon} style={{ height: "2vh" }} />
+              Add files
+              <input
+                id="files"
+                type="file"
+                className="d-none"
+                onChange={onFileChange}
+                multiple
+              />
+            </label>
+          </div>
           {files.length > 0 && (
-            <div className="mt-2 text-normal">
+            <div className="mt-2 text-normal w-100 d-flex flex-column align-items-center">
               {files.map((file, index) => (
                 <div
                   key={index}
-                  className="d-flex align-items-center gap-2 mb-1"
+                  className="d-flex align-items-center justify-content-between gap-2 mb-1 w-75"
                 >
                   <span>
                     {file.name} ({(file.size / 1024).toFixed(0)} KB)
@@ -304,7 +243,7 @@ function CreateWarrantyModal() {
               src={addIcon}
               ref={addBtn}
               className="btn-requirements-not-met"
-              style={{ height: "18vh" }}
+              style={{ height: "15vh" }}
               alt="Add Icon"
             />
           </button>
