@@ -61,6 +61,10 @@ function WarrantyList(props: WarrantyListProps) {
     setSelectedId(null);
   };
 
+  const handleUpdateClick = (id: number) => {
+    navigate(`/warranties/edit/${id}`);
+  };
+
   const warrantyList = warranties.map((warranty) => (
     <li key={warranty.id}>
       <div className="card shadow-sm position-relative mb-3">
@@ -69,7 +73,10 @@ function WarrantyList(props: WarrantyListProps) {
             <div className="d-flex justify-content-between mt-2 mx-2">
               <h5 className="warranty-header px-2 mb-0">{warranty.name}</h5>
               <div className="btn-group">
-                <button className="btn btn-sm btn-update">
+                <button
+                  className="btn btn-sm btn-update"
+                  onClick={() => handleUpdateClick(warranty.id)}
+                >
                   <img src={editImg} height="25px" />
                 </button>
                 <button
