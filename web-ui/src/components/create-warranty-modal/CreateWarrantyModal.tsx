@@ -7,24 +7,16 @@ import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
 import uploadFileIcon from "../../assets/file-upload.svg";
 import WarrantyForm from "../warranty/WarrantyForm";
-
-export interface Warranty {
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  notes: string | null;
-  category: string | null;
-  files: File[];
-}
+import { CreateWarrantyCommand } from "../../types/Warranty";
 
 function CreateWarrantyModal() {
   const location = useLocation();
   const navigate = useNavigate();
 
   const createWarrantyCommand = location.state
-    ?.createWarrantyCommand as Warranty;
+    ?.createWarrantyCommand as CreateWarrantyCommand;
 
-  const defaultFormData: Warranty = createWarrantyCommand
+  const defaultFormData: CreateWarrantyCommand = createWarrantyCommand
     ? createWarrantyCommand
     : {
         name: "",
@@ -73,7 +65,9 @@ function CreateWarrantyModal() {
     }
   };
 
-  const createWarranty = async (createWarrantyCommand: Warranty) => {
+  const createWarranty = async (
+    createWarrantyCommand: CreateWarrantyCommand
+  ) => {
     const endpoint = ENDPOINTS.CREATE_WARRANTY;
     try {
       // Send only the warranty data without files
@@ -123,7 +117,7 @@ function CreateWarrantyModal() {
     }
   };
 
-  const updateButtonState = (data: Warranty) => {
+  const updateButtonState = (data: CreateWarrantyCommand) => {
     if (data.name && data.startDate && data.endDate) {
       addBtn.current?.classList.remove("btn-requirements-not-met");
     } else {
@@ -131,7 +125,7 @@ function CreateWarrantyModal() {
     }
   };
 
-  const handleFormChange = (updatedWarranty: Warranty) => {
+  const handleFormChange = (updatedWarranty: CreateWarrantyCommand) => {
     setFormData(updatedWarranty);
     updateButtonState(updatedWarranty);
   };
@@ -156,7 +150,7 @@ function CreateWarrantyModal() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const warrantyCommand: Warranty = {
+    const warrantyCommand: CreateWarrantyCommand = {
       ...formData,
       startDate: new Date(formData.startDate),
       endDate: new Date(formData.endDate),

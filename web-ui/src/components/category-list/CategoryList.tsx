@@ -1,13 +1,13 @@
 import "./CategoryList.css";
 import { Category } from "../../types/Warranty";
-import { CreateWarrantyCommand } from "../create-warranty-modal/CreateWarrantyModal";
+import { Warranty } from "../create-warranty-modal/CreateWarrantyModal";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import backArrowImg from "../../assets/back-arrow.svg";
 import addImg from "../../assets/add-icon.svg";
 
 interface CategoryListProps {
-  createWarrantyCommand: CreateWarrantyCommand | null;
+  createWarrantyCommand: Warranty | null;
   items: Category[];
   showUserCategories: boolean;
   handleUserCategoriesClick: () => void;
@@ -19,7 +19,7 @@ function CategoryList(props: CategoryListProps) {
   const location = useLocation();
   const [categoryInput, setCategoryInput] = useState("");
   const createWarrantyCommand =
-    (location.state?.createWarrantyCommand as CreateWarrantyCommand) ??
+    (location.state?.createWarrantyCommand as Warranty) ??
     props.createWarrantyCommand;
 
   const handleCategoryClick = (categoryName: string) => {
@@ -55,7 +55,7 @@ function CategoryList(props: CategoryListProps) {
   ));
 
   const handleBackArrowClick = () => {
-    navigate("/warranties/add", {
+    navigate(-1 as any, {
       state: { createWarrantyCommand: createWarrantyCommand },
     });
   };

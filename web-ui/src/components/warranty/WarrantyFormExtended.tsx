@@ -9,7 +9,11 @@ interface WarrantyFormProps {
   onChange: (updatedWarranty: WarrantyExtended) => void;
 }
 
-function WarrantyForm({ warranty, isReadOnly, onChange }: WarrantyFormProps) {
+function WarrantyFormExtended({
+  warranty,
+  isReadOnly,
+  onChange,
+}: WarrantyFormProps) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<WarrantyExtended>(warranty);
   const { name, startDate, endDate, metadata, category } = formData;
@@ -47,7 +51,6 @@ function WarrantyForm({ warranty, isReadOnly, onChange }: WarrantyFormProps) {
     });
   };
 
-  // Format date to YYYY-MM-DD for input date field
   const formatDateForInput = (date: Date): string => {
     if (!(date instanceof Date) || isNaN(date.getTime())) {
       return "";
@@ -60,7 +63,7 @@ function WarrantyForm({ warranty, isReadOnly, onChange }: WarrantyFormProps) {
       <div>
         <div className="mb-3">
           <label className="form-label text-bold">
-            Name {!isReadOnly && <span className="required-field">*</span>}
+            Name <span className="required-field">*</span>
           </label>
           <input
             type="text"
@@ -75,8 +78,8 @@ function WarrantyForm({ warranty, isReadOnly, onChange }: WarrantyFormProps) {
 
         <div className="mb-3">
           <label className="form-label text-bold">
-            Start Date{" "}
-            {!isReadOnly && <span className="required-field">*</span>}
+            Start Date (${isReadOnly} &&{" "}
+            <span className="required-field">*</span>)
           </label>
           <input
             type="date"
@@ -90,7 +93,7 @@ function WarrantyForm({ warranty, isReadOnly, onChange }: WarrantyFormProps) {
 
         <div className="mb-3">
           <label className="form-label text-bold">
-            End Date {!isReadOnly && <span className="required-field">*</span>}
+            End Date <span className="required-field">*</span>
           </label>
           <input
             type="date"
@@ -127,30 +130,9 @@ function WarrantyForm({ warranty, isReadOnly, onChange }: WarrantyFormProps) {
             disabled={isReadOnly}
           />
         </div>
-
-        <div className="mb-3">
-          <label className="form-label text-bold">Created on</label>
-          <input
-            type="date"
-            className="form-control"
-            value={formatDateForInput(metadata?.createdAt as Date)}
-            disabled
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label text-bold">Last updated</label>
-          <input
-            type="date"
-            className="form-control"
-            value={formatDateForInput(metadata?.updatedAt as Date)}
-            onChange={handleInputChange}
-            disabled
-          />
-        </div>
       </div>
     </div>
   );
 }
 
-export default WarrantyForm;
+export default WarrantyFormExtended;
