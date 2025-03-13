@@ -22,7 +22,8 @@ const HomePageMenu: React.FC = () => {
 
   // Common button styles with purple theme
   const buttonStyle = {
-    backgroundColor: "rgba(169, 133, 240, 0.28)", // Light muted purple background
+    backgroundColor: "rgba(169, 133, 240, 0.1)", // Light muted purple background
+    border: "2px solid",
     color: "#81c784", // Green text/icon color (from previous button background)
     py: 3,
     borderRadius: 2,
