@@ -6,9 +6,40 @@ import UserGreeting from "../components/UserGreeting";
 import HomePageMenu from "../components/HomePageMenu";
 import ExpiringSoonSection from "../components/ExpiringSoonSection";
 import SearchSection from "../components/SearchSection";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { User } from "../constants/User";
 
 function HomePage() {
-  // No need for componentStyle since we're applying width constraints directly in components
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const endpoint = ENDPOINTS.ACCOUNT;
+        const response = await axiosApi({
+          method: endpoint.method,
+          url: `${API_BASE_URL}${endpoint.path}`,
+          responseType: "json",
+        });
+        if (response.data) {
+          setUser(response.data);
+        } else {
+          navigate("/error");
+        }
+      } catch (error: any) {
+        if (error.response && error.response.status === 401) {
+          navigate("/unauthorized");
+        } else {
+          navigate("/error");
+        }
+      }
+    };
+
+    fetchUser();
+  }, [navigate]);
+
   return (
     <Container maxWidth="lg">
       <Paper
@@ -18,11 +49,11 @@ function HomePage() {
           backgroundColor: "background.paper",
           pb: 1,
           mt: 3,
-          width: "90%", // Match HomePageMenu width
-          mx: "auto", // Center the paper
+          width: "90%",
+          mx: "auto",
         }}
       >
-        <UserGreeting name={"Ludkoto"} />
+        {user && <UserGreeting user={user} />}
       </Paper>
 
       <Box sx={{ width: "90%", mx: "auto" }}>
@@ -38,8 +69,8 @@ function HomePage() {
           backgroundColor: "background.paper",
           pb: 0.5,
           pt: 0,
-          width: "90%", // Match HomePageMenu width
-          mx: "auto", // Center the paper
+          width: "90%",
+          mx: "auto",
         }}
       >
         <ExpiringSoonSection
