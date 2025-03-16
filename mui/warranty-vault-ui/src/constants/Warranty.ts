@@ -38,10 +38,10 @@ export interface WarrantyDTO {
 
 export interface CreateWarrantyCommand {
     name: string;
-    note?: string;
+    note?: string | null;
     startDate: string;
     endDate: string;
-    category: string;
+    category?: string | null;
   }
   
 export interface UpdateWarrantyCommand {

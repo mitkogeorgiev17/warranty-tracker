@@ -8,6 +8,10 @@ const useKeycloakUrl = (): string | null => {
   const [keycloakUrl, setKeycloakUrl] = useState<string | null>(null);
  
   useEffect(() => {
+    if (sessionStorage.getItem("jwt")) {
+      navigate("/home");
+    }
+
     const fetchUrl = async () => {
       try {
         const endpoint = ENDPOINTS.CODE_URL;

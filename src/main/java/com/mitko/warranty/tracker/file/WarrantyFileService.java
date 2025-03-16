@@ -55,12 +55,16 @@ public class WarrantyFileService {
             var newFiles = new ArrayList<WarrantyFile>();
 
             for (var entry : filesData) {
-                newFiles.add(
-                        new WarrantyFile()
-                                .setWarranty(warranty)
-                                .setFilePath(entry.get(URL))
-                                .setFileId(entry.get(PUBLIC_ID))
-                );
+                for (Map.Entry<String, String> item : entry.entrySet()) {
+                    if (item.getKey().startsWith("http")) {
+                        newFiles.add(
+                                new WarrantyFile()
+                                        .setWarranty(warranty)
+                                        .setFilePath(item.getKey())
+                                        .setFileId(item.getValue())
+                        );
+                    }
+                }
             }
 
             var savedFiles = repository.saveAll(newFiles);

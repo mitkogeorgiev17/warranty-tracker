@@ -10,6 +10,9 @@ import LoginPage from "./pages/LoginPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
+import CreateWarrantyPage from "./pages/CreateWarrantyPage";
+import ManageWarrantiesPage from "./pages/ManageWarrantiesPage";
+import { Toaster } from "sonner";
 
 const theme = createTheme({
   palette: {
@@ -38,11 +41,14 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
 
           <Route path="/home" element={<HomePage />} />
+          <Route path="/create" element={<CreateWarrantyPage />} />
+          <Route path="/manage" element={<ManageWarrantiesPage />} />
 
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/error" element={<ErrorPage />} />
         </Routes>
       </Router>
+      <Toaster richColors position="bottom-center" />
     </ThemeProvider>
   );
 }

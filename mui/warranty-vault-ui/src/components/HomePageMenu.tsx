@@ -9,15 +9,15 @@ const HomePageMenu: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCreateWarranty = () => {
-    navigate("/create-warranty");
+    navigate("/create");
   };
 
   const handleScanWarranty = () => {
-    navigate("/scan-warranty");
+    navigate("/scan");
   };
 
   const handleManageWarranties = () => {
-    navigate("/manage-warranties");
+    navigate("/manage");
   };
 
   // Common button styles with purple theme
