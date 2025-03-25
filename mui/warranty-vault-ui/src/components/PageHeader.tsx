@@ -33,7 +33,7 @@ const PageHeader = ({
         mt: 2,
         width: "90%",
         mx: "auto",
-        border: "1px solid",
+        border: "2px solid",
         borderColor: borderColor,
       }}
     >

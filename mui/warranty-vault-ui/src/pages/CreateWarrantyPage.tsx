@@ -12,6 +12,7 @@ import {
   ListItemText,
   ListItemIcon,
   IconButton,
+  Autocomplete,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
@@ -23,12 +24,13 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import { DEFAULT_WARRANTY_CATEGORIES } from "../constants/warrantyCategories";
 
 function CreateWarrantyPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const getCurrentDate = () => {
+  const getDefaultStartDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, "0");
@@ -36,11 +38,19 @@ function CreateWarrantyPage() {
     return `${year}-${month}-${day}`;
   };
 
+  const getDefaultEndDate = () => {
+    const today = new Date();
+    const year = today.getFullYear() + 2;
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const [warrantyName, setWarrantyName] = useState("");
-  const [startDate, setStartDate] = useState(getCurrentDate());
-  const [endDate, setEndDate] = useState(getCurrentDate());
+  const [startDate, setStartDate] = useState(getDefaultStartDate());
+  const [endDate, setEndDate] = useState(getDefaultEndDate());
   const [note, setNote] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState<string | null>("");
   const [files, setFiles] = useState<File[]>([]);
 
   const isFormValid = () => {
@@ -209,13 +219,22 @@ function CreateWarrantyPage() {
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
-            <TextField
-              fullWidth
+            <Autocomplete
               id="category"
-              label="Category"
-              name="category"
+              freeSolo
+              options={DEFAULT_WARRANTY_CATEGORIES}
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(event, newValue) => {
+                setCategory(newValue);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Category"
+                  fullWidth
+                  helperText="Select a category or enter your own"
+                />
+              )}
             />
             <Box sx={{ display: "flex", gap: 2 }}>
               <TextField

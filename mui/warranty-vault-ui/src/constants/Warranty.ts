@@ -7,6 +7,7 @@ export enum WarrantyStatus {
   
 export interface WarrantyFileDTO {
     id: number;
+    filePath: string;
     name: string;
     contentType: string;
     size: number;
