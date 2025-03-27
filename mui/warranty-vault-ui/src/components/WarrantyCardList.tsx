@@ -15,6 +15,7 @@ import { useState } from "react";
 import axiosApi from "../config/axiosApiConfig";
 import { ENDPOINTS, API_BASE_URL } from "../constants/apiConstants";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface WarrantyCardListProps {
   warranties: WarrantyDTO[];
@@ -25,12 +26,11 @@ const WarrantyCardList = ({
   warranties,
   onWarrantyDeleted,
 }: WarrantyCardListProps) => {
-  const navigate = useNavigate(); // Move this inside the component
+  const navigate = useNavigate();
   const [deletingWarrantyId, setDeletingWarrantyId] = useState<number | null>(
     null
   );
   const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Edit warranty handler
   const handleEditWarranty = (id: number, e: React.MouseEvent) => {
@@ -43,13 +43,11 @@ const WarrantyCardList = ({
   const handleDeleteClick = (id: number, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click from triggering
     setDeletingWarrantyId(id);
-    setDeleteError(null);
   };
 
   const handleDeleteCancel = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click from triggering
     setDeletingWarrantyId(null);
-    setDeleteError(null);
   };
 
   const handleDeleteConfirm = async (
@@ -59,7 +57,6 @@ const WarrantyCardList = ({
     e.stopPropagation(); // Prevent card click from triggering
 
     setIsDeleting(true);
-    setDeleteError(null);
 
     try {
       const endpoint = ENDPOINTS.DELETE_WARRANTY;
@@ -67,6 +64,9 @@ const WarrantyCardList = ({
         method: endpoint.method,
         url: `${API_BASE_URL}${endpoint.path}${warranty.id.toString()}`,
       });
+
+      // Show success toast
+      toast.success("Warranty deleted successfully");
 
       // Reset state
       setDeletingWarrantyId(null);
@@ -77,9 +77,14 @@ const WarrantyCardList = ({
       }
     } catch (error: any) {
       console.error("Error deleting warranty:", error);
-      setDeleteError(
+
+      // Show error toast
+      toast.error(
         error.response?.data?.message ||
-          "Failed to delete warranty. Please try again."
+          "Failed to delete warranty. Please try again.",
+        {
+          duration: 5000,
+        }
       );
     } finally {
       setIsDeleting(false);
@@ -115,9 +120,9 @@ const WarrantyCardList = ({
   };
 
   return (
-    <Grid container spacing={2} sx={{ alignItems: "flex-start" }}>
+    <Grid container spacing={1} sx={{ mt: -1 }} width={"92vw"}>
       {warranties.map((warranty) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={warranty.id}>
+        <Grid item xs={12} sm={6} md={4} lg={3} key={warranty.id} mt={0.8}>
           {deletingWarrantyId === warranty.id ? (
             // Delete confirmation card
             <Card
@@ -147,15 +152,6 @@ const WarrantyCardList = ({
                 <Typography sx={{ mb: 3 }}>
                   Are you sure you want to delete <b>"{warranty.name}"</b>?
                 </Typography>
-
-                {deleteError && (
-                  <Typography
-                    color="error"
-                    sx={{ mb: 2, fontSize: "0.875rem" }}
-                  >
-                    {deleteError}
-                  </Typography>
-                )}
 
                 <Box
                   sx={{
@@ -191,7 +187,6 @@ const WarrantyCardList = ({
             <Card
               sx={{
                 position: "relative",
-                height: "100%",
                 transition:
                   "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
                 "&:hover": {
@@ -199,6 +194,8 @@ const WarrantyCardList = ({
                   boxShadow: 4,
                 },
                 cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
               }}
               onClick={() => handleCardClick(warranty.id)}
             >
@@ -239,7 +236,7 @@ const WarrantyCardList = ({
                   <DeleteIcon />
                 </IconButton>
               </Box>
-              <CardContent>
+              <CardContent sx={{ py: 2 }}>
                 <Typography
                   variant="h6"
                   component="div"
@@ -262,7 +259,7 @@ const WarrantyCardList = ({
                   }}
                 >
                   <Typography variant="body2" color="text.secondary">
-                    {warranty.category
+                    {warranty.category && warranty.category.name
                       ? warranty.category.name
                       : "Uncategorized"}
                   </Typography>
