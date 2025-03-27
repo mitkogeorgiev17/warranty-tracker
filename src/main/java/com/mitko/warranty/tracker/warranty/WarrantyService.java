@@ -24,8 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.ACTIVE;
-import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.EXPIRED;
+import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.*;
 
 @Service
 @Transactional
@@ -166,5 +165,23 @@ public class WarrantyService {
         warrantyRepository.delete(warranty);
 
         log.info("Warranty deleted successfully.");
+    }
+
+    public void updateExpiringWarranties(LocalDate today) {
+        var allExpiringWarranties = warrantyRepository.findByEndDateBeforeAndStatusIn(today, List.of(ACTIVE, CLAIMED_ACTIVE));
+
+        allExpiringWarranties
+                .forEach(warranty -> {
+                    if (warranty.getStatus() == ACTIVE) {
+                        warranty.setStatus(EXPIRED);
+                    }
+                    if (warranty.getStatus() == CLAIMED_ACTIVE) {
+                        warranty.setStatus(CLAIMED_EXPIRED);
+                    }
+                });
+
+        warrantyRepository.saveAll(allExpiringWarranties);
+
+        log.info("New {} expired warranties as of {} have been updated.", allExpiringWarranties.size(), today);
     }
 }

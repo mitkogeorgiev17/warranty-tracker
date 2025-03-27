@@ -1,10 +1,12 @@
 package com.mitko.warranty.tracker.warranty;
 
 import com.mitko.warranty.tracker.warranty.model.Warranty;
+import com.mitko.warranty.tracker.warranty.model.WarrantyStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +16,6 @@ public interface WarrantyRepository extends JpaRepository<Warranty, Long> {
 
     @EntityGraph(attributePaths = {"files"})
     List<Warranty> findAllByUser_Id(String name);
+
+    List<Warranty> findByEndDateBeforeAndStatusIn(LocalDate date, List<WarrantyStatus> statuses);
 }
