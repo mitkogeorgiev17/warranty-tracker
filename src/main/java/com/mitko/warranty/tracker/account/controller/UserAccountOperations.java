@@ -1,6 +1,6 @@
 package com.mitko.warranty.tracker.account.controller;
 
-import com.mitko.warranty.tracker.account.model.UserAccountResponse;
+import com.mitko.warranty.tracker.account.model.response.UserAccountResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

@@ -40,7 +40,7 @@ public class WarrantyController implements WarrantyOperations {
     @Override
     @PutMapping("/")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public WarrantyDTO updateWarranty(UpdateWarrantyCommand command, Authentication authentication) {
+    public WarrantyDTO updateWarranty(@Valid @RequestBody UpdateWarrantyCommand command, Authentication authentication) {
         return service.updateWarranty(command, authentication);
     }
 

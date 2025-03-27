@@ -7,6 +7,7 @@ export enum WarrantyStatus {
   
 export interface WarrantyFileDTO {
     id: number;
+    filePath: string;
     name: string;
     contentType: string;
     size: number;
@@ -43,23 +44,18 @@ export interface CreateWarrantyCommand {
     endDate: string;
     category?: string | null;
   }
-  
-export interface UpdateWarrantyCommand {
+
+  export interface UpdateWarrantyCommand {
     warrantyId: number;
-    name?: string;
-    startDate?: string;
-    endDate?: string;
-    status?: WarrantyStatus;
-    note?: string;
-    category?: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    status: WarrantyStatus;
+    note: string | null;
+    category: string;
+    filesToAdd?: File[];
+    filesToDelete?: number[];
   }
-  
-export const ENDPOINTS = {
-    WARRANTIES: '/api/warranties',
-    WARRANTY_BY_ID: (id: number) => `/api/warranties/${id}`,
-    WARRANTY_FILES: (warrantyId: number) => `/api/warranties/${warrantyId}/files`,
-    CATEGORIES: '/api/categories',
-  };
   
 export const VALIDATION = {
     NAME: {

@@ -1,15 +1,22 @@
 package com.mitko.warranty.tracker.account;
 
 import com.mitko.warranty.tracker.account.model.User;
-import com.mitko.warranty.tracker.account.model.UserAccountResponse;
+import com.mitko.warranty.tracker.account.model.response.UserAccountResponse;
 import com.mitko.warranty.tracker.mapper.UserAccountMapper;
+import com.mitko.warranty.tracker.warranty.repository.WarrantyCountsProjection;
+import com.mitko.warranty.tracker.warranty.repository.WarrantyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import static com.mitko.warranty.tracker.authentication.AuthenticationUtils.getClaims;
+import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.ACTIVE;
+import static com.mitko.warranty.tracker.warranty.model.WarrantyStatus.CLAIMED_ACTIVE;
 
 @Service
 @Transactional
@@ -18,6 +25,7 @@ import static com.mitko.warranty.tracker.authentication.AuthenticationUtils.getC
 public class UserAccountService {
     private final UserRepository userRepository;
     private final UserAccountMapper mapper;
+    private final WarrantyRepository warrantyRepository;
 
     public UserAccountResponse getUser(Authentication authentication) {
         log.info("Receiving user account for {}.", authentication.getName());
@@ -25,7 +33,8 @@ public class UserAccountService {
         var user = userRepository.findById(authentication.getName())
                 .orElseGet(() -> createNewUserRecord(authentication));
 
-        return mapper.toResponseBody(user);
+        return mapper.toResponseBody(user)
+                .setWarrantyCountsProjection(getWarrantyCounts(authentication));
     }
 
     private User createNewUserRecord(Authentication authentication) {
@@ -45,5 +54,20 @@ public class UserAccountService {
         log.info("New user saved successfully. Username: {}", savedUser.getUsername());
 
         return savedUser;
+    }
+
+    public WarrantyCountsProjection getWarrantyCounts(Authentication authentication) {
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthFromNow = today.plusMonths(1);
+        LocalDate oneYearFromNow = today.plusYears(1);
+
+        List<String> statusStrings = List.of(ACTIVE.name(), CLAIMED_ACTIVE.name());
+
+        return warrantyRepository.countExpiringWarranties(
+                oneMonthFromNow,
+                oneYearFromNow,
+                statusStrings,
+                authentication.getName()
+        );
     }
 }
