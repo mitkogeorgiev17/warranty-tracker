@@ -1,9 +1,6 @@
-import { FC, useState, useRef } from "react";
-import {
-  WarrantyDTO,
-  WarrantyStatus,
-  WarrantyFileDTO,
-} from "../constants/Warranty";
+import { FC, useState, useRef, useEffect } from "react";
+import { WarrantyDTO, WarrantyStatus } from "../constants/Warranty";
+import { UpdateWarrantyCommand } from "../constants/Warranty";
 import { format } from "date-fns";
 
 // MUI imports
@@ -21,6 +18,7 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import {
   Description as DocumentIcon,
@@ -36,7 +34,8 @@ import {
 interface WarrantyDetailsProps {
   warranty: WarrantyDTO;
   isEditMode?: boolean;
-  onSave?: (updatedWarranty: WarrantyDTO) => Promise<void>;
+  onSave?: (updatedWarranty: UpdateWarrantyCommand) => Promise<void>;
+  onCancel?: () => void;
 }
 
 // Helper function to get file icon based on content type
@@ -103,10 +102,20 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
   warranty,
   isEditMode = false,
   onSave,
+  onCancel,
 }) => {
   const [currentWarranty, setCurrentWarranty] = useState<WarrantyDTO>(warranty);
-  const [fileInput, setFileInput] = useState<File[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [filesToDelete, setFilesToDelete] = useState<number[]>([]);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Reset state when warranty prop changes
+  useEffect(() => {
+    setCurrentWarranty(warranty);
+    setNewFiles([]);
+    setFilesToDelete([]);
+  }, [warranty]);
 
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "";
@@ -115,7 +124,47 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
 
   const handleSave = async () => {
     if (onSave) {
-      await onSave(currentWarranty);
+      setIsSaving(true);
+      try {
+        // Create an UpdateWarrantyCommand from the current state
+        const updateCommand: UpdateWarrantyCommand = {
+          warrantyId: Number(currentWarranty.id),
+          name: currentWarranty.name,
+          startDate: currentWarranty.startDate || "",
+          endDate: currentWarranty.endDate || "",
+          status: currentWarranty.status,
+          note: currentWarranty.metadata?.note || "",
+          category: currentWarranty.category?.name || "", // Use category name as a string
+          filesToAdd: newFiles,
+          filesToDelete: filesToDelete,
+        };
+
+        // Validate the command before sending
+        if (updateCommand.name.length < 2 || updateCommand.name.length > 64) {
+          throw new Error("Name must be between 2 and 64 characters");
+        }
+
+        if (
+          updateCommand.note &&
+          (updateCommand.note.length < 2 || updateCommand.note.length > 2048)
+        ) {
+          throw new Error("Note must be between 2 and 2048 characters");
+        }
+
+        console.log("About to send update command:", updateCommand);
+        await onSave(updateCommand);
+      } catch (error) {
+        console.error("Error in handleSave:", error);
+        // You might want to show an error message to the user here
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
     }
   };
 
@@ -138,16 +187,16 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      const newFiles = Array.from(event.target.files);
-      setFileInput((prevFiles) => [...prevFiles, ...newFiles]);
+      const addedFiles = Array.from(event.target.files);
+      setNewFiles((prevFiles) => [...prevFiles, ...addedFiles]);
     }
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  const handleRemoveFile = (index: number) => {
-    setFileInput((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  const handleRemoveNewFile = (index: number) => {
+    setNewFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   const handleOpenFileDialog = () => {
@@ -157,10 +206,13 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
   };
 
   const handleRemoveExistingFile = (fileId: number) => {
-    console.log("Remove existing file", fileId);
-    // Here you would implement the logic to remove an existing file
-    // This would typically involve updating the warranty object
+    setFilesToDelete((prev) => [...prev, fileId]);
   };
+
+  // Get the list of current files, excluding those marked for deletion
+  const currentFiles =
+    currentWarranty.files?.filter((file) => !filesToDelete.includes(file.id)) ||
+    [];
 
   return (
     <Paper
@@ -173,6 +225,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
         pb: 3,
         mt: 3,
         width: "90%",
+        height: "85vh",
         mx: "auto",
         display: "flex",
         flexDirection: "column",
@@ -185,10 +238,11 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             fullWidth
             value={currentWarranty.name}
             onChange={(e) => handleFieldChange("name", e.target.value)}
+            disabled={!isEditMode}
             slotProps={{
               inputLabel: { sx: { color: "primary.main" } },
             }}
-            variant={isEditMode ? "outlined" : "outlined"}
+            variant="outlined"
             size="medium"
           />
         </Grid>
@@ -198,6 +252,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             label="Category"
             fullWidth
             value={currentWarranty.category?.name || "N/A"}
+            disabled={true} // Always disabled as category cannot be edited here
             slotProps={{
               inputLabel: { sx: { color: "primary.main" } },
             }}
@@ -214,6 +269,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
               sx={{ flex: 1 }}
               value={formatDate(currentWarranty.startDate)}
               onChange={(e) => handleFieldChange("startDate", e.target.value)}
+              disabled={!isEditMode}
               slotProps={{
                 inputLabel: { sx: { color: "primary.main" } },
               }}
@@ -227,6 +283,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
               sx={{ flex: 1 }}
               value={formatDate(currentWarranty.endDate)}
               onChange={(e) => handleFieldChange("endDate", e.target.value)}
+              disabled={!isEditMode}
               slotProps={{
                 inputLabel: { sx: { color: "primary.main" } },
               }}
@@ -291,6 +348,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             rows={3}
             value={currentWarranty.metadata?.note || ""}
             onChange={(e) => handleNoteChange(e.target.value)}
+            disabled={!isEditMode}
             slotProps={{
               inputLabel: { sx: { color: "primary.main" } },
             }}
@@ -306,14 +364,13 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
         Attached Files
       </Typography>
 
-      {(!currentWarranty.files || currentWarranty.files.length === 0) &&
-      fileInput.length === 0 ? (
+      {currentFiles.length === 0 && newFiles.length === 0 ? (
         <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
           No files attached
         </Typography>
       ) : (
         <List dense sx={{ width: "100%", bgcolor: "background.paper", mb: 2 }}>
-          {currentWarranty.files?.map((file) => (
+          {currentFiles.map((file) => (
             <ListItem
               key={file.id}
               secondaryAction={
@@ -356,22 +413,20 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             </ListItem>
           ))}
 
-          {fileInput.map((file, index) => (
+          {newFiles.map((file, index) => (
             <ListItem
               key={`new-${index}`}
               secondaryAction={
                 <IconButton
                   edge="end"
                   aria-label="delete"
-                  onClick={() => handleRemoveFile(index)}
+                  onClick={() => handleRemoveNewFile(index)}
                 >
                   <DeleteIcon />
                 </IconButton>
               }
             >
-              <ListItemIcon>
-                <FileIcon />
-              </ListItemIcon>
+              <ListItemIcon>{getFileIcon(file.type)}</ListItemIcon>
               <ListItemText
                 primary={file.name}
                 secondary={`${(file.size / 1024).toFixed(1)} KB (New)`}
@@ -407,11 +462,17 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
           sx={{
             display: "flex",
             justifyContent: "flex-end",
-            mt: 3,
+            pt: 7,
+            pb: 3,
             gap: 2,
           }}
         >
-          <Button variant="outlined" size="large">
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={handleCancel}
+            disabled={isSaving}
+          >
             Cancel
           </Button>
           <Button
@@ -419,6 +480,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             color="primary"
             size="large"
             onClick={handleSave}
+            disabled={isSaving}
             sx={{
               px: 4,
               backgroundColor: "#81c784",
@@ -426,8 +488,9 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
                 backgroundColor: "#66bb6a",
               },
             }}
+            startIcon={isSaving ? <CircularProgress size={20} /> : null}
           >
-            Save Changes
+            {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </Box>
       )}

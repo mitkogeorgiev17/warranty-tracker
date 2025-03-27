@@ -34,9 +34,9 @@ const WarrantyCardList = ({
 
   // Edit warranty handler
   const handleEditWarranty = (id: number, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click from triggering
-    // Implementation for editing a warranty
+    e.stopPropagation();
     console.log("Edit warranty", id);
+    navigate(`/warranty/update/${id}`);
   };
 
   // Delete warranty handlers

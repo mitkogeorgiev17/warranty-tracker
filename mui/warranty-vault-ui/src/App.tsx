@@ -14,6 +14,7 @@ import CreateWarrantyPage from "./pages/CreateWarrantyPage";
 import ManageWarrantiesPage from "./pages/ManageWarrantiesPage";
 import { Toaster } from "sonner";
 import WarrantyDetailsPage from "./pages/WarrantyDetailsPage";
+import UpdateWarrantyPage from "./pages/UpdateWarrantyPage";
 
 const theme = createTheme({
   palette: {
@@ -47,6 +48,10 @@ function App() {
           <Route
             path="/warranty/:warrantyId"
             element={<WarrantyDetailsPage />}
+          />
+          <Route
+            path="/warranty/update/:warrantyId"
+            element={<UpdateWarrantyPage />}
           />
 
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
