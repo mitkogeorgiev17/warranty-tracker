@@ -74,9 +74,9 @@ function HomePage() {
         }}
       >
         <ExpiringSoonSection
-          expiringThisMonth={1}
-          expiringThisYear={1}
-          expiringLater={3}
+          lessThanOneMonth={user?.warrantyCountsProjection.lessThanOneMonth}
+          oneToTwelveMonths={user?.warrantyCountsProjection.oneToTwelveMonths}
+          moreThanOneYear={user?.warrantyCountsProjection.moreThanOneYear}
         />
       </Paper>
     </Container>

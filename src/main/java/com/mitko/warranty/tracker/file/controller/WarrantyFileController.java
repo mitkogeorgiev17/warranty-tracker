@@ -27,7 +27,7 @@ public class WarrantyFileController implements WarrantyFileOperations {
 
     @DeleteMapping("/{warrantyId}")
     @ResponseStatus(NO_CONTENT)
-    public void deleteFiles(@PathVariable("warrantyId") long warrantyId, @RequestParam List<String> fileIDs, Authentication authentication) {
-        service.deleteAllByFileIDs(warrantyId, fileIDs, authentication);
+    public void deleteFiles(@PathVariable("warrantyId") long warrantyId, @RequestParam List<Long> fileIDs, Authentication authentication) {
+        service.deleteFilesByIds(warrantyId, fileIDs, authentication);
     }
 }

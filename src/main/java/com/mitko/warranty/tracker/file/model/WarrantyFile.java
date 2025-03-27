@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -29,6 +30,17 @@ public class WarrantyFile {
     @Column(name = "file_path")
     private String filePath;
 
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "content_type")
+    private String contentType;
+
+    @Column(name = "file_size")
+    private long fileSize;
+
+    @Column(name = "upload_date")
+    private LocalDate uploadDate;
 
     @ManyToOne(fetch = LAZY)
     private Warranty warranty;

@@ -38,6 +38,10 @@ create table files (
     id int primary key generated always as identity,
     file_id text not null,
     file_path text not null,
+    name varchar(255) not null,
+    content_type varchar(64) not null,
+    file_size bigint not null,
+    upload_date date not null,
 
     warranty_id int not null,
     constraint fk_warranty_id foreign key (warranty_id) references warranties(id)

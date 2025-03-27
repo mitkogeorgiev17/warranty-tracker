@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface WarrantyFileRepository extends JpaRepository<WarrantyFile, Long> {
-    List<WarrantyFile> findAllByWarrantyIdAndIdIn(long warrantyId, List<String> filesIDs);
+    List<WarrantyFile> findAllByWarrantyIdAndIdIn(long warrantyId, List<Long> filesIDs);
 }
