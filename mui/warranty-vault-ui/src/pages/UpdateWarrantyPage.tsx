@@ -112,7 +112,7 @@ const UpdateWarrantyPage: FC = () => {
               fileCount === 1 ? "file" : "files"
             }`
           );
-        } catch (error) {
+        } catch (error: any) {
           // Dismiss loading toast and show error
           toast.dismiss(uploadingToast);
           toast.error(
@@ -157,7 +157,7 @@ const UpdateWarrantyPage: FC = () => {
               fileCount === 1 ? "file" : "files"
             }`
           );
-        } catch (error) {
+        } catch (error: any) {
           // Dismiss loading toast and show error
           toast.dismiss(deletingToast);
           toast.error(
@@ -186,8 +186,7 @@ const UpdateWarrantyPage: FC = () => {
   };
 
   const handleCancel = () => {
-    // Navigate back to the warranty details page
-    navigate(`/warranties/${warrantyIdNumber}`);
+    navigate("/manage/");
   };
 
   if (loading) {

@@ -1,6 +1,7 @@
 import { FC, useState, useRef, useEffect } from "react";
 import { WarrantyDTO, WarrantyStatus } from "../constants/Warranty";
 import { UpdateWarrantyCommand } from "../constants/Warranty";
+import { DEFAULT_WARRANTY_CATEGORIES } from "../constants/warrantyCategories"; // Import default categories
 import { format } from "date-fns";
 
 // MUI imports
@@ -19,6 +20,10 @@ import {
   ListItemText,
   IconButton,
   CircularProgress,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import {
   Description as DocumentIcon,
@@ -108,11 +113,15 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [filesToDelete, setFilesToDelete] = useState<number[]>([]);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    warranty.category?.name || ""
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset state when warranty prop changes
   useEffect(() => {
     setCurrentWarranty(warranty);
+    setSelectedCategory(warranty.category?.name || "");
     setNewFiles([]);
     setFilesToDelete([]);
   }, [warranty]);
@@ -133,8 +142,8 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
           startDate: currentWarranty.startDate || "",
           endDate: currentWarranty.endDate || "",
           status: currentWarranty.status,
-          note: currentWarranty.metadata?.note || "",
-          category: currentWarranty.category?.name || "", // Use category name as a string
+          note: currentWarranty.metadata?.note || null,
+          category: selectedCategory, // Use the selected category
           filesToAdd: newFiles,
           filesToDelete: filesToDelete,
         };
@@ -173,6 +182,10 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
   };
 
   const handleNoteChange = (value: string) => {
@@ -248,17 +261,27 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <TextField
-            label="Category"
-            fullWidth
-            value={currentWarranty.category?.name || "N/A"}
-            disabled={true} // Always disabled as category cannot be edited here
-            slotProps={{
-              inputLabel: { sx: { color: "primary.main" } },
-            }}
-            variant="outlined"
-            size="medium"
-          />
+          <FormControl fullWidth variant="outlined" size="medium">
+            <InputLabel
+              id="category-select-label"
+              sx={{ color: "primary.main" }}
+            >
+              Category
+            </InputLabel>
+            <Select
+              labelId="category-select-label"
+              value={selectedCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              label="Category"
+              disabled={!isEditMode}
+            >
+              {DEFAULT_WARRANTY_CATEGORIES.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
 
         <Grid item xs={12} md={6}>
@@ -461,9 +484,9 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
         <Box
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
-            pt: 7,
-            pb: 3,
+            justifyContent: "center",
+            pt: 6,
+            pb: 4,
             gap: 2,
           }}
         >

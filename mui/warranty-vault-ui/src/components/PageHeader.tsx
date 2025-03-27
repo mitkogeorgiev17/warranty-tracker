@@ -20,7 +20,7 @@ const PageHeader = ({
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(-1);
+    navigate("/home");
   };
 
   return (

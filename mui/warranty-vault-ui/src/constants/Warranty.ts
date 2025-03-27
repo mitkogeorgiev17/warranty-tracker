@@ -51,7 +51,7 @@ export interface CreateWarrantyCommand {
     startDate: string;
     endDate: string;
     status: WarrantyStatus;
-    note: string;
+    note: string | null;
     category: string;
     filesToAdd?: File[];
     filesToDelete?: number[];
