@@ -2,16 +2,40 @@ import React from "react";
 import { Box, Typography, Stack, Paper } from "@mui/material";
 
 interface ExpiringSoonSectionProps {
-  expiringThisMonth: number;
-  expiringThisYear: number;
-  expiringLater: number;
+  lessThanOneMonth: number | undefined;
+  oneToTwelveMonths: number | undefined;
+  moreThanOneYear: number | undefined;
 }
 
 const ExpiringSoonSection: React.FC<ExpiringSoonSectionProps> = ({
-  expiringThisMonth,
-  expiringThisYear,
-  expiringLater,
+  lessThanOneMonth,
+  oneToTwelveMonths,
+  moreThanOneYear,
 }) => {
+  // Function to create muted version of colors
+  const getMutedColor = (color: string): string => {
+    // For standard hex colors like #ef5350
+    if (color.startsWith("#") && color.length === 7) {
+      // Convert to RGB, reduce intensity, and convert back to hex
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);
+      const b = parseInt(color.slice(5, 7), 16);
+
+      // Mix with white to create muted version (70% original, 30% white)
+      const mutedR = Math.round(r * 0.7 + 255 * 0.3)
+        .toString(16)
+        .padStart(2, "0");
+      const mutedG = Math.round(g * 0.7 + 255 * 0.3)
+        .toString(16)
+        .padStart(2, "0");
+      const mutedB = Math.round(b * 0.7 + 255 * 0.3)
+        .toString(16)
+        .padStart(2, "0");
+
+      return `#${mutedR}${mutedG}${mutedB}`;
+    }
+    return color; // Return original if not standard format
+  };
   const baseCircleStyle = {
     p: 1.5,
     borderRadius: "50%",
@@ -24,13 +48,15 @@ const ExpiringSoonSection: React.FC<ExpiringSoonSectionProps> = ({
   };
 
   const getCircleStyle = (
-    value: number,
+    value: number | undefined,
     color: string,
     borderColor: string
   ) => ({
     ...baseCircleStyle,
-    backgroundColor: value > 0 ? color : "background.paper",
-    border: value > 0 ? `2px solid ${borderColor}` : "none",
+    backgroundColor: (value ?? 0) > 0 ? color : "background.paper",
+    border: `2px solid ${
+      (value ?? 0) > 0 ? borderColor : getMutedColor(borderColor)
+    }`, // Muted version of color when value is 0
   });
 
   return (
@@ -50,43 +76,43 @@ const ExpiringSoonSection: React.FC<ExpiringSoonSectionProps> = ({
       >
         <Paper
           elevation={2}
-          sx={getCircleStyle(expiringThisMonth, "#ffebee", "#ef5350")}
+          sx={getCircleStyle(lessThanOneMonth, "#ffebee", "#ef5350")}
         >
           <Typography
             variant="h6"
-            color={expiringThisMonth > 0 ? "error" : "text.primary"}
+            color={(lessThanOneMonth ?? 0) > 0 ? "error" : "text.primary"}
           >
-            {expiringThisMonth}
+            {lessThanOneMonth ?? 0}
           </Typography>
           <Typography variant="caption" align="center" color="text.secondary">
             Month
           </Typography>
         </Paper>
-
         <Paper
           elevation={2}
-          sx={getCircleStyle(expiringThisYear, "#fff8e1", "#ffc107")}
+          sx={getCircleStyle(oneToTwelveMonths, "#fff8e1", "#ffc107")}
         >
           <Typography
             variant="h6"
-            color={expiringThisYear > 0 ? "warning.dark" : "text.primary"}
+            color={
+              (oneToTwelveMonths ?? 0) > 0 ? "warning.dark" : "text.primary"
+            }
           >
-            {expiringThisYear}
+            {oneToTwelveMonths ?? 0}
           </Typography>
           <Typography variant="caption" align="center" color="text.secondary">
             Year
           </Typography>
         </Paper>
-
         <Paper
           elevation={2}
-          sx={getCircleStyle(expiringLater, "#e8f5e9", "#66bb6a")}
+          sx={getCircleStyle(moreThanOneYear, "#e8f5e9", "#66bb6a")}
         >
           <Typography
             variant="h6"
-            color={expiringLater > 0 ? "success.main" : "text.primary"}
+            color={(moreThanOneYear ?? 0) > 0 ? "success.main" : "text.primary"}
           >
-            {expiringLater}
+            {moreThanOneYear ?? 0}
           </Typography>
           <Typography variant="caption" align="center" color="text.secondary">
             1y+

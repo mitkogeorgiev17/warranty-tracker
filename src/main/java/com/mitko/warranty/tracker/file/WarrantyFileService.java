@@ -7,7 +7,7 @@ import com.mitko.warranty.tracker.exception.custom.WarrantyNotFoundException;
 import com.mitko.warranty.tracker.file.model.WarrantyFile;
 import com.mitko.warranty.tracker.file.model.WarrantyFileDTO;
 import com.mitko.warranty.tracker.mapper.WarrantyFileMapper;
-import com.mitko.warranty.tracker.warranty.WarrantyRepository;
+import com.mitko.warranty.tracker.warranty.repository.WarrantyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

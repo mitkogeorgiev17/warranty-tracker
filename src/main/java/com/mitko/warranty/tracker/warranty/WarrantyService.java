@@ -14,6 +14,7 @@ import com.mitko.warranty.tracker.warranty.model.WarrantyStatus;
 import com.mitko.warranty.tracker.warranty.model.request.CreateWarrantyCommand;
 import com.mitko.warranty.tracker.warranty.model.request.UpdateWarrantyCommand;
 import com.mitko.warranty.tracker.warranty.model.response.WarrantyDTO;
+import com.mitko.warranty.tracker.warranty.repository.WarrantyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

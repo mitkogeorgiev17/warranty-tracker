@@ -1,7 +1,7 @@
 package com.mitko.warranty.tracker.account.controller;
 
 import com.mitko.warranty.tracker.account.UserAccountService;
-import com.mitko.warranty.tracker.account.model.UserAccountResponse;
+import com.mitko.warranty.tracker.account.model.response.UserAccountResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
