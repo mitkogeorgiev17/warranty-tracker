@@ -11,6 +11,8 @@ import lombok.experimental.Accessors;
 
 import java.util.Objects;
 
+import static com.mitko.warranty.tracker.account.model.Language.EN;
+
 @Entity
 @Getter
 @Setter
@@ -32,6 +34,9 @@ public class User {
 
     @Column(name = "last_name")
     private String lastName;
+
+    @Column(name = "language")
+    private Language language = EN;
 
     @Override
     public final boolean equals(Object obj) {
