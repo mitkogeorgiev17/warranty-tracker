@@ -1,9 +1,6 @@
 package com.mitko.warranty.tracker.account.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +8,7 @@ import lombok.experimental.Accessors;
 
 import java.util.Objects;
 
-import static com.mitko.warranty.tracker.account.model.Language.EN;
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Getter
@@ -35,8 +32,13 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "language")
-    private Language language = EN;
+    @Column(name = "account_language")
+    @Enumerated(STRING)
+    private Language language;
+
+    {
+        this.language = Language.EN;
+    }
 
     @Override
     public final boolean equals(Object obj) {

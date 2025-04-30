@@ -142,7 +142,8 @@ public class WarrantyService {
                 .setEndDate(command.endDate() != null ? command.endDate() : warranty.getEndDate())
                 .setStatus(command.status() != null ? command.status() : warranty.getStatus())
                 .setNote(command.note() != null ? command.note() : warranty.getNote())
-                .setUpdatedAt(LocalDateTime.now());
+                .setUpdatedAt(LocalDateTime.now())
+                .setCategory(command.category() != null ? findCategory(command.category()) : warranty.getCategory());
 
         var savedWarranty = warrantyRepository.save(warranty);
 
