@@ -9,5 +9,10 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 2MB
-      max-request-size: 2MB
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+google:
+  cloud:
+    credentials:
+      location: classpath:google-credentials.json
