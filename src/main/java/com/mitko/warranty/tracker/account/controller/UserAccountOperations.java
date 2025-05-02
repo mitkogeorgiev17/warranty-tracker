@@ -1,5 +1,6 @@
 package com.mitko.warranty.tracker.account.controller;
 
+import com.mitko.warranty.tracker.account.model.request.UpdateUserCommand;
 import com.mitko.warranty.tracker.account.model.response.UserAccountResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,4 +20,14 @@ public interface UserAccountOperations {
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
     UserAccountResponse getLoggedUser(Authentication authentication);
+
+    @Operation(
+            summary = "Update user account information"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "User account information updated successfully."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - User is not authenticated."),
+            @ApiResponse(responseCode = "500", description = "Internal server error.")
+    })
+    void updateUser(Authentication authentication, UpdateUserCommand command);
 }

@@ -1,0 +1,156 @@
+{
+  "common": {
+    "save": "Запази промените",
+    "language": "Език",
+    "back": "Назад",
+    "loading": "Зареждане...",
+    "tryAgain": "Опитай отново",
+    "goToLogin": "Към входа",
+    "signIn": "Вход",
+    "signingIn": "Влизане...",
+    "error": "Грешка",
+    "faq": "ЧЗВ"
+  },
+  "greeting": {
+    "welcome": "Здравей, {{name}}!",
+    "viewEditProfile": "преглед / редактиране на профил"
+  },
+  "pages": {
+    "profile": "Профил",
+    "home": "Начало",
+    "error": "Грешка",
+    "login": "Вход",
+    "unauthorized": "Неоторизиран",
+    "warrantyDetails": "Детайли за гаранция",
+    "updateWarranty": "Обнови гаранция",
+    "addWarranty": "Добави гаранция",
+    "manageWarranties": "Управление"
+  },
+  "profile": {
+    "firstName": "Име",
+    "lastName": "Фамилия",
+    "username": "Потребителско име",
+    "email": "Имейл",
+    "languageSettings": "Езикови настройки",
+    "userDataNotAvailable": "Потребителските данни не са налични",
+    "goToHome": "Към началната страница",
+    "languageUpdated": "Езиковите предпочитания са обновени",
+    "failedToUpdate": "Неуспешно обновяване на езиковите предпочитания"
+  },
+  "home": {
+    "createWarranty": "Създаване на гаранция",
+    "scanWarranty": "Сканиране на гаранция",
+    "manageWarranties": "Управление на гаранции",
+    "expiringWarranties": "Изтичащи гаранции"
+  },
+  "expiringWarranties": {
+    "month": "Месец",
+    "year": "Година",
+    "yearPlus": "1г+"
+  },
+  "languages": {
+    "bulgarian": "Български",
+    "english": "Английски"
+  },
+  "error": {
+    "title": "Опа! Нещо се обърка",
+    "message": "Срещнахме неочаквана грешка при обработката на вашата заявка. Моля, опитайте отново или се свържете с поддръжката, ако проблемът продължава."
+  },
+  "unauthorized": {
+    "title": "Неоторизиран достъп",
+    "message": "Нямате разрешение за достъп до тази страница или сесията ви е изтекла. Моля, влезте отново, за да продължите."
+  },
+  "login": {
+    "welcomeText": "Добре дошли в",
+    "appName": "Warranty Vault",
+    "description": "Пази всичките ви гаранции на едно място. Никога повече не пропускайте дата на изтичане."
+  },
+  "warranty": {
+    "notFound": "Не може да се намери гаранция с ID {{id}}",
+    "loadingWarranty": "Зареждане на детайли за гаранцията...",
+    "status": "Статус",
+    "createdAt": "Създадена на",
+    "lastUpdated": "Последно обновена",
+    "noFiles": "Няма прикачени файлове",
+    "unnamedFile": "Файл без име",
+    "unknownSize": "Неизвестен размер",
+    "unknownDate": "Неизвестна дата",
+    "viewFile": "Преглед",
+    "newFile": "Нов"
+  },
+  "createWarranty": {
+    "pageTitle": "Добави гаранция",
+    "details": "Детайли",
+    "warrantyName": "Име на гаранция",
+    "notes": "Бележки (по избор)",
+    "category": "Категория",
+    "categoryHelperText": "Изберете категория или въведете своя",
+    "startDate": "Начална дата",
+    "endDate": "Крайна дата",
+    "attachments": "Прикачени файлове",
+    "selectFiles": "Избери файлове",
+    "createButton": "СЪЗДАЙ",
+    "successMessage": "Гаранцията е създадена успешно.",
+    "fileUploadSuccess": "Файл(ове) качени успешно.",
+    "fileUploadFailed": "Качването на файл(ове) е неуспешно.",
+    "actionNotSuccessful": "Действието не е успешно.",
+    "failedToCreate": "Неуспешно създаване на гаранция."
+  },
+  "manageWarranties": {
+    "filter": "Филтър",
+    "loadingWarranties": "Зареждане на гаранции...",
+    "noMatchingWarranties": "Няма гаранции, отговарящи на избраните филтри.",
+    "filters": {
+      "lessThanMonth": "По-малко от месец",
+      "oneToTwelveMonths": "1-12 месеца",
+      "moreThanYear": "Над 1 година",
+      "uncategorized": "Некатегоризирани"
+    }
+  },
+  "warrantyCardList": {
+    "deleteWarranty": "Изтрий гаранция",
+    "deleteConfirmation": "Сигурни ли сте, че искате да изтриете <b>\"{{name}}\"</b>?",
+    "cancel": "Отказ",
+    "delete": "Изтрий",
+    "deleting": "Изтриване...",
+    "uncategorized": "Без категория",
+    "deleteSuccess": "Гаранцията е изтрита успешно",
+    "deleteError": "Неуспешно изтриване на гаранцията. Моля, опитайте отново.",
+    "timeRemaining": {
+      "expired": "Изтекла",
+      "expirestoday": "Изтича днес",
+      "expiresTomorrow": "Изтича утре",
+      "daysRemaining": "{{days}} дни остават",
+      "monthRemaining": "{{count}} месец остава",
+      "monthRemaining_plural": "{{count}} месеца остават",
+      "yearRemaining": "{{count}} година остава",
+      "yearRemaining_plural": "{{count}} години остават"
+    }
+  },
+  "updateWarranty": {
+    "missingId": "Липсва ID на гаранцията, обновяването е невъзможно",
+    "updateSuccess": "Детайлите на гаранцията са успешно обновени",
+    "uploadingFiles": "Качване на {{count}} файл...",
+    "uploadingFiles_plural": "Качване на {{count}} файла...",
+    "uploadSuccess": "Успешно качен {{count}} файл",
+    "uploadSuccess_plural": "Успешно качени {{count}} файла",
+    "uploadError": "Неуспешно качване на файлове: {{error}}",
+    "deletingFiles": "Изтриване на {{count}} файл...",
+    "deletingFiles_plural": "Изтриване на {{count}} файла...",
+    "deleteSuccess": "Успешно изтрит {{count}} файл",
+    "deleteSuccess_plural": "Успешно изтрити {{count}} файла",
+    "deleteError": "Неуспешно изтриване на файлове: {{error}}",
+    "warranty_updated": "Гаранцията е успешно обновена",
+    "updateError": "Неуспешно обновяване на гаранцията"
+  },
+  "validation": {
+    "nameLengthError": "Името трябва да е между 2 и 64 символа",
+    "noteLengthError": "Бележката трябва да е между 2 и 2048 символа"
+  },
+  "warrantyStatus": {
+    "ACTIVE": "Активна",
+    "EXPIRED": "Изтекла",
+    "CLAIMED_ACTIVE": "Предявена активна",
+    "CLAIMED_EXPIRED": "Предявена изтекла"
+  }
+}

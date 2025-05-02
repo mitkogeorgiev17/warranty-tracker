@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -43,4 +45,9 @@ public interface WarrantyOperations {
     @ApiResponse(responseCode = "404", description = "Warranty not found.")
     @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     void deleteWarranty(@Parameter(name = "warrantyId", example = "1") long warrantyId, Authentication authentication);
+
+    @Operation(summary = "Scan warranty file (picture / pdf) and returns its information.")
+    @ApiResponse(responseCode = "200", description = "Warranty scanned successfully.")
+    @ApiResponse(responseCode = "500", description = "Unexpected server error.")
+    CreateWarrantyCommand scanWarranty(@RequestParam(name = "file") MultipartFile file);
 }

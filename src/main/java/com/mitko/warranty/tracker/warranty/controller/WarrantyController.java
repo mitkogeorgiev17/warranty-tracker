@@ -1,5 +1,6 @@
 package com.mitko.warranty.tracker.warranty.controller;
 
+import com.mitko.warranty.tracker.warranty.WarrantyScanService;
 import com.mitko.warranty.tracker.warranty.WarrantyService;
 import com.mitko.warranty.tracker.warranty.model.request.CreateWarrantyCommand;
 import com.mitko.warranty.tracker.warranty.model.request.UpdateWarrantyCommand;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WarrantyController implements WarrantyOperations {
     private final WarrantyService service;
+    private final WarrantyScanService scanService;
 
     @Override
     @PostMapping("/")
@@ -50,4 +53,11 @@ public class WarrantyController implements WarrantyOperations {
     public void deleteWarranty(@PathVariable("warrantyId") long warrantyId, Authentication authentication) {
         service.deleteWarranty(warrantyId, authentication);
     }
+
+    @Override
+    @PostMapping(path = "/scan", consumes = { "multipart/form-data" })
+    public CreateWarrantyCommand scanWarranty(@RequestParam("file") MultipartFile file) {
+        return scanService.scanWarranty(file);
+    }
+
 }

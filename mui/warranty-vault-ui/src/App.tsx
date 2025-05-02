@@ -15,6 +15,9 @@ import ManageWarrantiesPage from "./pages/ManageWarrantiesPage";
 import { Toaster } from "sonner";
 import WarrantyDetailsPage from "./pages/WarrantyDetailsPage";
 import UpdateWarrantyPage from "./pages/UpdateWarrantyPage";
+import ProfilePage from "./pages/ProfilePage";
+import { UserProvider } from "./constants/UserContext.tsx";
+import "./config/i18n.ts";
 
 const theme = createTheme({
   palette: {
@@ -37,28 +40,29 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/create" element={<CreateWarrantyPage />} />
-          <Route path="/manage" element={<ManageWarrantiesPage />} />
-          <Route
-            path="/warranty/:warrantyId"
-            element={<WarrantyDetailsPage />}
-          />
-          <Route
-            path="/warranty/update/:warrantyId"
-            element={<UpdateWarrantyPage />}
-          />
-
-          <Route path="/unauthorized" element={<UnauthorizedPage />} />
-          <Route path="/error" element={<ErrorPage />} />
-        </Routes>
-      </Router>
-      <Toaster richColors position="bottom-center" />
+      <UserProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/create" element={<CreateWarrantyPage />} />
+            <Route path="/manage" element={<ManageWarrantiesPage />} />
+            <Route
+              path="/warranty/:warrantyId"
+              element={<WarrantyDetailsPage />}
+            />
+            <Route
+              path="/warranty/update/:warrantyId"
+              element={<UpdateWarrantyPage />}
+            />
+            <Route path="/unauthorized" element={<UnauthorizedPage />} />
+            <Route path="/error" element={<ErrorPage />} />
+          </Routes>
+        </Router>
+        <Toaster richColors position="bottom-center" />
+      </UserProvider>
     </ThemeProvider>
   );
 }

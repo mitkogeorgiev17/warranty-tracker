@@ -1,57 +1,65 @@
 import React from "react";
 import { Typography, Box, Avatar, Stack } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import PersonIcon from "@mui/icons-material/Person";
 import { User } from "../constants/User";
+import { useTranslation } from "react-i18next";
 
 interface UserGreetingProps {
   user: User;
 }
 
 const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
-  // Get first letter of name for the avatar
-  const firstLetter = user.firstName
-    ? user.firstName.charAt(0).toUpperCase()
-    : "";
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  // Get current time to determine greeting
-  const hours = new Date().getHours();
-  let greeting = "Hello";
-  if (hours < 12) {
-    greeting = "Good morning";
-  } else if (hours < 18) {
-    greeting = "Good afternoon";
-  } else {
-    greeting = "Good evening";
-  }
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
 
   return (
     <Box
       sx={{
+        pt: 2,
+        px: 3,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        pt: 1,
-        maxWidth: "360px",
+        cursor: "pointer",
+        "&:hover": {
+          backgroundColor: "rgba(169, 133, 240, 0.05)",
+        },
+        transition: "background-color 0.3s",
         mx: "auto",
+        mt: 2,
+        mb: 1,
       }}
+      onClick={handleProfileClick}
     >
-      <Stack direction="row" spacing={1.5} alignItems="center">
-        {" "}
+      <Stack direction="row" spacing={2.5} alignItems="center">
         <Avatar
           sx={{
-            bgcolor: "primary.main",
-            width: 40,
-            height: 40,
+            bgcolor: "rgba(169, 133, 240, 0.7)",
+            width: 48,
+            height: 48,
           }}
         >
-          {firstLetter}
+          <PersonIcon sx={{ fontSize: 28 }} />
         </Avatar>
-        <Box sx={{ textAlign: "left" }}>
-          <Typography variant="subtitle1" component="h1">
-            {" "}
-            {greeting}, {user.firstName}!
+        <Box>
+          <Typography
+            variant="h6"
+            component="h1"
+            sx={{ lineHeight: 1.2, fontWeight: 500 }}
+          >
+            {t("greeting.welcome", { name: user.firstName })}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Welcome back to Warranty Vault
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ lineHeight: 1.2 }}
+          >
+            {t("greeting.viewEditProfile")}
           </Typography>
         </Box>
       </Stack>

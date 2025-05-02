@@ -2,9 +2,11 @@ import { Box, Button, Typography, Container } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/vault-logo-simplistic.svg";
+import { useTranslation } from "react-i18next";
 
 function ErrorPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleTryAgain = () => {
     navigate(-1); // Go back one step in history
@@ -33,7 +35,6 @@ function ErrorPage() {
           }}
         />
       </Box>
-
       {/* Error content in the center */}
       <Box
         sx={{
@@ -55,21 +56,17 @@ function ErrorPage() {
             mb: 2, // Reduced margin
           }}
         />
-
         <Typography variant="h5" component="h1" gutterBottom>
-          Oops! Something went wrong
+          {t("error.title")}
         </Typography>
-
         <Typography
           variant="body2"
           color="text.secondary"
           paragraph
           sx={{ mb: 2 }} // Reduced margin
         >
-          We encountered an unexpected error while processing your request.
-          Please try again or contact support if the problem persists.
+          {t("error.message")}
         </Typography>
-
         <Button
           variant="contained"
           color="primary"
@@ -80,7 +77,7 @@ function ErrorPage() {
             px: 3, // Less padding
           }}
         >
-          Try Again
+          {t("common.tryAgain")}
         </Button>
       </Box>
     </Container>

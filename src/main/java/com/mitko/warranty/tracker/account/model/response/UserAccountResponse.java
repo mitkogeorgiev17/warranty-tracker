@@ -1,5 +1,6 @@
 package com.mitko.warranty.tracker.account.model.response;
 
+import com.mitko.warranty.tracker.account.model.Language;
 import com.mitko.warranty.tracker.warranty.repository.WarrantyCountsProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,4 +15,5 @@ public class UserAccountResponse {
     private String firstName;
     private String lastName;
     private WarrantyCountsProjection warrantyCountsProjection;
+    private Language language;
 }

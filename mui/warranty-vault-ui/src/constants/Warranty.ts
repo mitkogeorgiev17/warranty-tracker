@@ -19,10 +19,6 @@ export interface WarrantyMetadataDTO {
     createdAt: string;
     updatedAt: string;
   }
-
-export interface CategoryName {
-    name: string;
-  }
   
 export interface WarrantyDTO {
     id: number;
@@ -30,7 +26,7 @@ export interface WarrantyDTO {
     startDate: string;
     endDate: string;
     status: WarrantyStatus;
-    category: CategoryName;
+    category: string;
     metadata: WarrantyMetadataDTO;
     files: WarrantyFileDTO[];
   }

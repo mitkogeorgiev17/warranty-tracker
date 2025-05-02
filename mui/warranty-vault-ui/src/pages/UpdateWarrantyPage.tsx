@@ -8,11 +8,13 @@ import { UpdateWarrantyCommand } from "../constants/Warranty";
 import WarrantyDetails from "../components/WarrantyDetails";
 import { Box, Typography, CircularProgress } from "@mui/material";
 import PageHeader from "../components/PageHeader";
+import { useTranslation } from "react-i18next"; // Import for translations
 
 const UpdateWarrantyPage: FC = () => {
   const navigate = useNavigate();
   const { warrantyId } = useParams<{ warrantyId: string }>();
   const warrantyIdNumber = warrantyId ? parseInt(warrantyId, 10) : null;
+  const { t } = useTranslation(); // Initialize translation hook
 
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -50,7 +52,7 @@ const UpdateWarrantyPage: FC = () => {
 
   const handleSaveWarranty = async (updateCommand: UpdateWarrantyCommand) => {
     if (!warrantyIdNumber) {
-      toast.error("Missing warranty ID, unable to update");
+      toast.error(t("updateWarranty.missingId"));
       return;
     }
 
@@ -71,7 +73,7 @@ const UpdateWarrantyPage: FC = () => {
         },
       });
 
-      toast.success("Warranty details updated successfully");
+      toast.success(t("updateWarranty.updateSuccess"));
 
       // Step 2: Handle file uploads if any
       if (updateCommand.filesToAdd && updateCommand.filesToAdd.length > 0) {
@@ -79,7 +81,7 @@ const UpdateWarrantyPage: FC = () => {
 
         // Show loading toast for file upload
         const uploadingToast = toast.loading(
-          `Uploading ${fileCount} ${fileCount === 1 ? "file" : "files"}...`
+          t("updateWarranty.uploadingFiles", { count: fileCount })
         );
 
         try {
@@ -108,15 +110,15 @@ const UpdateWarrantyPage: FC = () => {
           // Dismiss loading toast and show success
           toast.dismiss(uploadingToast);
           toast.success(
-            `Successfully uploaded ${fileCount} ${
-              fileCount === 1 ? "file" : "files"
-            }`
+            t("updateWarranty.uploadSuccess", { count: fileCount })
           );
         } catch (error: any) {
           // Dismiss loading toast and show error
           toast.dismiss(uploadingToast);
           toast.error(
-            `Failed to upload files: ${error.message || "Unknown error"}`
+            t("updateWarranty.uploadError", {
+              error: error.message || "Unknown error",
+            })
           );
           throw error; // Re-throw to be caught by the outer catch
         }
@@ -131,7 +133,7 @@ const UpdateWarrantyPage: FC = () => {
 
         // Show loading toast for file deletion
         const deletingToast = toast.loading(
-          `Deleting ${fileCount} ${fileCount === 1 ? "file" : "files"}...`
+          t("updateWarranty.deletingFiles", { count: fileCount })
         );
 
         try {
@@ -153,21 +155,21 @@ const UpdateWarrantyPage: FC = () => {
           // Dismiss loading toast and show success
           toast.dismiss(deletingToast);
           toast.success(
-            `Successfully deleted ${fileCount} ${
-              fileCount === 1 ? "file" : "files"
-            }`
+            t("updateWarranty.deleteSuccess", { count: fileCount })
           );
         } catch (error: any) {
           // Dismiss loading toast and show error
           toast.dismiss(deletingToast);
           toast.error(
-            `Failed to delete files: ${error.message || "Unknown error"}`
+            t("updateWarranty.deleteError", {
+              error: error.message || "Unknown error",
+            })
           );
           throw error; // Re-throw to be caught by the outer catch
         }
       }
 
-      toast.success("Warranty updated successfully");
+      toast.success(t("updateWarranty.warranty_updated"));
 
       // Navigate back to details page after a short delay
       setTimeout(() => {
@@ -178,7 +180,7 @@ const UpdateWarrantyPage: FC = () => {
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
-        "Failed to update warranty";
+        t("updateWarranty.updateError");
       toast.error(errorMessage);
     } finally {
       setSubmitting(false);
@@ -206,7 +208,7 @@ const UpdateWarrantyPage: FC = () => {
     return (
       <Box textAlign="center" p={6}>
         <Typography>
-          Could not find warranty with ID {warrantyIdNumber}
+          {t("warranty.notFound", { id: warrantyIdNumber })}
         </Typography>
       </Box>
     );
@@ -214,7 +216,7 @@ const UpdateWarrantyPage: FC = () => {
 
   return (
     <>
-      <PageHeader title="Update Warranty" borderColor="#ffb74d" />
+      <PageHeader title={t("pages.updateWarranty")} borderColor="#ffb74d" />
       <WarrantyDetails
         warranty={warranty}
         isEditMode={true}

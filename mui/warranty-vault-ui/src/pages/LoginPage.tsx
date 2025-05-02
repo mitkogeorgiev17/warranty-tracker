@@ -5,12 +5,14 @@ import axiosApi from "../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
 import logo from "../assets/vault-logo-simplistic.svg";
 import useKeycloakUrl from "../hooks/useKeycloakUrl";
+import { useTranslation } from "react-i18next";
 
 function LoginPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const authAttempted = useRef(false);
   const keycloakUrl = useKeycloakUrl();
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -76,7 +78,7 @@ function LoginPage() {
       }}
     >
       <Typography variant="h4" component="h1" fontWeight="normal" mb={4}>
-        Welcome to
+        {t("login.welcomeText")}
         <br />
         <Typography
           variant="h4"
@@ -84,16 +86,14 @@ function LoginPage() {
           fontWeight="bold"
           display="inline"
         >
-          Warranty Vault
+          {t("login.appName")}
         </Typography>
       </Typography>
-
       <img
         src={logo}
         alt="Vault Logo"
         style={{ width: "50vw", maxWidth: "300px", marginBottom: "3.5rem" }}
       />
-
       <Typography
         variant="body1"
         color="text.secondary"
@@ -102,10 +102,8 @@ function LoginPage() {
           maxWidth: "600px",
         }}
       >
-        Keeps all your warranties in one place. <br />
-        Never miss an expiration date again.
+        {t("login.description")}
       </Typography>
-
       <Button
         variant="contained"
         size="large"
@@ -120,13 +118,12 @@ function LoginPage() {
         {isLoading ? (
           <>
             <CircularProgress size={24} sx={{ mr: 1 }} color="inherit" />
-            Signing in...
+            {t("common.signingIn")}
           </>
         ) : (
-          "Sign in"
+          t("common.signIn")
         )}
       </Button>
-
       <Button
         variant="text"
         size="small"
@@ -138,7 +135,7 @@ function LoginPage() {
         }}
         onClick={() => navigate("/how-it-works")}
       >
-        FAQ
+        {t("common.faq")}
       </Button>
     </Box>
   );

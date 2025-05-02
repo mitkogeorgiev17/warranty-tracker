@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Typography, Stack, Paper } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface ExpiringSoonSectionProps {
   lessThanOneMonth: number | undefined;
@@ -12,6 +13,7 @@ const ExpiringSoonSection: React.FC<ExpiringSoonSectionProps> = ({
   oneToTwelveMonths,
   moreThanOneYear,
 }) => {
+  const { t } = useTranslation();
   // Function to create muted version of colors
   const getMutedColor = (color: string): string => {
     // For standard hex colors like #ef5350
@@ -66,7 +68,7 @@ const ExpiringSoonSection: React.FC<ExpiringSoonSectionProps> = ({
         component="h2"
         sx={{ pt: 2, mb: 2, textAlign: "center" }}
       >
-        Expiring Warranties
+        {t("home.expiringWarranties")}
       </Typography>
       <Stack
         direction="row"
@@ -85,7 +87,7 @@ const ExpiringSoonSection: React.FC<ExpiringSoonSectionProps> = ({
             {lessThanOneMonth ?? 0}
           </Typography>
           <Typography variant="caption" align="center" color="text.secondary">
-            Month
+            {t("expiringWarranties.month")}
           </Typography>
         </Paper>
         <Paper
@@ -101,7 +103,7 @@ const ExpiringSoonSection: React.FC<ExpiringSoonSectionProps> = ({
             {oneToTwelveMonths ?? 0}
           </Typography>
           <Typography variant="caption" align="center" color="text.secondary">
-            Year
+            {t("expiringWarranties.year")}
           </Typography>
         </Paper>
         <Paper
@@ -115,7 +117,7 @@ const ExpiringSoonSection: React.FC<ExpiringSoonSectionProps> = ({
             {moreThanOneYear ?? 0}
           </Typography>
           <Typography variant="caption" align="center" color="text.secondary">
-            1y+
+            {t("expiringWarranties.yearPlus")}
           </Typography>
         </Paper>
       </Stack>

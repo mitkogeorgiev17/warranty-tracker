@@ -1,7 +1,9 @@
 package com.mitko.warranty.tracker.account;
 
 import com.mitko.warranty.tracker.account.model.User;
+import com.mitko.warranty.tracker.account.model.request.UpdateUserCommand;
 import com.mitko.warranty.tracker.account.model.response.UserAccountResponse;
+import com.mitko.warranty.tracker.exception.custom.UserNotFoundException;
 import com.mitko.warranty.tracker.mapper.UserAccountMapper;
 import com.mitko.warranty.tracker.warranty.repository.WarrantyCountsProjection;
 import com.mitko.warranty.tracker.warranty.repository.WarrantyRepository;
@@ -69,5 +71,19 @@ public class UserAccountService {
                 statusStrings,
                 authentication.getName()
         );
+    }
+
+    public void updateUser(Authentication authentication, UpdateUserCommand command) {
+        log.info("Updating user {}.", authentication.getName());
+
+        var user = userRepository.findById(authentication.getName())
+                        .orElseThrow(() -> new UserNotFoundException(authentication.getName()));
+
+        user
+                .setLanguage(command.getUpdatedLanguage() != null ? command.getUpdatedLanguage() : user.getLanguage());
+
+        userRepository.save(user);
+
+        log.info("Successfully updated user {}.", authentication.getName());
     }
 }

@@ -123,3 +123,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+google-credentials.json
