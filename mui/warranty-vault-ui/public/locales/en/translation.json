@@ -1,0 +1,156 @@
+{
+  "common": {
+    "save": "Save Changes",
+    "language": "Language",
+    "back": "Back",
+    "loading": "Loading...",
+    "tryAgain": "Try Again",
+    "goToLogin": "Go to Login",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "error": "Error",
+    "faq": "FAQ"
+  },
+  "greeting": {
+    "welcome": "Welcome, {{name}}!",
+    "viewEditProfile": "view / edit profile"
+  },
+  "pages": {
+    "profile": "Profile",
+    "home": "Home",
+    "error": "Error",
+    "login": "Login",
+    "unauthorized": "Unauthorized",
+    "warrantyDetails": "Warranty details",
+    "updateWarranty": "Update Warranty",
+    "addWarranty": "Add warranty",
+    "manageWarranties": "Manage warranties"
+  },
+  "profile": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "username": "Username",
+    "email": "Email",
+    "languageSettings": "Language Settings",
+    "userDataNotAvailable": "User data not available",
+    "goToHome": "Go to Home",
+    "languageUpdated": "Language preference updated",
+    "failedToUpdate": "Failed to update language preference"
+  },
+  "home": {
+    "createWarranty": "Create Warranty",
+    "scanWarranty": "Scan Warranty",
+    "manageWarranties": "Manage Warranties",
+    "expiringWarranties": "Expiring Warranties"
+  },
+  "expiringWarranties": {
+    "month": "Month",
+    "year": "Year",
+    "yearPlus": "1y+"
+  },
+  "languages": {
+    "bulgarian": "Bulgarian",
+    "english": "English"
+  },
+  "error": {
+    "title": "Oops! Something went wrong",
+    "message": "We encountered an unexpected error while processing your request. Please try again or contact support if the problem persists."
+  },
+  "unauthorized": {
+    "title": "Unauthorized Access",
+    "message": "You don't have permission to access this page or your session has expired. Please log in again to continue."
+  },
+  "login": {
+    "welcomeText": "Welcome to",
+    "appName": "Warranty Vault",
+    "description": "Keeps all your warranties in one place. Never miss an expiration date again."
+  },
+  "warranty": {
+    "notFound": "Could not find warranty with ID {{id}}",
+    "loadingWarranty": "Loading warranty details...",
+    "status": "Status",
+    "createdAt": "Created At",
+    "lastUpdated": "Last Updated",
+    "noFiles": "No files attached",
+    "unnamedFile": "Unnamed file",
+    "unknownSize": "Unknown size",
+    "unknownDate": "Unknown date",
+    "viewFile": "View",
+    "newFile": "New"
+  },
+  "createWarranty": {
+    "pageTitle": "Add warranty",
+    "details": "Details",
+    "warrantyName": "Warranty Name",
+    "notes": "Notes (Optional)",
+    "category": "Category",
+    "categoryHelperText": "Select a category or enter your own",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "attachments": "Attachments",
+    "selectFiles": "Select Files",
+    "createButton": "CREATE",
+    "successMessage": "Warranty created successfully.",
+    "fileUploadSuccess": "File(s) uploaded successfully.",
+    "fileUploadFailed": "File upload failed.",
+    "actionNotSuccessful": "Action not successful.",
+    "failedToCreate": "Failed to create warranty."
+  },
+  "manageWarranties": {
+    "filter": "Filter",
+    "loadingWarranties": "Loading warranties...",
+    "noMatchingWarranties": "No warranties match the selected filters.",
+    "filters": {
+      "lessThanMonth": "Less than a month",
+      "oneToTwelveMonths": "1-12 months",
+      "moreThanYear": "1 year +",
+      "uncategorized": "Uncategorized"
+    }
+  },
+  "warrantyCardList": {
+    "deleteWarranty": "Delete Warranty",
+    "deleteConfirmation": "Are you sure you want to delete <b>\"{{name}}\"</b>?",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "uncategorized": "Uncategorized",
+    "deleteSuccess": "Warranty deleted successfully",
+    "deleteError": "Failed to delete warranty. Please try again.",
+    "timeRemaining": {
+      "expired": "Expired",
+      "expirestoday": "Expires today",
+      "expiresTomorrow": "Expires tomorrow",
+      "daysRemaining": "{{days}} days remaining",
+      "monthRemaining": "{{count}} month remaining",
+      "monthRemaining_plural": "{{count}} months remaining",
+      "yearRemaining": "{{count}} year remaining",
+      "yearRemaining_plural": "{{count}} years remaining"
+    }
+  },
+  "updateWarranty": {
+    "missingId": "Missing warranty ID, unable to update",
+    "updateSuccess": "Warranty details updated successfully",
+    "uploadingFiles": "Uploading {{count}} file...",
+    "uploadingFiles_plural": "Uploading {{count}} files...",
+    "uploadSuccess": "Successfully uploaded {{count}} file",
+    "uploadSuccess_plural": "Successfully uploaded {{count}} files",
+    "uploadError": "Failed to upload files: {{error}}",
+    "deletingFiles": "Deleting {{count}} file...",
+    "deletingFiles_plural": "Deleting {{count}} files...",
+    "deleteSuccess": "Successfully deleted {{count}} file",
+    "deleteSuccess_plural": "Successfully deleted {{count}} files",
+    "deleteError": "Failed to delete files: {{error}}",
+    "warranty_updated": "Warranty updated successfully",
+    "updateError": "Failed to update warranty"
+  },
+  "validation": {
+    "nameLengthError": "Name must be between 2 and 64 characters",
+    "noteLengthError": "Note must be between 2 and 2048 characters"
+  },
+  "warrantyStatus": {
+    "ACTIVE": "Active",
+    "EXPIRED": "Expired",
+    "CLAIMED_ACTIVE": "Claimed Active",
+    "CLAIMED_EXPIRED": "Claimed Expired"
+  }
+}
