@@ -2,15 +2,16 @@ import { Box, Button, Typography, Container } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/vault-logo-simplistic.svg";
+import { useTranslation } from "react-i18next";
 
 function UnauthorizedPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleGoToLogin = () => {
     // Clear session storage and local storage
     sessionStorage.clear();
     localStorage.clear();
-
     // Navigate to login page
     navigate("/login");
   };
@@ -38,7 +39,6 @@ function UnauthorizedPage() {
           }}
         />
       </Box>
-
       {/* Unauthorized content in the center */}
       <Box
         sx={{
@@ -60,21 +60,17 @@ function UnauthorizedPage() {
             mb: 3,
           }}
         />
-
         <Typography variant="h4" component="h1" gutterBottom>
-          Unauthorized Access
+          {t("unauthorized.title")}
         </Typography>
-
         <Typography
           variant="body1"
           color="text.secondary"
           paragraph
           sx={{ mb: 3 }}
         >
-          You don't have permission to access this page or your session has
-          expired. Please log in again to continue.
+          {t("unauthorized.message")}
         </Typography>
-
         <Button
           variant="contained"
           color="primary"
@@ -85,7 +81,7 @@ function UnauthorizedPage() {
             px: 4,
           }}
         >
-          Go to Login
+          {t("common.goToLogin")}
         </Button>
       </Box>
     </Container>

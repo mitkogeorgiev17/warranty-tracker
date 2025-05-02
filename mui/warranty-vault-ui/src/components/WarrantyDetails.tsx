@@ -3,6 +3,7 @@ import { WarrantyDTO, WarrantyStatus } from "../constants/Warranty";
 import { UpdateWarrantyCommand } from "../constants/Warranty";
 import { DEFAULT_WARRANTY_CATEGORIES } from "../constants/warrantyCategories"; // Import default categories
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next"; // Import for translations
 
 // MUI imports
 import {
@@ -67,6 +68,8 @@ interface StatusChipProps {
 }
 
 const StatusChip: FC<StatusChipProps> = ({ status }) => {
+  const { t } = useTranslation(); // Initialize translation hook for Status Chip
+
   const getChipProps = () => {
     switch (status) {
       case WarrantyStatus.ACTIVE:
@@ -97,6 +100,8 @@ const StatusChip: FC<StatusChipProps> = ({ status }) => {
     }
   };
 
+  // Format the status for display (replace underscore with space)
+  // In a full implementation, you'd use translation keys for each status
   return (
     <Chip label={status.replace("_", " ")} size="small" {...getChipProps()} />
   );
@@ -109,19 +114,20 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
   onSave,
   onCancel,
 }) => {
+  const { t } = useTranslation(); // Initialize translation hook
   const [currentWarranty, setCurrentWarranty] = useState<WarrantyDTO>(warranty);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [filesToDelete, setFilesToDelete] = useState<number[]>([]);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    warranty.category?.name || ""
+    warranty.category || ""
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset state when warranty prop changes
   useEffect(() => {
     setCurrentWarranty(warranty);
-    setSelectedCategory(warranty.category?.name || "");
+    setSelectedCategory(warranty.category || "");
     setNewFiles([]);
     setFilesToDelete([]);
   }, [warranty]);
@@ -150,14 +156,14 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
 
         // Validate the command before sending
         if (updateCommand.name.length < 2 || updateCommand.name.length > 64) {
-          throw new Error("Name must be between 2 and 64 characters");
+          throw new Error(t("validation.nameLengthError"));
         }
 
         if (
           updateCommand.note &&
           (updateCommand.note.length < 2 || updateCommand.note.length > 2048)
         ) {
-          throw new Error("Note must be between 2 and 2048 characters");
+          throw new Error(t("validation.noteLengthError"));
         }
 
         console.log("About to send update command:", updateCommand);
@@ -247,7 +253,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <TextField
-            label="Name"
+            label={t("createWarranty.warrantyName")}
             fullWidth
             value={currentWarranty.name}
             onChange={(e) => handleFieldChange("name", e.target.value)}
@@ -266,13 +272,13 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
               id="category-select-label"
               sx={{ color: "primary.main" }}
             >
-              Category
+              {t("createWarranty.category")}
             </InputLabel>
             <Select
               labelId="category-select-label"
               value={selectedCategory}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              label="Category"
+              label={t("createWarranty.category")}
               disabled={!isEditMode}
             >
               {DEFAULT_WARRANTY_CATEGORIES.map((category) => (
@@ -287,7 +293,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
         <Grid item xs={12} md={6}>
           <Box sx={{ display: "flex", gap: 2 }}>
             <TextField
-              label="Valid From"
+              label={t("createWarranty.startDate")}
               type="date"
               sx={{ flex: 1 }}
               value={formatDate(currentWarranty.startDate)}
@@ -301,7 +307,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
               size="medium"
             />
             <TextField
-              label="Valid Until"
+              label={t("createWarranty.endDate")}
               type="date"
               sx={{ flex: 1 }}
               value={formatDate(currentWarranty.endDate)}
@@ -320,7 +326,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
         <Grid item xs={12} md={6}>
           <Box sx={{ display: "flex", gap: 2 }}>
             <TextField
-              label="Created At"
+              label={t("warranty.createdAt")}
               sx={{ flex: 1 }}
               value={
                 currentWarranty.metadata?.createdAt
@@ -336,7 +342,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
               size="medium"
             />
             <TextField
-              label="Last Updated"
+              label={t("warranty.lastUpdated")}
               sx={{ flex: 1 }}
               value={
                 currentWarranty.metadata?.updatedAt
@@ -357,7 +363,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
         <Grid item xs={12} md={6}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography variant="body1" sx={{ mr: 1, fontWeight: 500 }}>
-              Status:
+              {t("warranty.status")}:
             </Typography>
             <StatusChip status={currentWarranty.status} />
           </Box>
@@ -365,7 +371,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
 
         <Grid item xs={12}>
           <TextField
-            label="Notes"
+            label={t("createWarranty.notes")}
             fullWidth
             multiline
             rows={3}
@@ -384,12 +390,12 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
       <Divider sx={{ my: 3 }} />
 
       <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
-        Attached Files
+        {t("createWarranty.attachments")}
       </Typography>
 
       {currentFiles.length === 0 && newFiles.length === 0 ? (
         <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
-          No files attached
+          {t("warranty.noFiles")}
         </Typography>
       ) : (
         <List dense sx={{ width: "100%", bgcolor: "background.paper", mb: 2 }}>
@@ -410,15 +416,15 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             >
               <ListItemIcon>{getFileIcon(file.contentType)}</ListItemIcon>
               <ListItemText
-                primary={file.name || "Unnamed file"}
+                primary={file.name || t("warranty.unnamedFile")}
                 secondary={`${
                   file.size
                     ? (file.size / 1024).toFixed(1) + " KB"
-                    : "Unknown size"
+                    : t("warranty.unknownSize")
                 } • ${
                   file.uploadDate
                     ? format(new Date(file.uploadDate), "MM/dd/yyyy")
-                    : "Unknown date"
+                    : t("warranty.unknownDate")
                 }`}
               />
               {file.filePath && (
@@ -430,7 +436,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
                   rel="noopener noreferrer"
                   sx={{ ml: 2 }}
                 >
-                  View
+                  {t("warranty.viewFile")}
                 </Button>
               )}
             </ListItem>
@@ -452,7 +458,9 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
               <ListItemIcon>{getFileIcon(file.type)}</ListItemIcon>
               <ListItemText
                 primary={file.name}
-                secondary={`${(file.size / 1024).toFixed(1)} KB (New)`}
+                secondary={`${(file.size / 1024).toFixed(1)} KB (${t(
+                  "warranty.newFile"
+                )})`}
               />
             </ListItem>
           ))}
@@ -475,7 +483,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             onClick={handleOpenFileDialog}
             sx={{ mb: 2, alignSelf: "flex-start" }}
           >
-            Select Files
+            {t("createWarranty.selectFiles")}
           </Button>
         </>
       )}
@@ -496,7 +504,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             onClick={handleCancel}
             disabled={isSaving}
           >
-            Cancel
+            {t("warrantyCardList.cancel")}
           </Button>
           <Button
             variant="contained"
@@ -513,7 +521,7 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             }}
             startIcon={isSaving ? <CircularProgress size={20} /> : null}
           >
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? t("common.loading") : t("common.save")}
           </Button>
         </Box>
       )}

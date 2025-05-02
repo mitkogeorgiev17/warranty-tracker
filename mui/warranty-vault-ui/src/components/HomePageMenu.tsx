@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import { useTranslation } from "react-i18next";
 
 const HomePageMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ const HomePageMenu: React.FC = () => {
   const handleCreateWarranty = () => {
     navigate("/create");
   };
+
+  const { t } = useTranslation();
 
   const handleScanWarranty = () => {
     navigate("/scan");
@@ -46,7 +49,7 @@ const HomePageMenu: React.FC = () => {
           >
             <AddCircleOutlineIcon sx={{ fontSize: 48 }} />
             <Typography variant="h6" color="inherit">
-              Create Warranty
+              {t("home.createWarranty")}
             </Typography>
           </Button>
         </Grid>
@@ -62,7 +65,7 @@ const HomePageMenu: React.FC = () => {
           >
             <QrCodeScannerIcon sx={{ fontSize: 48 }} />
             <Typography variant="h6" color="inherit">
-              Scan Warranty
+              {t("home.scanWarranty")}
             </Typography>
           </Button>
         </Grid>
@@ -78,7 +81,7 @@ const HomePageMenu: React.FC = () => {
           >
             <ListAltIcon sx={{ fontSize: 48 }} />
             <Typography variant="h6" color="inherit">
-              Manage Warranties
+              {t("home.manageWarranties")}
             </Typography>
           </Button>
         </Grid>

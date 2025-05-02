@@ -4,16 +4,17 @@ import { ENDPOINTS, API_BASE_URL } from "../constants/apiConstants";
 import axiosApi from "../config/axiosApiConfig";
 import { WarrantyDTO } from "../constants/Warranty";
 import WarrantyDetails from "../components/WarrantyDetails";
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import PageHeader from "../components/PageHeader";
+import { useTranslation } from "react-i18next";
 
 const WarrantyDetailsPage: FC = () => {
   const navigate = useNavigate();
   const { warrantyId } = useParams<{ warrantyId: string }>();
   const warrantyIdNumber = warrantyId ? parseInt(warrantyId, 10) : null;
-
   const [loading, setLoading] = useState<boolean>(true);
   const [warranty, setWarranty] = useState<WarrantyDTO | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     async function fetchWarrantyDetails() {
@@ -21,16 +22,13 @@ const WarrantyDetailsPage: FC = () => {
         setLoading(false);
         return;
       }
-
       try {
         setLoading(true);
-
         const endpoint = ENDPOINTS.GET_WARRANTIES;
         const response = await axiosApi({
           method: endpoint.method,
           url: `${API_BASE_URL}${endpoint.path}${warrantyIdNumber}`,
         });
-
         setWarranty(response.data);
       } catch (error: any) {
         console.error("Error fetching warranty details:", error);
@@ -43,9 +41,8 @@ const WarrantyDetailsPage: FC = () => {
         setLoading(false);
       }
     }
-
     fetchWarrantyDetails();
-  }, [warrantyIdNumber]);
+  }, [warrantyIdNumber, navigate]);
 
   if (loading) {
     return (
@@ -64,7 +61,7 @@ const WarrantyDetailsPage: FC = () => {
     return (
       <Box textAlign="center" p={6}>
         <Typography>
-          Could not find warranty with ID {warrantyIdNumber}
+          {t("warranty.notFound", { id: warrantyIdNumber })}
         </Typography>
       </Box>
     );
@@ -72,7 +69,7 @@ const WarrantyDetailsPage: FC = () => {
 
   return (
     <>
-      <PageHeader title="Warranty details" />
+      <PageHeader title={t("pages.warrantyDetails")} />
       <WarrantyDetails warranty={warranty} isEditMode={false} />
     </>
   );

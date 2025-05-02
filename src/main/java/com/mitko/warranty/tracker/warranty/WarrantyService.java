@@ -1,8 +1,6 @@
 package com.mitko.warranty.tracker.warranty;
 
 import com.mitko.warranty.tracker.account.UserRepository;
-import com.mitko.warranty.tracker.category.Category;
-import com.mitko.warranty.tracker.category.CategoryRepository;
 import com.mitko.warranty.tracker.exception.custom.UserNotFoundException;
 import com.mitko.warranty.tracker.exception.custom.WarrantyBadRequest;
 import com.mitko.warranty.tracker.exception.custom.WarrantyNotFoundException;
@@ -35,7 +33,6 @@ public class WarrantyService {
     private final WarrantyFileService warrantyFileService;
     private final WarrantyRepository warrantyRepository;
     private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
     private final WarrantyMapper mapper;
 
     /**
@@ -62,7 +59,7 @@ public class WarrantyService {
                 .setStatus(getStatus(command.endDate()))
                 .setUser(user)
                 .setNote(command.note())
-                .setCategory(command.category() != null ? findCategory(command.category()) : null)
+                .setCategory(command.category() != null ? command.category() : null)
 
                 .setCreatedAt(LocalDateTime.now());
 
@@ -71,15 +68,6 @@ public class WarrantyService {
         log.info("Warranty saved successfully.");
 
         return mapper.toDto(savedWarranty);
-    }
-
-    private Category findCategory(String name) {
-        return categoryRepository.findByName(name)
-                .orElseGet(() -> createNewCategory(name));
-    }
-
-    private Category createNewCategory(String name) {
-        return categoryRepository.save(new Category().setName(name));
     }
 
     /**
@@ -143,7 +131,7 @@ public class WarrantyService {
                 .setStatus(command.status() != null ? command.status() : warranty.getStatus())
                 .setNote(command.note() != null ? command.note() : warranty.getNote())
                 .setUpdatedAt(LocalDateTime.now())
-                .setCategory(command.category() != null ? findCategory(command.category()) : warranty.getCategory());
+                .setCategory(command.category() != null ? command.category() : warranty.getCategory());
 
         var savedWarranty = warrantyRepository.save(warranty);
 

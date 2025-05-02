@@ -17,6 +17,7 @@ import WarrantyDetailsPage from "./pages/WarrantyDetailsPage";
 import UpdateWarrantyPage from "./pages/UpdateWarrantyPage";
 import ProfilePage from "./pages/ProfilePage";
 import { UserProvider } from "./constants/UserContext.tsx";
+import "./config/i18n.ts";
 
 const theme = createTheme({
   palette: {

@@ -3,6 +3,7 @@ import { Typography, Box, Avatar, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import { User } from "../constants/User";
+import { useTranslation } from "react-i18next";
 
 interface UserGreetingProps {
   user: User;
@@ -10,6 +11,7 @@ interface UserGreetingProps {
 
 const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleProfileClick = () => {
     navigate("/profile");
@@ -18,8 +20,8 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
   return (
     <Box
       sx={{
-        pt: 2, // Normal padding top
-        px: 3, // Horizontal padding
+        pt: 2,
+        px: 3,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -28,9 +30,9 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
           backgroundColor: "rgba(169, 133, 240, 0.05)",
         },
         transition: "background-color 0.3s",
-        mx: "auto", // Auto margins for horizontal centering
-        mt: 2, // Top margin
-        mb: 1, // Reduced bottom margin
+        mx: "auto",
+        mt: 2,
+        mb: 1,
       }}
       onClick={handleProfileClick}
     >
@@ -48,16 +50,16 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
           <Typography
             variant="h6"
             component="h1"
-            sx={{ lineHeight: 1.2, fontWeight: 500 }} // Reduced line height
+            sx={{ lineHeight: 1.2, fontWeight: 500 }}
           >
-            Welcome, {user.firstName}!
+            {t("greeting.welcome", { name: user.firstName })}
           </Typography>
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={{ lineHeight: 1.2 }} // Reduced line height
+            sx={{ lineHeight: 1.2 }}
           >
-            view / edit profile
+            {t("greeting.viewEditProfile")}
           </Typography>
         </Box>
       </Stack>

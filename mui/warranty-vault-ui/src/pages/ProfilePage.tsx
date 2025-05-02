@@ -9,10 +9,6 @@ import {
   Button,
   Divider,
   MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   CircularProgress,
   Container,
   Select,
@@ -29,6 +25,7 @@ import { toast } from "sonner";
 import axiosApi from "../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
 import PageHeader from "../components/PageHeader.tsx";
+import { useTranslation } from "react-i18next";
 
 export interface ExpiringWarranties {
   expired: number;
@@ -36,15 +33,15 @@ export interface ExpiringWarranties {
   valid: number;
 }
 
-// Flag icons can be emoji or SVG imports
-const GB_FLAG = "🇬🇧"; // UK flag emoji
-const BG_FLAG = "🇧🇬"; // Bulgaria flag emoji
+const GB_FLAG = "🇬🇧";
+const BG_FLAG = "🇧🇬";
 
 const ProfilePage: React.FC = () => {
   const { user, updateUser, isLoading, setIsLoading } = useUser();
   const navigate = useNavigate();
   const [language, setLanguage] = useState("");
   const [isLanguageChanged, setIsLanguageChanged] = useState(false);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     // If user is not loaded yet, navigate to home to trigger the fetch
@@ -53,8 +50,13 @@ const ProfilePage: React.FC = () => {
     } else if (user) {
       // Set language from user data
       setLanguage(user.language);
+
+      // Initialize i18n with the user's language preference
+      if (user.language) {
+        i18n.changeLanguage(user.language.toLowerCase());
+      }
     }
-  }, [user, navigate, isLoading]);
+  }, [user, navigate, isLoading, i18n]);
 
   const handleLanguageChange = (event: any) => {
     const newLanguage = event.target.value;
@@ -72,7 +74,7 @@ const ProfilePage: React.FC = () => {
 
       const updatedUser = {
         ...user,
-        language: language,
+        updatedLanguage: language,
       };
 
       await axiosApi({
@@ -82,13 +84,21 @@ const ProfilePage: React.FC = () => {
         responseType: "json",
       });
 
-      // Update the user in context
-      updateUser(updatedUser);
-      toast.success("Language preference updated");
+      // First change the language in i18next
+      await i18n.changeLanguage(language.toLowerCase());
+
+      // Then update the user in context with the new language
+      // This is important to update in correct order
+      updateUser({
+        ...user,
+        language: language, // Update user object with the new language
+      });
+
+      toast.success(t("profile.languageUpdated"));
       setIsLanguageChanged(false);
     } catch (error) {
       console.error("Failed to update language preference:", error);
-      toast.error("Failed to update language preference");
+      toast.error(t("profile.failedToUpdate"));
       // Reset to original language on error
       setLanguage(user.language);
     } finally {
@@ -96,9 +106,10 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  // Re-compute available languages each render to ensure translations are current
   const availableLanguages = [
-    { value: "EN", label: "English", flag: GB_FLAG },
-    { value: "BG", label: "Bulgarian", flag: BG_FLAG },
+    { value: "EN", label: t("languages.english"), flag: GB_FLAG },
+    { value: "BG", label: t("languages.bulgarian"), flag: BG_FLAG },
   ];
 
   // Common card styles with purple theme matching the HomePageMenu
@@ -129,17 +140,19 @@ const ProfilePage: React.FC = () => {
   if (!user) {
     return (
       <>
-        <PageHeader title="Profile" />
+        <PageHeader title={t("pages.profile")} />
         <Container>
           <Box sx={{ textAlign: "center", py: 5 }}>
-            <Typography variant="h5">User data not available</Typography>
+            <Typography variant="h5">
+              {t("profile.userDataNotAvailable")}
+            </Typography>
             <Button
               variant="contained"
               color="primary"
               onClick={() => navigate("/home")}
               sx={{ mt: 2 }}
             >
-              Go to Home
+              {t("profile.goToHome")}
             </Button>
           </Box>
         </Container>
@@ -149,7 +162,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <>
-      <PageHeader title="Profile" />
+      <PageHeader title={t("pages.profile")} />
       <Box sx={{ py: 2, width: "90%", mx: "auto" }}>
         {/* Personal Info Card */}
         <Card sx={cardStyle}>
@@ -180,7 +193,7 @@ const ProfilePage: React.FC = () => {
                 <Grid container spacing={1}>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" color="textSecondary">
-                      First Name
+                      {t("profile.firstName")}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
                       {user.firstName}
@@ -189,7 +202,7 @@ const ProfilePage: React.FC = () => {
 
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" color="textSecondary">
-                      Last Name
+                      {t("profile.lastName")}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
                       {user.lastName}
@@ -198,7 +211,7 @@ const ProfilePage: React.FC = () => {
 
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" color="textSecondary">
-                      Username
+                      {t("profile.username")}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
                       {user.username}
@@ -207,7 +220,7 @@ const ProfilePage: React.FC = () => {
 
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" color="textSecondary">
-                      Email
+                      {t("profile.email")}
                     </Typography>
                     <Typography variant="body1" gutterBottom>
                       {user.email}
@@ -223,20 +236,22 @@ const ProfilePage: React.FC = () => {
         <Card sx={cardStyle}>
           <CardContent sx={{ pt: 2, pb: 2 }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Language Settings
+              {t("profile.languageSettings")}
             </Typography>
             <Divider sx={{ mb: 2 }} />
 
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} sm={8}>
                 <FormControl fullWidth variant="outlined" size="small">
-                  <InputLabel id="language-select-label">Language</InputLabel>
+                  <InputLabel id="language-select-label">
+                    {t("common.language")}
+                  </InputLabel>
                   <Select
                     labelId="language-select-label"
                     id="language-select"
                     value={language}
                     onChange={handleLanguageChange}
-                    label="Language"
+                    label={t("common.language")}
                     renderValue={(selected) => {
                       const selectedLang = availableLanguages.find(
                         (lang) => lang.value === selected
@@ -275,7 +290,7 @@ const ProfilePage: React.FC = () => {
                   disabled={!isLanguageChanged}
                   size="medium"
                 >
-                  Save Changes
+                  {t("common.save")}
                 </Button>
               </Grid>
             </Grid>

@@ -11,9 +11,5 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class UpdateUserCommand {
-    private String updatedUsername;
-    private String updatedEmail;
-    private String updatedFirstName;
-    private String updatedLastName;
     private Language updatedLanguage;
 }

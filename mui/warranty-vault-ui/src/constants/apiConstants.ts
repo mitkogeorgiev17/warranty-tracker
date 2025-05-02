@@ -12,7 +12,7 @@ const ENDPOINTS: Record<string, ApiEndpoint> = {
   CODE_URL: { path: '/auth/code', method: 'GET' },
   AUTHENTICATE: { path: '/auth/authenticate', method: 'POST' },
   ACCOUNT: { path: '/account/', method: 'POST' },
-  UPDATE_ACCOUNT: { path: '/account', method: 'PUT'},
+  UPDATE_ACCOUNT: { path: '/account/', method: 'PUT'},
   
   // Warranties
   GET_WARRANTIES: { path: '/warranties/', method: 'GET'},

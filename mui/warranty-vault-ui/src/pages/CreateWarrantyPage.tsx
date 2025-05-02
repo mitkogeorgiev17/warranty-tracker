@@ -25,10 +25,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { DEFAULT_WARRANTY_CATEGORIES } from "../constants/warrantyCategories";
+import { useTranslation } from "react-i18next";
 
 function CreateWarrantyPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   const getDefaultStartDate = () => {
     const today = new Date();
@@ -116,10 +118,10 @@ function CreateWarrantyPage() {
           uploadFiles(warrantyId, attachments);
         }
 
-        toast.success("Warranty created successfully.");
+        toast.success(t("createWarranty.successMessage"));
         navigate("/manage");
       } else {
-        toast.error("Action not successful.");
+        toast.error(t("createWarranty.actionNotSuccessful"));
         navigate(-1);
       }
     } catch (error: any) {
@@ -127,7 +129,7 @@ function CreateWarrantyPage() {
       if (error.response && error.response.status === 401) {
         navigate("/unauthorized");
       } else {
-        toast.error("Failed to create warranty.");
+        toast.error(t("createWarranty.failedToCreate"));
         navigate("/error");
       }
     }
@@ -151,17 +153,17 @@ function CreateWarrantyPage() {
       });
 
       if (response.status == 201) {
-        toast.success("File(s) uploaded successfully.");
+        toast.success(t("createWarranty.fileUploadSuccess"));
       }
     } catch (error) {
       console.error("Error uploading files:", error);
-      toast.error("File upload failed.");
+      toast.error(t("createWarranty.fileUploadFailed"));
     }
   };
 
   return (
     <>
-      <PageHeader title="Add warranty" borderColor="#81c784" />
+      <PageHeader title={t("createWarranty.pageTitle")} borderColor="#81c784" />
       <Paper
         elevation={3}
         sx={{
@@ -196,7 +198,7 @@ function CreateWarrantyPage() {
             component="h2"
             sx={{ mb: 2, fontWeight: 500 }}
           >
-            Details
+            {t("createWarranty.details")}
           </Typography>
 
           <Stack spacing={3} sx={{ mb: 2 }}>
@@ -204,7 +206,7 @@ function CreateWarrantyPage() {
               required
               fullWidth
               id="name"
-              label="Warranty Name"
+              label={t("createWarranty.warrantyName")}
               name="name"
               value={warrantyName}
               onChange={(e) => setWarrantyName(e.target.value)}
@@ -212,7 +214,7 @@ function CreateWarrantyPage() {
             <TextField
               fullWidth
               id="note"
-              label="Notes (Optional)"
+              label={t("createWarranty.notes")}
               name="note"
               multiline
               rows={3}
@@ -230,9 +232,9 @@ function CreateWarrantyPage() {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Category"
+                  label={t("createWarranty.category")}
                   fullWidth
-                  helperText="Select a category or enter your own"
+                  helperText={t("createWarranty.categoryHelperText")}
                 />
               )}
             />
@@ -241,7 +243,7 @@ function CreateWarrantyPage() {
                 required
                 sx={{ flex: 1 }}
                 id="startDate"
-                label="Start Date"
+                label={t("createWarranty.startDate")}
                 name="startDate"
                 type="date"
                 value={startDate}
@@ -257,7 +259,7 @@ function CreateWarrantyPage() {
                 required
                 sx={{ flex: 1 }}
                 id="endDate"
-                label="End Date"
+                label={t("createWarranty.endDate")}
                 name="endDate"
                 type="date"
                 value={endDate}
@@ -275,7 +277,7 @@ function CreateWarrantyPage() {
 
             {/* File Upload Section */}
             <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-              Attachments
+              {t("createWarranty.attachments")}
             </Typography>
 
             <Box>
@@ -293,7 +295,7 @@ function CreateWarrantyPage() {
                 onClick={handleOpenFileDialog}
                 sx={{ mb: 2 }}
               >
-                Select Files
+                {t("createWarranty.selectFiles")}
               </Button>
 
               {files.length > 0 && (
@@ -355,7 +357,7 @@ function CreateWarrantyPage() {
                 },
               }}
             >
-              CREATE
+              {t("createWarranty.createButton")}
             </Button>
           </Box>
         </Box>

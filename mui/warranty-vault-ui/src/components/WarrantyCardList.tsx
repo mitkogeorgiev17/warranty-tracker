@@ -16,6 +16,7 @@ import axiosApi from "../config/axiosApiConfig";
 import { ENDPOINTS, API_BASE_URL } from "../constants/apiConstants";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next"; // Import for translations
 
 interface WarrantyCardListProps {
   warranties: WarrantyDTO[];
@@ -27,6 +28,7 @@ const WarrantyCardList = ({
   onWarrantyDeleted,
 }: WarrantyCardListProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation(); // Initialize translation hook
   const [deletingWarrantyId, setDeletingWarrantyId] = useState<number | null>(
     null
   );
@@ -66,7 +68,7 @@ const WarrantyCardList = ({
       });
 
       // Show success toast
-      toast.success("Warranty deleted successfully");
+      toast.success(t("warrantyCardList.deleteSuccess"));
 
       // Reset state
       setDeletingWarrantyId(null);
@@ -80,8 +82,7 @@ const WarrantyCardList = ({
 
       // Show error toast
       toast.error(
-        error.response?.data?.message ||
-          "Failed to delete warranty. Please try again.",
+        error.response?.data?.message || t("warrantyCardList.deleteError"),
         {
           duration: 5000,
         }
@@ -103,19 +104,25 @@ const WarrantyCardList = ({
     const daysRemaining = differenceInDays(endDate, today);
 
     if (daysRemaining < 0) {
-      return "Expired";
+      return t("warrantyCardList.timeRemaining.expired");
     } else if (daysRemaining === 0) {
-      return "Expires today";
+      return t("warrantyCardList.timeRemaining.expirestoday");
     } else if (daysRemaining === 1) {
-      return "Expires tomorrow";
+      return t("warrantyCardList.timeRemaining.expiresTomorrow");
     } else if (daysRemaining < 30) {
-      return `${daysRemaining} days remaining`;
+      return t("warrantyCardList.timeRemaining.daysRemaining", {
+        days: daysRemaining,
+      });
     } else if (daysRemaining < 365) {
       const months = Math.floor(daysRemaining / 30);
-      return `${months} ${months === 1 ? "month" : "months"} remaining`;
+      return t("warrantyCardList.timeRemaining.monthRemaining", {
+        count: months,
+      });
     } else {
       const years = Math.floor(daysRemaining / 365);
-      return `${years} ${years === 1 ? "year" : "years"} remaining`;
+      return t("warrantyCardList.timeRemaining.yearRemaining", {
+        count: years,
+      });
     }
   };
 
@@ -147,10 +154,17 @@ const WarrantyCardList = ({
                 }}
               >
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  Delete Warranty
+                  {t("warrantyCardList.deleteWarranty")}
                 </Typography>
                 <Typography sx={{ mb: 3 }}>
-                  Are you sure you want to delete <b>"{warranty.name}"</b>?
+                  {/* Using dangerouslySetInnerHTML to render HTML from translations */}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: t("warrantyCardList.deleteConfirmation", {
+                        name: warranty.name,
+                      }),
+                    }}
+                  />
                 </Typography>
 
                 <Box
@@ -168,7 +182,7 @@ const WarrantyCardList = ({
                     disabled={isDeleting}
                     size="medium"
                   >
-                    Cancel
+                    {t("warrantyCardList.cancel")}
                   </Button>
                   <Button
                     variant="contained"
@@ -177,7 +191,9 @@ const WarrantyCardList = ({
                     disabled={isDeleting}
                     size="medium"
                   >
-                    {isDeleting ? "Deleting..." : "Delete"}
+                    {isDeleting
+                      ? t("warrantyCardList.deleting")
+                      : t("warrantyCardList.delete")}
                   </Button>
                 </Box>
               </CardContent>
@@ -259,9 +275,9 @@ const WarrantyCardList = ({
                   }}
                 >
                   <Typography variant="body2" color="text.secondary">
-                    {warranty.category && warranty.category.name
-                      ? warranty.category.name
-                      : "Uncategorized"}
+                    {warranty.category && warranty.category
+                      ? warranty.category
+                      : t("warrantyCardList.uncategorized")}
                   </Typography>
                 </Box>
               </CardContent>

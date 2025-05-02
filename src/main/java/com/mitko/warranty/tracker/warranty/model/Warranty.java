@@ -1,7 +1,6 @@
 package com.mitko.warranty.tracker.warranty.model;
 
 import com.mitko.warranty.tracker.account.model.User;
-import com.mitko.warranty.tracker.category.Category;
 import com.mitko.warranty.tracker.file.model.WarrantyFile;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -43,17 +42,17 @@ public class Warranty {
     @Enumerated(STRING)
     private WarrantyStatus status;
 
-    @Column(name = "NOTE")
+    @Column(name = "note")
     private String note;
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = EAGER)
-    private Category category;
+    @Column(name = "category")
+    private String category;
 
     @OneToMany(
             cascade = CascadeType.ALL,

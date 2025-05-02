@@ -8,10 +8,12 @@ import SearchSection from "../components/SearchSection";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "../constants/UserContext.tsx";
+import { useTranslation } from "react-i18next";
 
 function HomePage() {
   const navigate = useNavigate();
   const { user, setUser, isLoading, setIsLoading } = useUser();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,6 +31,7 @@ function HomePage() {
 
         if (response.data) {
           setUser(response.data);
+          await i18n.changeLanguage(response.data.language.toLowerCase());
         } else {
           navigate("/error");
         }
@@ -54,16 +57,14 @@ function HomePage() {
           borderRadius: 3,
           backgroundColor: "background.paper",
           pb: 1,
-          mt: 3,
+          mb: 3,
+          mt: 6,
           width: "90%",
           mx: "auto",
         }}
       >
         {user && <UserGreeting user={user} />}
       </Paper>
-      <Box sx={{ width: "90%", mx: "auto" }}>
-        <SearchSection />
-      </Box>
       <HomePageMenu />
       <Paper
         elevation={3}

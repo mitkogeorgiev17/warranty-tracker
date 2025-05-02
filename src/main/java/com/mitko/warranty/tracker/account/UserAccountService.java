@@ -80,10 +80,6 @@ public class UserAccountService {
                         .orElseThrow(() -> new UserNotFoundException(authentication.getName()));
 
         user
-                .setUsername(command.getUpdatedUsername() != null ? command.getUpdatedUsername() : user.getUsername())
-                .setFirstName(command.getUpdatedFirstName() != null ? command.getUpdatedFirstName() : user.getFirstName())
-                .setLastName(command.getUpdatedLastName() != null ? command.getUpdatedLastName() : user.getLastName())
-                .setEmail(command.getUpdatedEmail() != null ? command.getUpdatedEmail() : user.getEmail())
                 .setLanguage(command.getUpdatedLanguage() != null ? command.getUpdatedLanguage() : user.getLanguage());
 
         userRepository.save(user);

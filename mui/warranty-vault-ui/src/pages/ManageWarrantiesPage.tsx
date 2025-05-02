@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useMemo } from "react";
 import PageHeader from "../components/PageHeader";
 import {
   Box,
@@ -19,22 +19,31 @@ import { useNavigate } from "react-router-dom";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CategoryIcon from "@mui/icons-material/Category";
-
-const EXPIRATION_FILTERS = {
-  LESS_THAN_MONTH: "Less than a month",
-  ONE_TO_TWELVE_MONTHS: "1-12 months",
-  MORE_THAN_YEAR: "1 year +",
-};
-
-const UNCATEGORIZED = "Uncategorized";
+import { useTranslation } from "react-i18next";
 
 function ManageWarrantiesPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [warranties, setWarranties] = useState<WarrantyDTO[]>([]);
   const [filteredWarranties, setFilteredWarranties] = useState<WarrantyDTO[]>(
     []
   );
   const [loading, setLoading] = useState(true);
+
+  // Memoize these translation values to prevent re-renders
+  const EXPIRATION_FILTERS = useMemo(
+    () => ({
+      LESS_THAN_MONTH: t("manageWarranties.filters.lessThanMonth"),
+      ONE_TO_TWELVE_MONTHS: t("manageWarranties.filters.oneToTwelveMonths"),
+      MORE_THAN_YEAR: t("manageWarranties.filters.moreThanYear"),
+    }),
+    [t]
+  );
+
+  const UNCATEGORIZED = useMemo(
+    () => t("manageWarranties.filters.uncategorized"),
+    [t]
+  );
 
   const [expirationFilter, setExpirationFilter] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -47,78 +56,13 @@ function ManageWarrantiesPage() {
     useState<null | HTMLElement>(null);
   const [filtersVisible, setFiltersVisible] = useState(false);
 
+  // Initial load of warranties only on mount
   useEffect(() => {
     fetchWarranties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (warranties.length > 0) {
-      // Check if there are any warranties without categories
-      const hasNullCategories = warranties.some(
-        (w) => !w.category || !w.category.name
-      );
-      setHasUncategorized(hasNullCategories);
-
-      // Extract unique categories and handle null or undefined categories
-      const categories = Array.from(
-        new Set(
-          warranties
-            .map((w) =>
-              w.category && w.category.name ? w.category.name : null
-            )
-            .filter((name) => name !== null) as string[]
-        )
-      );
-      setAvailableCategories(categories);
-    }
-  }, [warranties]);
-
-  useEffect(() => {
-    let filtered = [...warranties];
-    const now = new Date();
-
-    if (expirationFilter) {
-      filtered = filtered.filter((warranty) => {
-        const expiryDate = new Date(warranty.endDate);
-        const monthsDifference =
-          (expiryDate.getFullYear() - now.getFullYear()) * 12 +
-          (expiryDate.getMonth() - now.getMonth());
-
-        switch (expirationFilter) {
-          case EXPIRATION_FILTERS.LESS_THAN_MONTH:
-            return monthsDifference < 1;
-          case EXPIRATION_FILTERS.ONE_TO_TWELVE_MONTHS:
-            return monthsDifference >= 1 && monthsDifference <= 12;
-          case EXPIRATION_FILTERS.MORE_THAN_YEAR:
-            return monthsDifference > 12;
-          default:
-            return true;
-        }
-      });
-    }
-
-    if (selectedCategories.length > 0) {
-      filtered = filtered.filter((warranty) => {
-        // Handle uncategorized warranties
-        if (
-          selectedCategories.includes(UNCATEGORIZED) &&
-          (!warranty.category || !warranty.category.name)
-        ) {
-          return true;
-        }
-
-        // Handle categorized warranties
-        return (
-          warranty.category &&
-          warranty.category.name &&
-          selectedCategories.includes(warranty.category.name)
-        );
-      });
-    }
-
-    setFilteredWarranties(filtered);
-  }, [warranties, expirationFilter, selectedCategories]);
-
+  // Fetch warranties function
   const fetchWarranties = async () => {
     try {
       setLoading(true);
@@ -133,12 +77,118 @@ function ManageWarrantiesPage() {
     }
   };
 
+  // Extract available categories from warranties
+  useEffect(() => {
+    if (warranties.length === 0) return;
+
+    // Check if there are any warranties without categories
+    const hasNullCategories = warranties.some(
+      (w) => !w.category || w.category === ""
+    );
+    setHasUncategorized(hasNullCategories);
+
+    // Extract unique categories
+    const categories = Array.from(
+      new Set(
+        warranties
+          .map((w) => (w.category && w.category !== "" ? w.category : null))
+          .filter((name) => name !== null) as string[]
+      )
+    );
+    setAvailableCategories(categories);
+  }, [warranties]);
+
+  // Apply filters to warranties - now with memoized filters
+  useEffect(() => {
+    if (warranties.length === 0) return;
+
+    let filtered = [...warranties];
+    const now = new Date();
+
+    // Apply expiration filter
+    if (expirationFilter) {
+      filtered = filtered.filter((warranty) => {
+        const expiryDate = new Date(warranty.endDate);
+        const monthsDifference =
+          (expiryDate.getFullYear() - now.getFullYear()) * 12 +
+          (expiryDate.getMonth() - now.getMonth());
+
+        if (expirationFilter === EXPIRATION_FILTERS.LESS_THAN_MONTH) {
+          return monthsDifference < 1;
+        } else if (
+          expirationFilter === EXPIRATION_FILTERS.ONE_TO_TWELVE_MONTHS
+        ) {
+          return monthsDifference >= 1 && monthsDifference <= 12;
+        } else if (expirationFilter === EXPIRATION_FILTERS.MORE_THAN_YEAR) {
+          return monthsDifference > 12;
+        }
+        return true;
+      });
+    }
+
+    // Apply category filter
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter((warranty) => {
+        // Handle uncategorized warranties
+        if (
+          selectedCategories.includes(UNCATEGORIZED) &&
+          (!warranty.category || warranty.category === "")
+        ) {
+          return true;
+        }
+
+        // Handle categorized warranties
+        return (
+          warranty.category &&
+          warranty.category !== "" &&
+          selectedCategories.includes(warranty.category)
+        );
+      });
+    }
+
+    setFilteredWarranties(filtered);
+  }, [
+    warranties,
+    expirationFilter,
+    selectedCategories,
+    EXPIRATION_FILTERS,
+    UNCATEGORIZED,
+  ]);
+
+  // Toggle filters visibility
+  const handleToggleFilters = () => {
+    setFiltersVisible(!filtersVisible);
+  };
+
+  // Handle expiration filter selection
+  const handleExpirationFilterSelect = (option: string) => {
+    setExpirationFilter(expirationFilter === option ? null : option);
+    setExpirationMenuAnchor(null);
+  };
+
+  // Handle category selection
+  const handleCategorySelect = (category: string) => {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(selectedCategories.filter((c) => c !== category));
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
+  };
+
+  // Reset all filters
+  const handleResetFilters = () => {
+    setExpirationFilter(null);
+    setSelectedCategories([]);
+    setFiltersVisible(false);
+  };
+
+  // Render filter content
   const renderFilterContent = () => {
     if (!filtersVisible) {
       return (
         <Fragment>
           <FilterAltIcon sx={{ marginRight: "8px" }} />
-          <Typography>Filter</Typography>
+          <Typography>{t("manageWarranties.filter")}</Typography>
         </Fragment>
       );
     }
@@ -161,18 +211,13 @@ function ManageWarrantiesPage() {
         </IconButton>
         <Menu
           anchorEl={expirationMenuAnchor}
-          open={!!expirationMenuAnchor}
+          open={Boolean(expirationMenuAnchor)}
           onClose={() => setExpirationMenuAnchor(null)}
         >
           {Object.values(EXPIRATION_FILTERS).map((option) => (
             <MenuItem
               key={option}
-              onClick={() => {
-                setExpirationFilter(
-                  expirationFilter === option ? null : option
-                );
-                setExpirationMenuAnchor(null);
-              }}
+              onClick={() => handleExpirationFilterSelect(option)}
               selected={expirationFilter === option}
             >
               {option}
@@ -191,20 +236,14 @@ function ManageWarrantiesPage() {
         </IconButton>
         <Menu
           anchorEl={categoryMenuAnchor}
-          open={!!categoryMenuAnchor}
+          open={Boolean(categoryMenuAnchor)}
           onClose={() => setCategoryMenuAnchor(null)}
         >
           {/* Add Uncategorized option if there are uncategorized warranties */}
           {hasUncategorized && (
             <MenuItem
               key={UNCATEGORIZED}
-              onClick={() =>
-                setSelectedCategories((prev) =>
-                  prev.includes(UNCATEGORIZED)
-                    ? prev.filter((c) => c !== UNCATEGORIZED)
-                    : [...prev, UNCATEGORIZED]
-                )
-              }
+              onClick={() => handleCategorySelect(UNCATEGORIZED)}
             >
               <Checkbox checked={selectedCategories.includes(UNCATEGORIZED)} />
               <ListItemText primary={UNCATEGORIZED} />
@@ -215,13 +254,7 @@ function ManageWarrantiesPage() {
           {availableCategories.map((category) => (
             <MenuItem
               key={category}
-              onClick={() =>
-                setSelectedCategories((prev) =>
-                  prev.includes(category)
-                    ? prev.filter((c) => c !== category)
-                    : [...prev, category]
-                )
-              }
+              onClick={() => handleCategorySelect(category)}
             >
               <Checkbox checked={selectedCategories.includes(category)} />
               <ListItemText primary={category} />
@@ -230,11 +263,7 @@ function ManageWarrantiesPage() {
         </Menu>
 
         <IconButton
-          onClick={() => {
-            setExpirationFilter(null);
-            setSelectedCategories([]);
-            setFiltersVisible(false);
-          }}
+          onClick={handleResetFilters}
           sx={{
             padding: "12px",
           }}
@@ -247,9 +276,9 @@ function ManageWarrantiesPage() {
 
   return (
     <>
-      <PageHeader title="Manage warranties" borderColor="#ffb74d" />
+      <PageHeader title={t("pages.manageWarranties")} borderColor="#ffb74d" />
       <Box
-        onClick={!filtersVisible ? () => setFiltersVisible(true) : undefined}
+        onClick={!filtersVisible ? handleToggleFilters : undefined}
         sx={{
           width: "90vw",
           margin: "2vh auto",
@@ -275,12 +304,12 @@ function ManageWarrantiesPage() {
       >
         {loading ? (
           <Typography align="center" color="text.secondary">
-            Loading warranties...
+            {t("manageWarranties.loadingWarranties")}
           </Typography>
         ) : filteredWarranties.length === 0 &&
           (expirationFilter || selectedCategories.length > 0) ? (
           <Typography align="center" color="text.secondary">
-            No warranties match the selected filters.
+            {t("manageWarranties.noMatchingWarranties")}
           </Typography>
         ) : (
           <WarrantyCardList
