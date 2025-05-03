@@ -71,29 +71,24 @@ public class WarrantyScanService {
 
             // Perform OCR
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-            StringBuilder extractedText = getStringBuilder(response);
+            List<AnnotateImageResponse> responses = response.getResponsesList();
+
+            // Process the response
+            StringBuilder extractedText = new StringBuilder();
+            for (AnnotateImageResponse res : responses) {
+                if (res.hasError()) {
+                    throw new OCRException("Error performing OCR: " + res.getError().getMessage());
+                }
+
+                // Get full text annotation
+                TextAnnotation annotation = res.getFullTextAnnotation();
+                extractedText.append(annotation.getText());
+            }
 
             return extractedText.toString();
         } finally {
             client.close();
         }
-    }
-
-    private static StringBuilder getStringBuilder(BatchAnnotateImagesResponse response) {
-        List<AnnotateImageResponse> responses = response.getResponsesList();
-
-        // Process the response
-        StringBuilder extractedText = new StringBuilder();
-        for (AnnotateImageResponse res : responses) {
-            if (res.hasError()) {
-                throw new OCRException("Error performing OCR: " + res.getError().getMessage());
-            }
-
-            // Get full text annotation
-            TextAnnotation annotation = res.getFullTextAnnotation();
-            extractedText.append(annotation.getText());
-        }
-        return extractedText;
     }
 
     /**
