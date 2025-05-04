@@ -19,6 +19,7 @@ const ENDPOINTS: Record<string, ApiEndpoint> = {
   CREATE_WARRANTY: { path: '/warranties/', method: 'POST'},
   UPDATE_WARRANTY: { path: '/warranties/', method: 'PUT'},
   DELETE_WARRANTY: { path: '/warranties/', method: 'DELETE'},
+  SCAN_WARRANTY: { path: '/warranties/scan', method: 'POST'},
   
   // Warranty Files
   ADD_WARRANTY_FILES: { path: '/warranties/files/', method: 'POST'},

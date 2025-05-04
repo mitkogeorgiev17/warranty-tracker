@@ -1,4 +1,6 @@
 spring:
+  application:
+    api-version: v1
   jpa:
     open-in-view: false
     hibernate:
@@ -11,6 +13,9 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+
+openai:
+  prompt: "Analyze this extracted text from a warranty document (either English or Bulgarian) and return a JSON with: name (String) - item purchased, note (optional, short), startDate and endDate (YYYY-MM-DD), category (String). Return the notes either in Bulgarian or English depending on the context. If no dates are found - return null. For Category prefer one of: [Electronics, Appliances, Furniture, Automotive, Home Improvement, Mobile Devices, Computers, Kitchen Appliances, Tools] if applicable. Extracted text: "
 
 google:
   cloud:

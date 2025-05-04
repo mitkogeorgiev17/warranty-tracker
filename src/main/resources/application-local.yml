@@ -7,8 +7,8 @@ spring:
         default_schema: ${spring.datasource.schema}
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: ${DB.USERNAME}
-    password: ${DB.PASSWORD}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     url: jdbc:postgresql://localhost:5432/warranty_tracker
     schema: development
   security:
@@ -25,6 +25,12 @@ spring:
     compose:
       enabled: true
       file: docker/docker-compose-dev.yml
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4.1-mini
 
 baseUrls:
   keycloak: http://localhost:8081/realms/WarrantyTracker
@@ -33,10 +39,10 @@ keycloak:
   code-url: ${baseUrls.keycloak}/protocol/openid-connect/auth?client_id=${keycloak.client-id}&response_type=code
   token-endpoint: ${baseUrls.keycloak}/protocol/openid-connect/token
   client-id: warranty-tracker-local
-  client-secret: ${KEYCLOAK.CLIENT_SECRET}
-  admin-client-secret: ${KEYCLOAK.ADMIN_CLIENT_SECRET}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
+  admin-client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
 
 cloudinary:
   name: dbw5gmuas
   api-key: 951285131297993
-  api-secret: ${CLOUDINARY.SECRET}
+  api-secret: ${CLOUDINARY_SECRET}

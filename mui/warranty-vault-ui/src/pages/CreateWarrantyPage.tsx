@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Paper,
   Box,
@@ -21,6 +21,7 @@ import axiosApi from "../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
 import { toast } from "sonner";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { useLocation } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
@@ -28,6 +29,7 @@ import { DEFAULT_WARRANTY_CATEGORIES } from "../constants/warrantyCategories";
 import { useTranslation } from "react-i18next";
 
 function CreateWarrantyPage() {
+  const location = useLocation();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
@@ -54,6 +56,29 @@ function CreateWarrantyPage() {
   const [note, setNote] = useState("");
   const [category, setCategory] = useState<string | null>("");
   const [files, setFiles] = useState<File[]>([]);
+
+  // Check if we have warranty data from the scan page
+  useEffect(() => {
+    const incomingData = location.state?.warrantyCommand;
+
+    if (incomingData) {
+      if (incomingData.name) setWarrantyName(incomingData.name);
+      if (incomingData.startDate) {
+        setStartDate(incomingData.startDate);
+      } else {
+        setStartDate("");
+      }
+      if (incomingData.endDate) {
+        setEndDate(incomingData.endDate);
+      } else {
+        setEndDate("");
+      }
+      if (incomingData.note) setNote(incomingData.note);
+      if (incomingData.category) setCategory(incomingData.category);
+
+      toast.success(t("createWarranty.dataExtractedSuccess"));
+    }
+  }, [location.state]);
 
   const isFormValid = () => {
     return warrantyName.trim() !== "" && startDate !== "" && endDate !== "";
