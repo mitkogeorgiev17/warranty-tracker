@@ -25,6 +25,10 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import ScannerIcon from "@mui/icons-material/Scanner";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { useTranslation } from "react-i18next";
+import Lottie from "lottie-react"; // Import Lottie
+
+// Import the animation data from your JSON file or paste it here
+import animationData from "../assets/animations/scanning-animation.json"; // Update path as needed
 
 function ScanWarrantyPage() {
   const navigate = useNavigate();
@@ -108,8 +112,54 @@ function ScanWarrantyPage() {
           mx: "auto",
           display: "flex",
           flexDirection: "column",
+          position: "relative", // Added to position the loader properly
         }}
       >
+        {/* Scanning Loader Overlay */}
+        {isScanning && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "background.paper",
+              zIndex: 10,
+              borderRadius: 3,
+            }}
+          >
+            <Box
+              sx={{
+                width: "300px",
+                height: "300px",
+                mb: 2,
+                background: "transparent",
+              }}
+            >
+              <Lottie
+                animationData={animationData}
+                loop={true}
+                autoplay={true}
+              />
+            </Box>
+            <Typography
+              variant="h6"
+              sx={{
+                color: "primary.main",
+                fontWeight: 600,
+                mb: 0.5,
+              }}
+            >
+              {t("scanWarranty.scanning")}
+            </Typography>
+          </Box>
+        )}
+
         <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 500 }}>
           {t("scanWarranty.uploadInstruction")}
         </Typography>
