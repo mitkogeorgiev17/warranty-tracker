@@ -1,13 +1,18 @@
 package com.mitko.warranty.tracker.warranty;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
+import com.mitko.warranty.tracker.config.properties.WarrantyVaultProperties;
 import com.mitko.warranty.tracker.exception.custom.OCRException;
 import com.mitko.warranty.tracker.warranty.model.request.CreateWarrantyCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -25,20 +30,62 @@ public class WarrantyScanService {
     @Value("${google.cloud.credentials.location}")
     private Resource credentialsResource;
 
+    private final WarrantyVaultProperties properties;
+
+    private final ChatClient chatClient;
+
     public CreateWarrantyCommand scanWarranty(MultipartFile file) {
         log.info("Scanning warranty file and extracting information...");
 
         try {
-            String extractedText = extractTextFromImage(file);
-            log.info("Extracted text: {}", extractedText);
+            var extractedText = extractTextFromImage(file);
 
-            // TODO: Parse the extracted text to populate CreateWarrantyCommand fields
+            String chatResponse = chatClient
+                    .prompt(properties.openai().prompt() + extractedText)
+                    .call()
+                    .content();
 
-            return null;
+            log.info("OPENAI RESPONSE: {}" ,chatResponse);
+
+            return parseToResponse(chatResponse);
         } catch (Exception e) {
             log.error("Error scanning warranty document", e);
             throw new RuntimeException("Failed to scan warranty document: " + e.getMessage(), e);
         }
+    }
+
+    private CreateWarrantyCommand parseToResponse(String chatResponse) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            // Configure date/time module to handle Java 8 date types
+            mapper.registerModule(new JavaTimeModule());
+            // Configure mapper for more flexibility
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
+
+            // Extract the JSON part from the response if needed
+            String jsonPart = extractJsonFromResponse(chatResponse);
+
+            // Log the JSON we're trying to parse for debugging
+            log.debug("Attempting to parse JSON: {}", jsonPart);
+
+            return mapper.readValue(jsonPart, CreateWarrantyCommand.class);
+        } catch (Exception e) {
+            log.error("Error parsing AI response: {}", chatResponse, e);
+            throw new OCRException("Could not parse AI response: " + e.getMessage());
+        }
+    }
+
+    private String extractJsonFromResponse(String response) {
+        // If the response contains multiple parts or extra text, extract just the JSON
+        int startBrace = response.indexOf('{');
+        int endBrace = response.lastIndexOf('}');
+
+        if (startBrace >= 0 && endBrace > startBrace) {
+            return response.substring(startBrace, endBrace + 1);
+        }
+
+        return response; // Return original if no JSON object found
     }
 
     /**
@@ -71,29 +118,24 @@ public class WarrantyScanService {
 
             // Perform OCR
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-            StringBuilder extractedText = getStringBuilder(response);
+            List<AnnotateImageResponse> responses = response.getResponsesList();
+
+            // Process the response
+            StringBuilder extractedText = new StringBuilder();
+            for (AnnotateImageResponse res : responses) {
+                if (res.hasError()) {
+                    throw new OCRException("Error performing OCR: " + res.getError().getMessage());
+                }
+
+                // Get full text annotation
+                TextAnnotation annotation = res.getFullTextAnnotation();
+                extractedText.append(annotation.getText());
+            }
 
             return extractedText.toString();
         } finally {
             client.close();
         }
-    }
-
-    private static StringBuilder getStringBuilder(BatchAnnotateImagesResponse response) {
-        List<AnnotateImageResponse> responses = response.getResponsesList();
-
-        // Process the response
-        StringBuilder extractedText = new StringBuilder();
-        for (AnnotateImageResponse res : responses) {
-            if (res.hasError()) {
-                throw new OCRException("Error performing OCR: " + res.getError().getMessage());
-            }
-
-            // Get full text annotation
-            TextAnnotation annotation = res.getFullTextAnnotation();
-            extractedText.append(annotation.getText());
-        }
-        return extractedText;
     }
 
     /**

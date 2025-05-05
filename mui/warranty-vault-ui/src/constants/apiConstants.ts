@@ -5,7 +5,7 @@ interface ApiEndpoint {
   method: HttpMethod;
 }
 
-const API_BASE_URL = 'http://localhost:8080/api/v1.0.0';
+const API_BASE_URL = 'http://10.0.2.2:8080/api/v1.0.0';
 
 const ENDPOINTS: Record<string, ApiEndpoint> = {
   // Authentication
@@ -19,6 +19,7 @@ const ENDPOINTS: Record<string, ApiEndpoint> = {
   CREATE_WARRANTY: { path: '/warranties/', method: 'POST'},
   UPDATE_WARRANTY: { path: '/warranties/', method: 'PUT'},
   DELETE_WARRANTY: { path: '/warranties/', method: 'DELETE'},
+  SCAN_WARRANTY: { path: '/warranties/scan', method: 'POST'},
   
   // Warranty Files
   ADD_WARRANTY_FILES: { path: '/warranties/files/', method: 'POST'},

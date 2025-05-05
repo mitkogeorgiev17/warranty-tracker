@@ -24,6 +24,7 @@
     "warrantyDetails": "Warranty details",
     "updateWarranty": "Update Warranty",
     "addWarranty": "Add warranty",
+    "scanWarranty": "Scan Warranty",
     "manageWarranties": "Manage warranties"
   },
   "profile": {
@@ -94,7 +95,22 @@
     "fileUploadSuccess": "File(s) uploaded successfully.",
     "fileUploadFailed": "File upload failed.",
     "actionNotSuccessful": "Action not successful.",
-    "failedToCreate": "Failed to create warranty."
+    "failedToCreate": "Failed to create warranty.",
+    "dataExtractedSuccess" : "Warranty information extracted successfully."
+  },
+  "scanWarranty": {
+    "uploadInstruction": "Upload your warranty document",
+    "openCamera": "Take a photo",
+    "uploadFile": "Upload file",
+    "selectedFile": "Selected file",
+    "noFilesSelected": "Please select a file first",
+    "scanButton": "Scan document",
+    "scanning": "Scanning...",
+    "scanComplete": "Document scanned successfully",
+    "scanFailed": "Failed to scan document",
+    "infoAlert": "Warranty document scanner",
+    "ocrExplanation": "This tool uses Optical Character Recognition (OCR) and AI to extract warranty information from your document. Simply upload or take a photo of your warranty, and we'll automatically fill in the details for you.",
+    "uploadInstructions": "For best results, ensure your document is well-lit, flat, and all text is clearly visible in the image."
   },
   "manageWarranties": {
     "filter": "Filter",

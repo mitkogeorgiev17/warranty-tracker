@@ -2,7 +2,7 @@ package com.mitko.warranty.tracker.authentication;
 
 import com.mitko.warranty.tracker.authentication.model.AuthenticationCommand;
 import com.mitko.warranty.tracker.authentication.model.AuthenticationResponse;
-import com.mitko.warranty.tracker.config.properties.KeycloakProperties;
+import com.mitko.warranty.tracker.config.properties.WarrantyVaultProperties;
 import com.mitko.warranty.tracker.exception.custom.AuthorizationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,34 +23,37 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationService {
-    private final KeycloakProperties keycloakProperties;
+    private final WarrantyVaultProperties properties;
     private final RestClient restClient;
 
     public String getCodeUrl() {
-        return keycloakProperties.getCodeUrl();
+        return properties.keycloak().codeUrl();
     }
 
     public Map<String, String> authenticate(@Valid AuthenticationCommand command) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "authorization_code");
-        formData.add("client_id", keycloakProperties.getClientId());
-        formData.add("client_secret", keycloakProperties.getClientSecret());
+        formData.add("client_id", properties.keycloak().clientId());
+        formData.add("client_secret", properties.keycloak().clientSecret());
         formData.add("code", command.code());
+        formData.add("redirect_uri", properties.keycloak().redirectUri());
 
         var authResponse = restClient
                 .post()
-                .uri(keycloakProperties.getTokenEndpoint())
+                .uri(properties.keycloak().tokenEndpoint())
                 .accept(APPLICATION_JSON)
                 .contentType(APPLICATION_FORM_URLENCODED)
                 .body(formData)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (req, res) -> {
-                    throw new AuthorizationException("Error occurred while receiving Keycloak token.");
-        })
+                    throw new AuthorizationException("Error occurred while receiving Keycloak token. " + res.getStatusText());
+                })
                 .body(AuthenticationResponse.class);
 
-        if (authResponse != null && isNotBlank(authResponse.accessToken()))
+        if (authResponse != null && isNotBlank(authResponse.accessToken())) {
+            log.info("JWT Token generated successfully.");
             return Map.of("token", authResponse.accessToken());
+        }
         else
             throw new RuntimeException("Error occurred while receiving Keycloak token.");
     }

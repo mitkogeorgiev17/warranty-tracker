@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@capacitor/android": "^7.1.0",
-    "@capacitor/cli": "^7.1.0",
-    "@capacitor/core": "^7.1.0",
+    "@capacitor-community/http": "^1.4.1",
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/app": "^7.0.1",
+    "@capacitor/browser": "^7.0.1",
+    "@capacitor/cli": "^7.2.0",
+    "@capacitor/core": "^7.2.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.2.5",
@@ -23,6 +26,7 @@
     "i18next": "^25.0.2",
     "i18next-browser-languagedetector": "^8.1.0",
     "i18next-http-backend": "^3.0.2",
+    "lottie-react": "^2.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.5.1",

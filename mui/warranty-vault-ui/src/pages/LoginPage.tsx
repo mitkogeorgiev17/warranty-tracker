@@ -6,6 +6,9 @@ import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
 import logo from "../assets/vault-logo-simplistic.svg";
 import useKeycloakUrl from "../hooks/useKeycloakUrl";
 import { useTranslation } from "react-i18next";
+import { Capacitor } from "@capacitor/core";
+import { App } from "@capacitor/app";
+import { Browser } from "@capacitor/browser";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -14,57 +17,146 @@ function LoginPage() {
   const keycloakUrl = useKeycloakUrl();
   const { t } = useTranslation();
 
+  const isNative = Capacitor.isNativePlatform();
+
+  // Set up deep link handler for native platforms
+  useEffect(() => {
+    if (!isNative) return;
+
+    // Create a variable to store the listener handle
+    let urlOpenListenerHandle: any = null;
+
+    // Set up the listener
+    const setupListener = async () => {
+      // Await the promise to get the actual handle
+      urlOpenListenerHandle = await App.addListener("appUrlOpen", ({ url }) => {
+        console.log("Deep link received:", url);
+
+        try {
+          // Parse the URL to extract code and state
+          const urlObj = new URL(url);
+          const params = new URLSearchParams(urlObj.search);
+          const code = params.get("code");
+          const state = params.get("state");
+
+          if (code) {
+            // Close the browser if it's still open
+            Browser.close().catch((e) =>
+              console.log("Error closing browser:", e)
+            );
+
+            // Process the authentication code
+            handleAuthCode(code, state);
+          }
+        } catch (e) {
+          console.error("Error parsing deep link URL:", e);
+        }
+      });
+    };
+
+    // Call the async setup function
+    setupListener();
+
+    // Clean up listener on component unmount
+    return () => {
+      // Check if we have a handle before trying to remove
+      if (urlOpenListenerHandle) {
+        urlOpenListenerHandle.remove();
+      }
+    };
+  }, []);
+
+  // Process authentication code
+  const handleAuthCode = async (code: string, state: string | null) => {
+    if (authAttempted.current) return;
+
+    // Verify state parameter if present
+    const storedState = sessionStorage.getItem("keycloak_state");
+    if (state && storedState && state !== storedState) {
+      console.error("State mismatch in authentication response");
+      navigate("/error");
+      return;
+    }
+
+    // Clear state after use
+    sessionStorage.removeItem("keycloak_state");
+
+    authAttempted.current = true;
+    setIsLoading(true);
+
+    try {
+      const endpoint = ENDPOINTS.AUTHENTICATE;
+      const response = await axiosApi({
+        method: endpoint.method,
+        url: `${API_BASE_URL}${endpoint.path}`,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { code },
+      });
+
+      const jwt = response.data.token;
+      if (jwt) {
+        sessionStorage.setItem("jwt", jwt);
+        navigate("/home");
+      }
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        navigate("/unauthorized");
+      } else {
+        console.error("Authentication error:", error);
+        navigate("/error");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Check for auth code in URL (for web browser flow)
   useEffect(() => {
     // Check if user is already logged in
     if (sessionStorage.getItem("jwt")) {
       navigate("/home");
       return;
     }
-    // Check for auth code in URL (after redirect back from Keycloak)
-    const handleAuthCode = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get("code");
-      // Only proceed if we have a code and haven't attempted auth yet
-      if (code && !authAttempted.current) {
-        authAttempted.current = true; // Mark that we've attempted authentication
-        setIsLoading(true);
-        try {
-          const endpoint = ENDPOINTS.AUTHENTICATE;
-          const response = await axiosApi({
-            method: endpoint.method,
-            url: `${API_BASE_URL}${endpoint.path}`,
-            headers: {
-              "Content-Type": "application/json",
-            },
-            data: { code },
-          });
-          const jwt = response.data.token;
-          if (jwt) {
-            sessionStorage.setItem("jwt", jwt);
-            navigate("/home");
-          }
-        } catch (error: any) {
-          if (error.response?.status === 401) {
-            navigate("/unauthorized");
-          } else {
-            console.error("Authentication error:", error);
-            navigate("/error");
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-    handleAuthCode();
+
+    // Check for auth code in URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+    const state = urlParams.get("state");
+
+    if (code && !authAttempted.current) {
+      handleAuthCode(code, state);
+    }
   }, [navigate]);
 
+  // Handle sign-in button click
   const handleSignIn = async () => {
+    if (!keycloakUrl) {
+      console.error("Keycloak URL not available");
+      return;
+    }
+
     setIsLoading(true);
-    if (keycloakUrl) {
-      window.location.href = keycloakUrl;
+
+    try {
+      if (isNative) {
+        // For native platforms, use the Capacitor Browser plugin
+        await Browser.open({
+          url: keycloakUrl,
+          presentationStyle: "popover", // Important for iOS to allow closing
+        });
+      } else {
+        // For web, use standard redirect
+        window.location.href = keycloakUrl;
+      }
+    } catch (error) {
+      console.error("Error opening browser:", error);
+      setIsLoading(false);
     }
   };
 
+  // Your existing UI code remains the same
   return (
     <Box
       sx={{

@@ -1,10 +1,9 @@
 import axiosApi from "../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
-import { Container, Paper, Box } from "@mui/material";
+import { Container, Paper } from "@mui/material";
 import UserGreeting from "../components/UserGreeting";
 import HomePageMenu from "../components/HomePageMenu";
 import ExpiringSoonSection from "../components/ExpiringSoonSection";
-import SearchSection from "../components/SearchSection";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "../constants/UserContext.tsx";
@@ -12,8 +11,8 @@ import { useTranslation } from "react-i18next";
 
 function HomePage() {
   const navigate = useNavigate();
-  const { user, setUser, isLoading, setIsLoading } = useUser();
-  const { t, i18n } = useTranslation();
+  const { user, setUser, setIsLoading } = useUser();
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const fetchUser = async () => {

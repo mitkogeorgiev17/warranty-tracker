@@ -17,7 +17,6 @@ const UpdateWarrantyPage: FC = () => {
   const { t } = useTranslation(); // Initialize translation hook
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [submitting, setSubmitting] = useState<boolean>(false);
   const [warranty, setWarranty] = useState<WarrantyDTO | null>(null);
 
   useEffect(() => {
@@ -57,8 +56,6 @@ const UpdateWarrantyPage: FC = () => {
     }
 
     try {
-      setSubmitting(true);
-
       // Use the original updateCommand
       console.log("Update command:", updateCommand);
 
@@ -182,8 +179,6 @@ const UpdateWarrantyPage: FC = () => {
         error.message ||
         t("updateWarranty.updateError");
       toast.error(errorMessage);
-    } finally {
-      setSubmitting(false);
     }
   };
 
