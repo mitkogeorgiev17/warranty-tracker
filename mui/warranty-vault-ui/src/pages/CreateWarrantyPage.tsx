@@ -20,7 +20,6 @@ import { CreateWarrantyCommand } from "../constants/Warranty";
 import axiosApi from "../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
 import { toast } from "sonner";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { useLocation } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -251,9 +250,6 @@ function CreateWarrantyPage() {
               freeSolo
               options={DEFAULT_WARRANTY_CATEGORIES}
               value={category}
-              onChange={(event, newValue) => {
-                setCategory(newValue);
-              }}
               renderInput={(params) => (
                 <TextField
                   {...params}

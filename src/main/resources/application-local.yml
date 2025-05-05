@@ -1,3 +1,6 @@
+server:
+  address: 0.0.0.0
+  port: 8080
 spring:
   jpa:
     show-sql: false
@@ -33,7 +36,7 @@ spring:
           model: gpt-4.1-mini
 
 baseUrls:
-  keycloak: http://localhost:8081/realms/WarrantyTracker
+  keycloak: http://10.0.2.2:8081/realms/WarrantyTracker
 
 keycloak:
   code-url: ${baseUrls.keycloak}/protocol/openid-connect/auth?client_id=${keycloak.client-id}&response_type=code

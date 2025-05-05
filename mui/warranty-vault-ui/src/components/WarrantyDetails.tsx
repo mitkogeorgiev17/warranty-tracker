@@ -68,8 +68,6 @@ interface StatusChipProps {
 }
 
 const StatusChip: FC<StatusChipProps> = ({ status }) => {
-  const { t } = useTranslation(); // Initialize translation hook for Status Chip
-
   const getChipProps = () => {
     switch (status) {
       case WarrantyStatus.ACTIVE:
