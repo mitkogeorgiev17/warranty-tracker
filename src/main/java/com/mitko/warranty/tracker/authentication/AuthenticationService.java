@@ -36,6 +36,7 @@ public class AuthenticationService {
         formData.add("client_id", properties.keycloak().clientId());
         formData.add("client_secret", properties.keycloak().clientSecret());
         formData.add("code", command.code());
+        formData.add("redirect_uri", properties.keycloak().redirectUri());
 
         var authResponse = restClient
                 .post()
@@ -45,12 +46,14 @@ public class AuthenticationService {
                 .body(formData)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (req, res) -> {
-                    throw new AuthorizationException("Error occurred while receiving Keycloak token.");
-        })
+                    throw new AuthorizationException("Error occurred while receiving Keycloak token. " + res.getStatusText());
+                })
                 .body(AuthenticationResponse.class);
 
-        if (authResponse != null && isNotBlank(authResponse.accessToken()))
+        if (authResponse != null && isNotBlank(authResponse.accessToken())) {
+            log.info("JWT Token generated successfully.");
             return Map.of("token", authResponse.accessToken());
+        }
         else
             throw new RuntimeException("Error occurred while receiving Keycloak token.");
     }

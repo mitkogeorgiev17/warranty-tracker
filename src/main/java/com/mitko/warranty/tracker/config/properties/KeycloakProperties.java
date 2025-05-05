@@ -4,6 +4,7 @@ public record KeycloakProperties (
         String tokenEndpoint,
         String codeUrl,
         String clientId,
-        String clientSecret
+        String clientSecret,
+        String redirectUri
 ){
 }

@@ -12,6 +12,8 @@
   "dependencies": {
     "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "^7.2.0",
+    "@capacitor/app": "^7.0.1",
+    "@capacitor/browser": "^7.0.1",
     "@capacitor/cli": "^7.2.0",
     "@capacitor/core": "^7.2.0",
     "@emotion/react": "^11.14.0",

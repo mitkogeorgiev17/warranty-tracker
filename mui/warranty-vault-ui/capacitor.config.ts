@@ -12,6 +12,15 @@ const config: CapacitorConfig = {
     allowMixedContent: true,
     captureInput: true,
     webContentsDebuggingEnabled: true
+  },
+  // Define URL schemes in plugins configuration instead
+  plugins: {
+    App: {
+      // This is where you define your URL scheme in newer Capacitor versions
+      appUrlOpen: {
+        scheme: 'vaultapp'
+      }
+    }
   }
 };
 

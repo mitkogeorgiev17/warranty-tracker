@@ -1,3 +1,6 @@
+server:
+  address: 0.0.0.0
+  port: 8080
 spring:
   jpa:
     show-sql: false
@@ -9,14 +12,13 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    url: jdbc:postgresql://localhost:5432/warranty_tracker
+    url: jdbc:postgresql://10.0.2.2:5432/warranty_tracker
     schema: development
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${baseUrls.keycloak}
-          jwt-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          jwt-set-uri: ${baseUrls.keycloak}/protocol/openid-connect/certs
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog-master.yaml
@@ -34,12 +36,14 @@ spring:
 
 baseUrls:
   keycloak: http://localhost:8081/realms/WarrantyTracker
+  keycloakMobileIssuer: http://10.0.2.2:8081/realms/WarrantyTracker
 
 keycloak:
-  code-url: ${baseUrls.keycloak}/protocol/openid-connect/auth?client_id=${keycloak.client-id}&response_type=code
+  code-url: ${baseUrls.keycloakMobileIssuer}/protocol/openid-connect/auth?client_id=${keycloak.client-id}&response_type=code&redirect_uri=vaultapp://callback
   token-endpoint: ${baseUrls.keycloak}/protocol/openid-connect/token
   client-id: warranty-tracker-local
   client-secret: ${KEYCLOAK_CLIENT_SECRET}
+  redirectUri: vaultapp://callback
   admin-client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
 
 cloudinary:
