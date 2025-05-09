@@ -16,4 +16,5 @@ public class UserAccountResponse {
     private String lastName;
     private WarrantyCountsProjection warrantyCountsProjection;
     private Language language;
+    private boolean emailNotifications;
 }

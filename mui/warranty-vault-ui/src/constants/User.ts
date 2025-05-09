@@ -5,6 +5,7 @@ export interface User {
     lastName: string;
     warrantyCountsProjection: ExpiringWarranties;
     language: string;
+    emailNotifications: boolean;
 }
 
 interface ExpiringWarranties {

@@ -40,6 +40,9 @@ public class User {
         this.language = Language.EN;
     }
 
+    @Column(name = "email_notifications")
+    private boolean emailNotifications;
+
     @Override
     public final boolean equals(Object obj) {
         if (this == obj) return true;

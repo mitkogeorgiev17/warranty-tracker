@@ -88,12 +88,23 @@ function ScanWarrantyPage() {
       });
 
       if (response.status === 200 && response.data) {
-        navigate("/create", { state: { warrantyCommand: response.data } });
+        // Pass both the warranty data and the scanned file to the create page
+        navigate("/create", {
+          state: {
+            warrantyCommand: response.data,
+            scannedFile: files[0], // Pass the scanned file to CreateWarrantyPage
+          },
+        });
       }
-    } catch (error) {
-      console.error("Error scanning warranty:", error);
-      toast.error(t("scanWarranty.scanFailed"));
+    } catch (error: any) {
+      console.error("Error creating warranty:", error);
       setIsScanning(false);
+      if (error.response && error.response.status === 401) {
+        navigate("/unauthorized");
+      } else {
+        toast.error(t("createWarranty.failedToCreate"));
+        navigate("/error");
+      }
     }
   };
 

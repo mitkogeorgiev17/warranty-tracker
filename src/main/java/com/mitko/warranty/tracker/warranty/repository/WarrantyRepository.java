@@ -37,4 +37,5 @@ public interface WarrantyRepository extends JpaRepository<Warranty, Long> {
             @Param("userId") String userId
     );
 
+    List<Warranty> findAllByEndDate(LocalDate endDate);
 }

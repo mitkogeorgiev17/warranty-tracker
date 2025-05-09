@@ -59,23 +59,29 @@ function CreateWarrantyPage() {
   // Check if we have warranty data from the scan page
   useEffect(() => {
     const incomingData = location.state?.warrantyCommand;
+    const scannedFile = location.state?.scannedFile;
 
     if (incomingData) {
       if (incomingData.name) setWarrantyName(incomingData.name);
       if (incomingData.startDate) {
         setStartDate(incomingData.startDate);
       } else {
-        setStartDate("");
+        setStartDate(getDefaultStartDate());
       }
       if (incomingData.endDate) {
         setEndDate(incomingData.endDate);
       } else {
-        setEndDate("");
+        setEndDate(getDefaultEndDate());
       }
       if (incomingData.note) setNote(incomingData.note);
       if (incomingData.category) setCategory(incomingData.category);
 
       toast.success(t("createWarranty.dataExtractedSuccess"));
+    }
+
+    // If a scanned file was passed, add it to the files array
+    if (scannedFile) {
+      setFiles([scannedFile]);
     }
   }, [location.state]);
 
@@ -119,7 +125,6 @@ function CreateWarrantyPage() {
 
     console.log("Warranty Command:", warrantyCommand);
     console.log("Files to upload:", files);
-
     createWarranty(warrantyCommand, files);
   };
 
@@ -141,7 +146,6 @@ function CreateWarrantyPage() {
           const warrantyId = response.data.id;
           uploadFiles(warrantyId, attachments);
         }
-
         toast.success(t("createWarranty.successMessage"));
         navigate("/manage");
       } else {
@@ -224,7 +228,6 @@ function CreateWarrantyPage() {
           >
             {t("createWarranty.details")}
           </Typography>
-
           <Stack spacing={3} sx={{ mb: 2 }}>
             <TextField
               required
@@ -250,6 +253,7 @@ function CreateWarrantyPage() {
               freeSolo
               options={DEFAULT_WARRANTY_CATEGORIES}
               value={category}
+              onChange={(_, newValue) => setCategory(newValue)}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -293,14 +297,11 @@ function CreateWarrantyPage() {
                 }}
               />
             </Box>
-
             <Divider sx={{ my: 2 }} />
-
             {/* File Upload Section */}
             <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
               {t("createWarranty.attachments")}
             </Typography>
-
             <Box>
               <input
                 type="file"
@@ -309,7 +310,6 @@ function CreateWarrantyPage() {
                 style={{ display: "none" }}
                 onChange={handleFileChange}
               />
-
               <Button
                 variant="outlined"
                 startIcon={<UploadFileIcon />}
@@ -318,7 +318,6 @@ function CreateWarrantyPage() {
               >
                 {t("createWarranty.selectFiles")}
               </Button>
-
               {files.length > 0 && (
                 <List dense sx={{ width: "100%", bgcolor: "background.paper" }}>
                   {files.map((file, index) => (
@@ -347,7 +346,6 @@ function CreateWarrantyPage() {
               )}
             </Box>
           </Stack>
-
           <Box
             sx={{
               position: "absolute",

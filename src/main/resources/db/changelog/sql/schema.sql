@@ -7,7 +7,8 @@ CREATE TABLE users (
     email               VARCHAR(128)        NOT NULL,
     first_name          VARCHAR(64)         NOT NULL,
     last_name           VARCHAR(64)         NOT NULL,
-    account_language    VARCHAR(2)          NOT NULL
+    account_language    VARCHAR(2)          NOT NULL,
+    email_notifications BOOLEAN             NOT NULL
 );
 
 --changeset mitko:create_warranties_table

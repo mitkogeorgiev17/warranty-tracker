@@ -12,4 +12,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class UpdateUserCommand {
     private Language updatedLanguage;
+    private Boolean updatedEmailNotifications;
 }

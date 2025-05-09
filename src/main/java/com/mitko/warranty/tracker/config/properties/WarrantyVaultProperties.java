@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties
 public record WarrantyVaultProperties(
         KeycloakProperties keycloak,
-        OpenAiProperties openai
+        OpenAiProperties openai,
+        EmailTemplateProperties emailTemplate
 ) {
 }

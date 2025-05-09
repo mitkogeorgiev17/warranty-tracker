@@ -36,7 +36,11 @@
     "userDataNotAvailable": "User data not available",
     "goToHome": "Go to Home",
     "languageUpdated": "Language preference updated",
-    "failedToUpdate": "Failed to update language preference"
+    "failedToUpdate": "Failed to update language preference",
+    "notificationSettings": "Notification Settings",
+    "warrantyNotifications": "Warranty Expiration Notifications",
+    "warrantyNotificationsDescription": "Receive email notifications when your product warranties are about to expire.",
+    "settingsSaved": "Profile settings saved successfully"
   },
   "home": {
     "createWarranty": "Create Warranty",

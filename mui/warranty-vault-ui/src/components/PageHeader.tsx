@@ -30,7 +30,7 @@ const PageHeader = ({
         borderRadius: 3,
         backgroundColor: "background.paper",
         p: 1,
-        mt: 2,
+        mt: 6,
         width: "90%",
         mx: "auto",
         border: "2px solid",

@@ -16,9 +16,7 @@ function HomePage() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      // Skip if we already have user data
-      if (user) return;
-
+      // Always fetch user data when landing on the page
       setIsLoading(true);
       try {
         const endpoint = ENDPOINTS.ACCOUNT;
@@ -27,7 +25,6 @@ function HomePage() {
           url: `${API_BASE_URL}${endpoint.path}`,
           responseType: "json",
         });
-
         if (response.data) {
           setUser(response.data);
           await i18n.changeLanguage(response.data.language.toLowerCase());
@@ -45,8 +42,9 @@ function HomePage() {
       }
     };
 
+    // Call fetchUser every time the component mounts
     fetchUser();
-  }, [navigate, setUser, user, setIsLoading]);
+  }, [navigate, setUser, setIsLoading, i18n]); // Removed user from dependencies
 
   return (
     <Container maxWidth="lg">
