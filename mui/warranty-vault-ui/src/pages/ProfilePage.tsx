@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import SaveIcon from "@mui/icons-material/Save";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import LanguageIcon from "@mui/icons-material/Language";
 import { useUser } from "../constants/UserContext.tsx";
 import { toast } from "sonner";
 import axiosApi from "../config/axiosApiConfig";
@@ -215,12 +216,12 @@ const ProfilePage: React.FC = () => {
               >
                 <Avatar
                   sx={{
-                    width: 60,
-                    height: 60,
+                    width: 80,
+                    height: 80,
                     bgcolor: "rgba(169, 133, 240, 0.7)",
                   }}
                 >
-                  <PersonIcon sx={{ fontSize: 40 }} />
+                  <PersonIcon sx={{ fontSize: 50 }} />
                 </Avatar>
               </Grid>
 
@@ -270,9 +271,12 @@ const ProfilePage: React.FC = () => {
         {/* Language Settings Card */}
         <Card sx={cardStyle}>
           <CardContent sx={{ pt: 2, pb: 2 }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              {t("profile.languageSettings")}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <LanguageIcon sx={{ mr: 1, color: "rgba(169, 133, 240, 0.9)" }} />
+              <Typography variant="h6">
+                {t("profile.languageSettings")}
+              </Typography>
+            </Box>
             <Divider sx={{ mb: 2 }} />
 
             <Grid container spacing={2} alignItems="center">
@@ -321,30 +325,32 @@ const ProfilePage: React.FC = () => {
         {/* Notification Settings Card */}
         <Card sx={cardStyle}>
           <CardContent sx={{ pt: 2, pb: 2 }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              {t("profile.notificationSettings")}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <NotificationsIcon
+                sx={{ mr: 1, color: "rgba(169, 133, 240, 0.9)" }}
+              />
+              <Typography variant="h6">
+                {t("profile.notificationSettings")}
+              </Typography>
+            </Box>
             <Divider sx={{ mb: 2 }} />
 
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <NotificationsIcon sx={{ mr: 2, color: "text.secondary" }} />
-                  <Box>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={emailNotifications}
-                          onChange={handleNotificationsChange}
-                          color="primary"
-                        />
-                      }
-                      label={t("profile.warrantyNotifications")}
-                    />
-                    <Typography variant="body2" color="textSecondary">
-                      {t("profile.warrantyNotificationsDescription")}
-                    </Typography>
-                  </Box>
+                <Box>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={emailNotifications}
+                        onChange={handleNotificationsChange}
+                        color="primary"
+                      />
+                    }
+                    label={t("profile.warrantyNotifications")}
+                  />
+                  <Typography variant="body2" color="textSecondary">
+                    {t("profile.warrantyNotificationsDescription")}
+                  </Typography>
                 </Box>
               </Grid>
             </Grid>

@@ -5,9 +5,9 @@ interface ApiEndpoint {
   method: HttpMethod;
 }
 // Local development
-const API_BASE_URL = 'http://localhost:8080/api/v1.0.0';
+// const API_BASE_URL = 'http://localhost:8080/api/v1.0.0';
 // For emulator
-// const API_BASE_URL = 'http://10.0.2.2:8080/api/v1.0.0';
+const API_BASE_URL = 'http://10.0.2.2:8080/api/v1.0.0';
 // For physical device
 // const API_BASE_URL = 'http://192.168.0.2:8080/api/v1.0.0';
 

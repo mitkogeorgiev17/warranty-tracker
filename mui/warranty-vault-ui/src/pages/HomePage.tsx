@@ -34,6 +34,8 @@ function HomePage() {
       } catch (error: any) {
         if (error.response && error.response.status === 401) {
           navigate("/unauthorized");
+        } else if (error.response && error.response.status === 409) {
+          console.log("409 Error");
         } else {
           navigate("/error");
         }

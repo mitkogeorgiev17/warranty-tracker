@@ -140,16 +140,21 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      if (isNative) {
-        // For native platforms, use the Capacitor Browser plugin
-        await Browser.open({
-          url: keycloakUrl,
-          presentationStyle: "popover", // Important for iOS to allow closing
-        });
-      } else {
-        // For web, use standard redirect
-        window.location.href = keycloakUrl;
-      }
+      // if (isNative) {
+      //   console.log("========IS NATIVE========");
+      //   await Browser.open({
+      //     url: keycloakUrl,
+      //     toolbarColor: "#262626",
+      //     presentationStyle: "fullscreen",
+      //   });
+      // } else {
+      //   window.location.href = keycloakUrl;
+      // }
+      await Browser.open({
+        url: keycloakUrl,
+        toolbarColor: "#262626",
+        presentationStyle: "fullscreen",
+      });
     } catch (error) {
       console.error("Error opening browser:", error);
       setIsLoading(false);
