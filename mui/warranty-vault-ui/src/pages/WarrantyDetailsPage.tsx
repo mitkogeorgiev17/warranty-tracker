@@ -8,6 +8,10 @@ import { Box, Typography, CircularProgress } from "@mui/material";
 import PageHeader from "../components/PageHeader";
 import { useTranslation } from "react-i18next";
 
+/**
+ * WarrantyDetailsPage - Displays the details of a specific warranty
+ * This page uses the shared WarrantyDetails component in view mode
+ */
 const WarrantyDetailsPage: FC = () => {
   const navigate = useNavigate();
   const { warrantyId } = useParams<{ warrantyId: string }>();
@@ -22,6 +26,7 @@ const WarrantyDetailsPage: FC = () => {
         setLoading(false);
         return;
       }
+
       try {
         setLoading(true);
         const endpoint = ENDPOINTS.GET_WARRANTIES;
@@ -32,7 +37,7 @@ const WarrantyDetailsPage: FC = () => {
         setWarranty(response.data);
       } catch (error: any) {
         console.error("Error fetching warranty details:", error);
-        if (error.status == 401) {
+        if (error.status === 401) {
           navigate("/unauthorized");
         } else {
           navigate("/error");
@@ -41,9 +46,11 @@ const WarrantyDetailsPage: FC = () => {
         setLoading(false);
       }
     }
+
     fetchWarrantyDetails();
   }, [warrantyIdNumber, navigate]);
 
+  // Show loading spinner while data is being fetched
   if (loading) {
     return (
       <Box
@@ -57,6 +64,7 @@ const WarrantyDetailsPage: FC = () => {
     );
   }
 
+  // Show error message if warranty data couldn't be loaded
   if (!warranty) {
     return (
       <Box textAlign="center" p={6}>
@@ -67,10 +75,15 @@ const WarrantyDetailsPage: FC = () => {
     );
   }
 
+  // Render the warranty details in view mode
   return (
     <>
-      <PageHeader title={t("pages.warrantyDetails")} />
-      <WarrantyDetails warranty={warranty} isEditMode={false} />
+      <PageHeader title={t("pages.warrantyDetails")} borderColor="#64b5f6" />
+      <WarrantyDetails
+        warranty={warranty}
+        isEditMode={false}
+        // No onSave or onCancel needed in view mode
+      />
     </>
   );
 };

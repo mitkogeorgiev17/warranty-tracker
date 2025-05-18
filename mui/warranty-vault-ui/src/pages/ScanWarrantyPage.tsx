@@ -25,10 +25,11 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import ScannerIcon from "@mui/icons-material/Scanner";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { useTranslation } from "react-i18next";
-import Lottie from "lottie-react"; // Import Lottie
+import Lottie from "lottie-react";
+import animationData from "../assets/animations/scanning-animation.json";
 
-// Import the animation data from your JSON file or paste it here
-import animationData from "../assets/animations/scanning-animation.json"; // Update path as needed
+// Import Capacitor Camera plugin
+import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 
 function ScanWarrantyPage() {
   const navigate = useNavigate();
@@ -58,11 +59,48 @@ function ScanWarrantyPage() {
     }
   };
 
-  const handleOpenCamera = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.accept = "image/*";
-      fileInputRef.current.capture = "environment";
-      fileInputRef.current.click();
+  // New function to handle camera capture with Capacitor
+  const handleOpenCamera = async () => {
+    try {
+      // Request camera permissions
+      const permissionStatus = await Camera.requestPermissions();
+
+      if (permissionStatus.camera === "granted") {
+        // Take photo with the camera
+        const image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: true,
+          resultType: CameraResultType.Uri,
+          source: CameraSource.Camera,
+        });
+
+        // Convert the image URI to a File object
+        if (image.webPath) {
+          const response = await fetch(image.webPath);
+          const blob = await response.blob();
+
+          // Create a File from the blob
+          const fileName = `photo_${new Date().getTime()}.${
+            image.format || "jpeg"
+          }`;
+          const file = new File([blob], fileName, {
+            type: `image/${image.format || "jpeg"}`,
+          });
+
+          setFiles([file]);
+        }
+      } else {
+        toast.error(t("scanWarranty.cameraPermissionDenied"));
+      }
+    } catch (error) {
+      console.error("Camera error:", error);
+      toast.error(t("scanWarranty.cameraError"));
+
+      // Fallback to file input if camera fails
+      if (fileInputRef.current) {
+        fileInputRef.current.accept = "image/*";
+        fileInputRef.current.click();
+      }
     }
   };
 
@@ -88,12 +126,23 @@ function ScanWarrantyPage() {
       });
 
       if (response.status === 200 && response.data) {
-        navigate("/create", { state: { warrantyCommand: response.data } });
+        // Pass both the warranty data and the scanned file to the create page
+        navigate("/create", {
+          state: {
+            warrantyCommand: response.data,
+            scannedFile: files[0], // Pass the scanned file to CreateWarrantyPage
+          },
+        });
       }
-    } catch (error) {
-      console.error("Error scanning warranty:", error);
-      toast.error(t("scanWarranty.scanFailed"));
+    } catch (error: any) {
+      console.error("Error creating warranty:", error);
       setIsScanning(false);
+      if (error.response && error.response.status === 401) {
+        navigate("/unauthorized");
+      } else {
+        toast.error(t("createWarranty.failedToCreate"));
+        navigate("/error");
+      }
     }
   };
 

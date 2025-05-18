@@ -13,7 +13,6 @@ const animationData = {
   w: 600,
   h: 600,
   nm: "Scanning",
-  // ... rest of the animation data from your JSON file
 };
 
 interface ScanningLoaderProps {

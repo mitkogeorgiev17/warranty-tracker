@@ -38,6 +38,8 @@ public class AuthenticationService {
         formData.add("code", command.code());
         formData.add("redirect_uri", properties.keycloak().redirectUri());
 
+        log.info(command.code());
+
         var authResponse = restClient
                 .post()
                 .uri(properties.keycloak().tokenEndpoint())

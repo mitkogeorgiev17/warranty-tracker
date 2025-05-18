@@ -36,7 +36,11 @@
     "userDataNotAvailable": "User data not available",
     "goToHome": "Go to Home",
     "languageUpdated": "Language preference updated",
-    "failedToUpdate": "Failed to update language preference"
+    "failedToUpdate": "Failed to update language preference",
+    "notificationSettings": "Notification Settings",
+    "warrantyNotifications": "Warranty Expiration Notifications",
+    "warrantyNotificationsDescription": "Receive email notifications when your product warranties are about to expire.",
+    "settingsSaved": "Profile settings saved successfully"
   },
   "home": {
     "createWarranty": "Create Warranty",
@@ -77,7 +81,9 @@
     "unknownSize": "Unknown size",
     "unknownDate": "Unknown date",
     "viewFile": "View",
-    "newFile": "New"
+    "newFile": "New",
+    "takePhoto": "Take a photo",
+    "photoAdded": "Photo added successfully"
   },
   "createWarranty": {
     "pageTitle": "Add warranty",
@@ -110,7 +116,9 @@
     "scanFailed": "Failed to scan document",
     "infoAlert": "Warranty document scanner",
     "ocrExplanation": "This tool uses Optical Character Recognition (OCR) and AI to extract warranty information from your document. Simply upload or take a photo of your warranty, and we'll automatically fill in the details for you.",
-    "uploadInstructions": "For best results, ensure your document is well-lit, flat, and all text is clearly visible in the image."
+    "uploadInstructions": "For best results, ensure your document is well-lit, flat, and all text is clearly visible in the image.",
+    "cameraPermissionDenied": "Camera permission denied",
+    "cameraError": "There was a problem accessing the camera"
   },
   "manageWarranties": {
     "filter": "Filter",

@@ -141,17 +141,19 @@ function LoginPage() {
 
     try {
       if (isNative) {
-        // For native platforms, use the Capacitor Browser plugin
+        // For mobile, use Capacitor Browser
         await Browser.open({
           url: keycloakUrl,
-          presentationStyle: "popover", // Important for iOS to allow closing
+          toolbarColor: "#262626",
+          presentationStyle: "fullscreen",
         });
       } else {
-        // For web, use standard redirect
+        // For web, navigate directly to the keycloak URL
+        // This will redirect back to your app after login
         window.location.href = keycloakUrl;
       }
     } catch (error) {
-      console.error("Error opening browser:", error);
+      console.error("Error during sign-in:", error);
       setIsLoading(false);
     }
   };

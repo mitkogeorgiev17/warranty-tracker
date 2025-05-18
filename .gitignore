@@ -96,9 +96,6 @@ ui/build/
 web-ui/node_modules/
 web-ui/build/
 
-# Capacitor generated Android project
-android/
-
 # Logs
 logs
 *.log
@@ -125,3 +122,5 @@ dist-ssr
 *.sw?
 
 google-credentials.json
+
+/android

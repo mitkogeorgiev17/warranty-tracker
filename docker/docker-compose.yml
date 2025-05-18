@@ -27,6 +27,8 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: tempadmin
     ports:
       - "8081:8080"
+    volumes:
+      - ./keycloak-theme-for-kc-all-other-versions.jar:/opt/keycloak/providers/keycloak-theme.jar
     command: ["start-dev"]
     depends_on:
       - postgres

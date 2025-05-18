@@ -212,52 +212,23 @@ const WarrantyCardList = ({
                 cursor: "pointer",
                 display: "flex",
                 flexDirection: "column",
+                height: "100%",
               }}
               onClick={() => handleCardClick(warranty.id)}
             >
-              <Box
+              <CardContent
                 sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
+                  py: 2,
                   display: "flex",
-                  gap: 1,
-                  zIndex: 2, // Ensure buttons are above the card content
+                  flexDirection: "column",
+                  height: "100%",
                 }}
               >
-                <IconButton
-                  onClick={(e) => handleEditWarranty(warranty.id, e)}
-                  sx={{
-                    color: "#ffb74d",
-                    border: "2px solid #ffb74d",
-                    padding: "6px",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 183, 77, 0.1)",
-                    },
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  onClick={(e) => handleDeleteClick(warranty.id, e)}
-                  sx={{
-                    color: "#f44336",
-                    border: "2px solid #f44336",
-                    padding: "6px",
-                    "&:hover": {
-                      backgroundColor: "rgba(244, 67, 54, 0.1)",
-                    },
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-              <CardContent sx={{ py: 2 }}>
                 <Typography
                   variant="h6"
                   component="div"
                   noWrap
-                  sx={{ pr: 6, fontWeight: 500, color: "text.primary" }}
+                  sx={{ fontWeight: 500, color: "text.primary" }}
                 >
                   {warranty.name}
                 </Typography>
@@ -266,19 +237,62 @@ const WarrantyCardList = ({
                 </Typography>
                 <Box
                   sx={{
-                    display: "inline-block",
-                    backgroundColor: "rgba(0, 0, 0, 0.06)",
-                    borderRadius: 1,
-                    px: 1,
-                    py: 0.5,
                     mt: 1,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  <Typography variant="body2" color="text.secondary">
-                    {warranty.category && warranty.category
-                      ? warranty.category
-                      : t("warrantyCardList.uncategorized")}
-                  </Typography>
+                  <Box
+                    sx={{
+                      display: "inline-block",
+                      backgroundColor: "rgba(0, 0, 0, 0.06)",
+                      borderRadius: 1,
+                      px: 1,
+                      py: 0.5,
+                    }}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      {warranty.category && warranty.category
+                        ? warranty.category
+                        : t("warrantyCardList.uncategorized")}
+                    </Typography>
+                  </Box>
+
+                  {/* Buttons aligned with category */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                    }}
+                  >
+                    <IconButton
+                      onClick={(e) => handleEditWarranty(warranty.id, e)}
+                      sx={{
+                        color: "#ffb74d",
+                        border: "2px solid #ffb74d",
+                        padding: "6px",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 183, 77, 0.1)",
+                        },
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={(e) => handleDeleteClick(warranty.id, e)}
+                      sx={{
+                        color: "#f44336",
+                        border: "2px solid #f44336",
+                        padding: "6px",
+                        "&:hover": {
+                          backgroundColor: "rgba(244, 67, 54, 0.1)",
+                        },
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
               </CardContent>
             </Card>

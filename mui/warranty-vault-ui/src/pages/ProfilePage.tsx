@@ -16,10 +16,15 @@ import {
   InputLabel,
   ListItemIcon,
   ListItemText,
+  Switch,
+  FormControlLabel,
+  Fab,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import SaveIcon from "@mui/icons-material/Save";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import LanguageIcon from "@mui/icons-material/Language";
 import { useUser } from "../constants/UserContext.tsx";
 import { toast } from "sonner";
 import axiosApi from "../config/axiosApiConfig";
@@ -40,8 +45,11 @@ const ProfilePage: React.FC = () => {
   const { user, updateUser, isLoading, setIsLoading } = useUser();
   const navigate = useNavigate();
   const [language, setLanguage] = useState("");
-  const [isLanguageChanged, setIsLanguageChanged] = useState(false);
+  const [emailNotifications, setEmailNotifications] = useState(false);
   const { t, i18n } = useTranslation();
+
+  // Track if any changes have been made
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     // If user is not loaded yet, navigate to home to trigger the fetch
@@ -51,6 +59,9 @@ const ProfilePage: React.FC = () => {
       // Set language from user data
       setLanguage(user.language);
 
+      // Set email notifications from user data
+      setEmailNotifications(user.emailNotifications || false);
+
       // Initialize i18n with the user's language preference
       if (user.language) {
         i18n.changeLanguage(user.language.toLowerCase());
@@ -58,49 +69,74 @@ const ProfilePage: React.FC = () => {
     }
   }, [user, navigate, isLoading, i18n]);
 
+  // Check if any changes were made to update the hasChanges state
+  useEffect(() => {
+    if (!user) return;
+
+    const languageChanged = language !== user.language;
+    const notificationsChanged = emailNotifications !== user.emailNotifications;
+
+    setHasChanges(languageChanged || notificationsChanged);
+  }, [language, emailNotifications, user]);
+
   const handleLanguageChange = (event: any) => {
     const newLanguage = event.target.value;
     setLanguage(newLanguage);
-    setIsLanguageChanged(newLanguage !== user?.language);
   };
 
-  const handleSaveLanguage = async () => {
+  const handleNotificationsChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newValue = event.target.checked;
+    setEmailNotifications(newValue);
+  };
+
+  const handleSaveChanges = async () => {
     if (!user) return;
 
     setIsLoading(true);
     try {
-      // Replace with your actual API endpoint
       const endpoint = ENDPOINTS.UPDATE_ACCOUNT;
 
-      const updatedUser = {
-        ...user,
-        updatedLanguage: language,
-      };
+      // Only include fields that have changed
+      const updatedData: any = { ...user };
+
+      if (language !== user.language) {
+        updatedData.updatedLanguage = language;
+      }
+
+      if (emailNotifications !== user.emailNotifications) {
+        updatedData.updatedEmailNotifications = emailNotifications;
+      }
 
       await axiosApi({
         method: endpoint.method,
         url: `${API_BASE_URL}${endpoint.path}`,
-        data: updatedUser,
+        data: updatedData,
         responseType: "json",
       });
 
-      // First change the language in i18next
-      await i18n.changeLanguage(language.toLowerCase());
+      // If language changed, update i18n first
+      if (language !== user.language) {
+        await i18n.changeLanguage(language.toLowerCase());
+      }
 
-      // Then update the user in context with the new language
-      // This is important to update in correct order
+      // Update user in context with all changes
       updateUser({
         ...user,
-        language: language, // Update user object with the new language
+        language: language,
+        emailNotifications: emailNotifications,
       });
 
-      toast.success(t("profile.languageUpdated"));
-      setIsLanguageChanged(false);
+      toast.success(t("profile.settingsSaved"));
+      setHasChanges(false);
     } catch (error) {
-      console.error("Failed to update language preference:", error);
+      console.error("Failed to update user settings:", error);
       toast.error(t("profile.failedToUpdate"));
-      // Reset to original language on error
+
+      // Reset to original values on error
       setLanguage(user.language);
+      setEmailNotifications(user.emailNotifications || false);
     } finally {
       setIsLoading(false);
     }
@@ -163,7 +199,7 @@ const ProfilePage: React.FC = () => {
   return (
     <>
       <PageHeader title={t("pages.profile")} />
-      <Box sx={{ py: 2, width: "90%", mx: "auto" }}>
+      <Box sx={{ py: 2, width: "90%", mx: "auto", pb: 10 }}>
         {/* Personal Info Card */}
         <Card sx={cardStyle}>
           <CardContent sx={{ pt: 2, pb: 2 }}>
@@ -180,12 +216,12 @@ const ProfilePage: React.FC = () => {
               >
                 <Avatar
                   sx={{
-                    width: 90,
-                    height: 90,
+                    width: 80,
+                    height: 80,
                     bgcolor: "rgba(169, 133, 240, 0.7)",
                   }}
                 >
-                  <PersonIcon sx={{ fontSize: 48 }} />
+                  <PersonIcon sx={{ fontSize: 50 }} />
                 </Avatar>
               </Grid>
 
@@ -235,13 +271,16 @@ const ProfilePage: React.FC = () => {
         {/* Language Settings Card */}
         <Card sx={cardStyle}>
           <CardContent sx={{ pt: 2, pb: 2 }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              {t("profile.languageSettings")}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <LanguageIcon sx={{ mr: 1, color: "rgba(169, 133, 240, 0.9)" }} />
+              <Typography variant="h6">
+                {t("profile.languageSettings")}
+              </Typography>
+            </Box>
             <Divider sx={{ mb: 2 }} />
 
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={8}>
+              <Grid item xs={12}>
                 <FormControl fullWidth variant="outlined" size="small">
                   <InputLabel id="language-select-label">
                     {t("common.language")}
@@ -279,24 +318,73 @@ const ProfilePage: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
 
-              <Grid item xs={12} sm={4}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  startIcon={<SaveIcon />}
-                  onClick={handleSaveLanguage}
-                  disabled={!isLanguageChanged}
-                  size="medium"
-                >
-                  {t("common.save")}
-                </Button>
+        {/* Notification Settings Card */}
+        <Card sx={cardStyle}>
+          <CardContent sx={{ pt: 2, pb: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <NotificationsIcon
+                sx={{ mr: 1, color: "rgba(169, 133, 240, 0.9)" }}
+              />
+              <Typography variant="h6">
+                {t("profile.notificationSettings")}
+              </Typography>
+            </Box>
+            <Divider sx={{ mb: 2 }} />
+
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12}>
+                <Box>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={emailNotifications}
+                        onChange={handleNotificationsChange}
+                        color="primary"
+                      />
+                    }
+                    label={t("profile.warrantyNotifications")}
+                  />
+                  <Typography variant="body2" color="textSecondary">
+                    {t("profile.warrantyNotificationsDescription")}
+                  </Typography>
+                </Box>
               </Grid>
             </Grid>
           </CardContent>
         </Card>
       </Box>
+
+      {/* Floating save button that appears only when changes are detected */}
+      {hasChanges && (
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 0,
+            left: 0,
+            display: "flex",
+            justifyContent: "center",
+            zIndex: 2,
+          }}
+        >
+          <Fab
+            variant="extended"
+            color="primary"
+            onClick={handleSaveChanges}
+            sx={{
+              px: 4,
+              boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            <SaveIcon sx={{ mr: 1 }} />
+            {t("common.save")}
+          </Fab>
+        </Box>
+      )}
     </>
   );
 };
