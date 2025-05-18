@@ -122,3 +122,5 @@ dist-ssr
 *.sw?
 
 google-credentials.json
+
+/android
