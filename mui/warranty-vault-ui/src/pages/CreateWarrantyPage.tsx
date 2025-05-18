@@ -23,9 +23,13 @@ import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { DEFAULT_WARRANTY_CATEGORIES } from "../constants/warrantyCategories";
 import { useTranslation } from "react-i18next";
+
+// Import Capacitor Camera plugin
+import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 
 function CreateWarrantyPage() {
   const location = useLocation();
@@ -96,6 +100,51 @@ function CreateWarrantyPage() {
     }
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+  };
+
+  // New function to handle camera capture
+  const handleOpenCamera = async () => {
+    try {
+      // Request camera permissions
+      const permissionStatus = await Camera.requestPermissions();
+
+      if (permissionStatus.camera === "granted") {
+        // Take photo with the camera
+        const image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: true,
+          resultType: CameraResultType.Uri,
+          source: CameraSource.Camera,
+        });
+
+        // Convert the image URI to a File object
+        if (image.webPath) {
+          const response = await fetch(image.webPath);
+          const blob = await response.blob();
+
+          // Create a File from the blob
+          const fileName = `photo_${new Date().getTime()}.${
+            image.format || "jpeg"
+          }`;
+          const file = new File([blob], fileName, {
+            type: `image/${image.format || "jpeg"}`,
+          });
+
+          setFiles((prevFiles) => [...prevFiles, file]);
+        }
+      } else {
+        toast.error(t("scanWarranty.cameraPermissionDenied"));
+      }
+    } catch (error) {
+      console.error("Camera error:", error);
+      toast.error(t("scanWarranty.cameraError"));
+
+      // Fallback to file input if camera fails
+      if (fileInputRef.current) {
+        fileInputRef.current.accept = "image/*";
+        fileInputRef.current.click();
+      }
     }
   };
 
@@ -310,14 +359,30 @@ function CreateWarrantyPage() {
                 style={{ display: "none" }}
                 onChange={handleFileChange}
               />
-              <Button
-                variant="outlined"
-                startIcon={<UploadFileIcon />}
-                onClick={handleOpenFileDialog}
-                sx={{ mb: 2 }}
-              >
-                {t("createWarranty.selectFiles")}
-              </Button>
+              <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+                <Button
+                  variant="outlined"
+                  startIcon={<UploadFileIcon />}
+                  onClick={handleOpenFileDialog}
+                >
+                  {t("createWarranty.selectFiles")}
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<PhotoCameraIcon />}
+                  onClick={handleOpenCamera}
+                  sx={{
+                    borderColor: "#4fc3f7",
+                    color: "#0288d1",
+                    "&:hover": {
+                      borderColor: "#29b6f6",
+                      backgroundColor: "rgba(3, 169, 244, 0.04)",
+                    },
+                  }}
+                >
+                  {t("scanWarranty.openCamera")}
+                </Button>
+              </Stack>
               {files.length > 0 && (
                 <List dense sx={{ width: "100%", bgcolor: "background.paper" }}>
                   {files.map((file, index) => (

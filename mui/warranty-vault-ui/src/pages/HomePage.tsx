@@ -57,7 +57,7 @@ function HomePage() {
           backgroundColor: "background.paper",
           pb: 1,
           mb: 3,
-          mt: 6,
+          mt: 10,
           width: "90%",
           mx: "auto",
         }}

@@ -140,23 +140,20 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      // if (isNative) {
-      //   console.log("========IS NATIVE========");
-      //   await Browser.open({
-      //     url: keycloakUrl,
-      //     toolbarColor: "#262626",
-      //     presentationStyle: "fullscreen",
-      //   });
-      // } else {
-      //   window.location.href = keycloakUrl;
-      // }
-      await Browser.open({
-        url: keycloakUrl,
-        toolbarColor: "#262626",
-        presentationStyle: "fullscreen",
-      });
+      if (isNative) {
+        // For mobile, use Capacitor Browser
+        await Browser.open({
+          url: keycloakUrl,
+          toolbarColor: "#262626",
+          presentationStyle: "fullscreen",
+        });
+      } else {
+        // For web, navigate directly to the keycloak URL
+        // This will redirect back to your app after login
+        window.location.href = keycloakUrl;
+      }
     } catch (error) {
-      console.error("Error opening browser:", error);
+      console.error("Error during sign-in:", error);
       setIsLoading(false);
     }
   };
