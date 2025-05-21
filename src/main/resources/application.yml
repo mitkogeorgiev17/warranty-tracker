@@ -1,4 +1,9 @@
+server:
+  address: 0.0.0.0
+  port: 8080
 spring:
+  profiles:
+    active: docker
   application:
     api-version: v1
   jpa:

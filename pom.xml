@@ -14,7 +14,7 @@
     <!-- Project Information -->
     <groupId>com.mitko</groupId>
     <artifactId>warranty-tracker</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>warranty-tracker</name>
     <description>SpringBoot project</description>
 

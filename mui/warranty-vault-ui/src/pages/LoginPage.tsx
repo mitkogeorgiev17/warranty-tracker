@@ -219,7 +219,7 @@ function LoginPage() {
         await Browser.open({
           url: keycloakUrl,
           toolbarColor: "#262626",
-          presentationStyle: "fullscreen",
+          presentationStyle: "popover",
         });
       } else {
         // For web, navigate directly to the keycloak URL

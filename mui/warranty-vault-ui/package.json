@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@awesome-cordova-plugins/in-app-browser": "^6.16.0",
     "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "^7.2.0",
     "@capacitor/app": "^7.0.1",
@@ -23,6 +24,7 @@
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.7",
     "axios": "^1.8.3",
+    "cordova-plugin-inappbrowser": "^6.0.0",
     "date-fns": "^4.1.0",
     "i18next": "^25.0.2",
     "i18next-browser-languagedetector": "^8.1.0",

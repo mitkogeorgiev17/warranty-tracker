@@ -5,7 +5,7 @@ interface ApiEndpoint {
   method: HttpMethod;
 }
 
-const API_BASE_URL = 'http://[PUBLIC.IP.HERE]:8080/api/v1.0.0';
+const API_BASE_URL = 'http://78.90.46.72:8080/api/v1.0.0';
 
 const ENDPOINTS: Record<string, ApiEndpoint> = {
   // Authentication

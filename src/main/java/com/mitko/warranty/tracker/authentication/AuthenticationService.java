@@ -48,6 +48,7 @@ public class AuthenticationService {
                 .body(formData)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (req, res) -> {
+                    log.error(res.getStatusText() + res.getStatusCode() + res.getBody());
                     throw new AuthorizationException("Error occurred while receiving Keycloak token. " + res.getStatusText());
                 })
                 .body(AuthenticationResponse.class);
