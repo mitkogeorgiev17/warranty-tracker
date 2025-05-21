@@ -88,7 +88,7 @@ lerna-debug.log*
 .DS_Store
 
 #Docker
-docker/db-data
+docker/db-data/
 
 # Node modules and build files
 ui/node_modules/
@@ -122,5 +122,6 @@ dist-ssr
 *.sw?
 
 google-credentials.json
+secrets.env
 
 /android

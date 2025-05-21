@@ -23,12 +23,13 @@ function LoginPage() {
   useEffect(() => {
     if (!isNative) return;
 
-    // Create a variable to store the listener handle
+    // Create a variable to store the listener handles
     let urlOpenListenerHandle: any = null;
+    let appStateChangeListenerHandle: any = null;
 
-    // Set up the listener
-    const setupListener = async () => {
-      // Await the promise to get the actual handle
+    // Set up the listeners
+    const setupListeners = async () => {
+      // Listen for deep links
       urlOpenListenerHandle = await App.addListener("appUrlOpen", ({ url }) => {
         console.log("Deep link received:", url);
 
@@ -52,19 +53,41 @@ function LoginPage() {
           console.error("Error parsing deep link URL:", e);
         }
       });
+
+      // Listen for app state changes to detect when browser is closed without authentication
+      appStateChangeListenerHandle = await App.addListener(
+        "appStateChange",
+        ({ isActive }) => {
+          // When app comes back to foreground
+          if (isActive && isLoading) {
+            // Check if authentication is still in progress after a delay
+            // This delay allows deep link handler to process first if auth was successful
+            setTimeout(() => {
+              if (isLoading && !authAttempted.current) {
+                console.log(
+                  "App returned to foreground without authentication completion"
+                );
+                setIsLoading(false);
+              }
+            }, 1000);
+          }
+        }
+      );
     };
 
     // Call the async setup function
-    setupListener();
+    setupListeners();
 
-    // Clean up listener on component unmount
+    // Clean up listeners on component unmount
     return () => {
-      // Check if we have a handle before trying to remove
       if (urlOpenListenerHandle) {
         urlOpenListenerHandle.remove();
       }
+      if (appStateChangeListenerHandle) {
+        appStateChangeListenerHandle.remove();
+      }
     };
-  }, []);
+  }, [isLoading]);
 
   // Process authentication code
   const handleAuthCode = async (code: string, state: string | null) => {
@@ -130,6 +153,55 @@ function LoginPage() {
     }
   }, [navigate]);
 
+  // For browser flow, add a timeout to reset loading state
+  useEffect(() => {
+    let timeoutId: number | undefined;
+
+    if (isLoading && isNative) {
+      // Set a timeout to reset loading state after a reasonable period (30 seconds)
+      timeoutId = window.setTimeout(() => {
+        if (isLoading && !authAttempted.current) {
+          console.log("Login timeout - resetting loading state");
+          setIsLoading(false);
+        }
+      }, 30000);
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isLoading, isNative]);
+
+  // Handler for browser's "close" event for web platforms
+  useEffect(() => {
+    if (isNative) return; // Skip for native platforms
+
+    // For web platforms, listen for browser focus events
+    const handleVisibilityChange = () => {
+      if (
+        document.visibilityState === "visible" &&
+        isLoading &&
+        !authAttempted.current
+      ) {
+        // User came back to the app without completing authentication
+        setTimeout(() => {
+          if (isLoading && !authAttempted.current) {
+            console.log(
+              "Browser visibility changed without authentication completion"
+            );
+            setIsLoading(false);
+          }
+        }, 1000);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isLoading, isNative]);
+
   // Handle sign-in button click
   const handleSignIn = async () => {
     if (!keycloakUrl) {
@@ -137,6 +209,8 @@ function LoginPage() {
       return;
     }
 
+    // Reset auth attempted flag
+    authAttempted.current = false;
     setIsLoading(true);
 
     try {
@@ -145,7 +219,7 @@ function LoginPage() {
         await Browser.open({
           url: keycloakUrl,
           toolbarColor: "#262626",
-          presentationStyle: "fullscreen",
+          presentationStyle: "popover",
         });
       } else {
         // For web, navigate directly to the keycloak URL
@@ -217,19 +291,6 @@ function LoginPage() {
         ) : (
           t("common.signIn")
         )}
-      </Button>
-      <Button
-        variant="text"
-        size="small"
-        sx={{
-          mt: 3,
-          color: "text.secondary",
-          textDecoration: "underline",
-          fontSize: "0.9rem",
-        }}
-        onClick={() => navigate("/how-it-works")}
-      >
-        {t("common.faq")}
       </Button>
     </Box>
   );
