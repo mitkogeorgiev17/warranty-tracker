@@ -19,6 +19,7 @@ import ProfilePage from "./pages/ProfilePage";
 import { UserProvider } from "./constants/UserContext.tsx";
 import ScanWarrantyPage from "./pages/ScanWarrantyPage.tsx";
 import "./config/i18n.ts";
+import AdvisorPage from "./pages/AdvisorPage.tsx";
 
 const theme = createTheme({
   palette: {
@@ -51,6 +52,7 @@ function App() {
             <Route path="/create" element={<CreateWarrantyPage />} />
             <Route path="/scan" element={<ScanWarrantyPage />} />
             <Route path="/manage" element={<ManageWarrantiesPage />} />
+            <Route path="/advisor" element={<AdvisorPage />} />
             <Route
               path="/warranty/:warrantyId"
               element={<WarrantyDetailsPage />}

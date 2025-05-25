@@ -78,7 +78,7 @@ const WarrantyDetailsPage: FC = () => {
   // Render the warranty details in view mode
   return (
     <>
-      <PageHeader title={t("pages.warrantyDetails")} borderColor="#64b5f6" />
+      <PageHeader title={t("pages.warrantyDetails")} />
       <WarrantyDetails
         warranty={warranty}
         isEditMode={false}

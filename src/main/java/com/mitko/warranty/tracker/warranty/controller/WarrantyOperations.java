@@ -2,6 +2,8 @@ package com.mitko.warranty.tracker.warranty.controller;
 
 import com.mitko.warranty.tracker.warranty.model.request.CreateWarrantyCommand;
 import com.mitko.warranty.tracker.warranty.model.request.UpdateWarrantyCommand;
+import com.mitko.warranty.tracker.warranty.model.response.AdvisorCommonQuestionsResponse;
+import com.mitko.warranty.tracker.warranty.model.response.QuestionAnswerResponse;
 import com.mitko.warranty.tracker.warranty.model.response.WarrantyDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,4 +52,10 @@ public interface WarrantyOperations {
     @ApiResponse(responseCode = "200", description = "Warranty scanned successfully.")
     @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     CreateWarrantyCommand scanWarranty(@RequestParam(name = "file") MultipartFile file);
+
+    @Operation(summary = "Loads up 3 commons question about a warranty.")
+    AdvisorCommonQuestionsResponse loadCommonQuestions(Authentication authentication, @Parameter(name = "warrantyId", example = "1") long warrantyId);
+
+    @Operation(summary = "Answers a user question about a warranty.")
+    QuestionAnswerResponse advisorAnswerQuestion(Authentication authentication, @Parameter(name = "warrantyId", example = "1") long warrantyId, String question);
 }

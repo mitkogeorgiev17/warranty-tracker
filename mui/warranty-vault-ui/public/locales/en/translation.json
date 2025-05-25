@@ -20,6 +20,7 @@
     "home": "Home",
     "error": "Error",
     "login": "Login",
+    "advisor": "Advisor",
     "unauthorized": "Unauthorized",
     "warrantyDetails": "Warranty details",
     "updateWarranty": "Update Warranty",
@@ -176,5 +177,23 @@
     "EXPIRED": "Expired",
     "CLAIMED_ACTIVE": "Claimed Active",
     "CLAIMED_EXPIRED": "Claimed Expired"
-  }
+  },
+  "advisor": {
+      "description": "Ask questions about your warranties and get AI-powered answers",
+      "selectWarranty": "Select a Warranty",
+      "noWarranties": "No warranties found. Please add some warranties first.",
+      "questionsFor": "Questions for",
+      "commonQuestions": "Common Questions",
+      "askCustomQuestion": "Ask Your Own Question",
+      "questionPlaceholder": "Type your question here...",
+      "askQuestion": "Ask Question",
+      "answer": "Answer",
+      "gettingAnswer": "Getting answer...",
+      "errors": {
+        "fetchWarranties": "Failed to load warranties",
+        "fetchQuestions": "Failed to load common questions",
+        "getAnswer": "Failed to get answer",
+        "emptyQuestion": "Please enter a question"
+      }
+    }
 }

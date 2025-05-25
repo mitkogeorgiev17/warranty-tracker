@@ -1,9 +1,12 @@
 package com.mitko.warranty.tracker.warranty.controller;
 
+import com.mitko.warranty.tracker.warranty.WarrantyAdvisorService;
 import com.mitko.warranty.tracker.warranty.WarrantyScanService;
 import com.mitko.warranty.tracker.warranty.WarrantyService;
 import com.mitko.warranty.tracker.warranty.model.request.CreateWarrantyCommand;
 import com.mitko.warranty.tracker.warranty.model.request.UpdateWarrantyCommand;
+import com.mitko.warranty.tracker.warranty.model.response.AdvisorCommonQuestionsResponse;
+import com.mitko.warranty.tracker.warranty.model.response.QuestionAnswerResponse;
 import com.mitko.warranty.tracker.warranty.model.response.WarrantyDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import java.util.List;
 public class WarrantyController implements WarrantyOperations {
     private final WarrantyService service;
     private final WarrantyScanService scanService;
+    private final WarrantyAdvisorService advisorService;
 
     @Override
     @PostMapping("/")
@@ -60,4 +64,15 @@ public class WarrantyController implements WarrantyOperations {
         return scanService.scanWarranty(file);
     }
 
+    @Override
+    @GetMapping("/{warrantyId}/advisor/")
+    public AdvisorCommonQuestionsResponse loadCommonQuestions(Authentication authentication, @PathVariable("warrantyId") long warrantyId) {
+        return advisorService.getCommonQuestions(authentication, warrantyId);
+    }
+
+    @Override
+    @GetMapping("/{warrantyId}/advisor/answer/")
+    public QuestionAnswerResponse advisorAnswerQuestion(Authentication authentication, @PathVariable("warrantyId") long warrantyId, @RequestParam String question) {
+        return advisorService.answerUserQuestion(authentication, warrantyId, question);
+    }
 }

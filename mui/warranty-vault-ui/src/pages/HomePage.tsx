@@ -1,6 +1,7 @@
 import axiosApi from "../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
-import { Container, Paper } from "@mui/material";
+import { Container, Paper, Fab, Tooltip } from "@mui/material";
+import { SmartToy } from "@mui/icons-material";
 import UserGreeting from "../components/UserGreeting";
 import HomePageMenu from "../components/HomePageMenu";
 import ExpiringSoonSection from "../components/ExpiringSoonSection";
@@ -12,7 +13,7 @@ import { useTranslation } from "react-i18next";
 function HomePage() {
   const navigate = useNavigate();
   const { user, setUser, setIsLoading } = useUser();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,10 +44,13 @@ function HomePage() {
         setIsLoading(false);
       }
     };
-
     // Call fetchUser every time the component mounts
     fetchUser();
   }, [navigate, setUser, setIsLoading, i18n]); // Removed user from dependencies
+
+  const handleAdvisorClick = () => {
+    navigate("/advisor");
+  };
 
   return (
     <Container maxWidth="lg">
@@ -82,6 +86,23 @@ function HomePage() {
           moreThanOneYear={user?.warrantyCountsProjection.moreThanOneYear}
         />
       </Paper>
+
+      {/* Floating Advisor Button */}
+      <Tooltip title={t("pages.advisor")} placement="left">
+        <Fab
+          color="primary"
+          size="medium"
+          onClick={handleAdvisorClick}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 1000,
+          }}
+        >
+          <SmartToy />
+        </Fab>
+      </Tooltip>
     </Container>
   );
 }

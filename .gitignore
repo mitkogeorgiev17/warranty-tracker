@@ -125,3 +125,7 @@ google-credentials.json
 secrets.env
 
 /android
+
+# Exceptions - do NOT ignore these specific files
+!docker/keycloak-theme-for-kc-22-to-25.jar
+!docker/keycloak-theme-for-kc-all-other-versions.jar
