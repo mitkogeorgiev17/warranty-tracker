@@ -76,4 +76,14 @@ public class Warranty {
     public final int hashCode() {
         return Objects.hashCode(id);
     }
+
+    public String details() {
+        return "Warranty{" +
+                "name='" + name + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", note='" + note + '\'' +
+                ", category='" + category + '\'' +
+                '}';
+    }
 }

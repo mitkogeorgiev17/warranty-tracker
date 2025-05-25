@@ -1,18 +1,15 @@
 package com.mitko.warranty.tracker.warranty;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
 import com.mitko.warranty.tracker.config.properties.WarrantyVaultProperties;
 import com.mitko.warranty.tracker.exception.custom.OCRException;
+import com.mitko.warranty.tracker.openai.OpenAiClient;
 import com.mitko.warranty.tracker.warranty.model.request.CreateWarrantyCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -32,7 +29,7 @@ public class WarrantyScanService {
 
     private final WarrantyVaultProperties properties;
 
-    private final ChatClient chatClient;
+    private final OpenAiClient openAiClient;
 
     public CreateWarrantyCommand scanWarranty(MultipartFile file) {
         log.info("Scanning warranty file and extracting information...");
@@ -40,54 +37,16 @@ public class WarrantyScanService {
         try {
             var extractedText = extractTextFromImage(file);
 
-            String chatResponse = chatClient
-                    .prompt(properties.openai().prompt() + extractedText)
-                    .call()
-                    .content();
+            String chatResponse = openAiClient.callOpenAI(properties.openai().prompt() + extractedText);
 
             log.info("OPENAI RESPONSE: {}" ,chatResponse);
 
-            return parseToResponse(chatResponse);
+            return openAiClient.parseToResponse(chatResponse, CreateWarrantyCommand.class);
         } catch (Exception e) {
             log.error("Error scanning warranty document", e);
             throw new RuntimeException("Failed to scan warranty document: " + e.getMessage(), e);
         }
     }
-
-    private CreateWarrantyCommand parseToResponse(String chatResponse) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            // Configure date/time module to handle Java 8 date types
-            mapper.registerModule(new JavaTimeModule());
-            // Configure mapper for more flexibility
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
-
-            // Extract the JSON part from the response if needed
-            String jsonPart = extractJsonFromResponse(chatResponse);
-
-            // Log the JSON we're trying to parse for debugging
-            log.debug("Attempting to parse JSON: {}", jsonPart);
-
-            return mapper.readValue(jsonPart, CreateWarrantyCommand.class);
-        } catch (Exception e) {
-            log.error("Error parsing AI response: {}", chatResponse, e);
-            throw new OCRException("Could not parse AI response: " + e.getMessage());
-        }
-    }
-
-    private String extractJsonFromResponse(String response) {
-        // If the response contains multiple parts or extra text, extract just the JSON
-        int startBrace = response.indexOf('{');
-        int endBrace = response.lastIndexOf('}');
-
-        if (startBrace >= 0 && endBrace > startBrace) {
-            return response.substring(startBrace, endBrace + 1);
-        }
-
-        return response; // Return original if no JSON object found
-    }
-
     /**
      * Extracts text from an image using Google Cloud Vision OCR
      *

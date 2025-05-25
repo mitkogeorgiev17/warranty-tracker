@@ -1,6 +1,7 @@
 import { useEffect, useState, Fragment, useMemo } from "react";
 import PageHeader from "../components/PageHeader";
 import {
+  Fab,
   Box,
   Typography,
   Menu,
@@ -9,6 +10,7 @@ import {
   ListItemText,
   IconButton,
   Stack,
+  Tooltip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import WarrantyCardList from "../components/WarrantyCardList";
@@ -20,6 +22,7 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CategoryIcon from "@mui/icons-material/Category";
 import { useTranslation } from "react-i18next";
+import { SmartToy } from "@mui/icons-material";
 
 function ManageWarrantiesPage() {
   const navigate = useNavigate();
@@ -182,6 +185,10 @@ function ManageWarrantiesPage() {
     setFiltersVisible(false);
   };
 
+  const handleAdvisorClick = () => {
+    navigate("/advisor");
+  };
+
   // Render filter content
   const renderFilterContent = () => {
     if (!filtersVisible) {
@@ -320,6 +327,21 @@ function ManageWarrantiesPage() {
           />
         )}
       </Box>
+      <Tooltip title={t("pages.advisor")} placement="left">
+        <Fab
+          color="primary"
+          size="medium"
+          onClick={handleAdvisorClick}
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 1000,
+          }}
+        >
+          <SmartToy />
+        </Fab>
+      </Tooltip>
     </>
   );
 }
