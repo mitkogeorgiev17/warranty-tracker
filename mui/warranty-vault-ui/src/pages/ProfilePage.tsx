@@ -31,6 +31,10 @@ import axiosApi from "../config/axiosApiConfig";
 import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
 import PageHeader from "../components/PageHeader.tsx";
 import { useTranslation } from "react-i18next";
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications, Token } from "@capacitor/push-notifications";
+import { getToken } from "firebase/messaging";
+import { messaging, VAPID_KEY } from "../config/firebaseConfig";
 
 export interface ExpiringWarranties {
   expired: number;
@@ -46,6 +50,7 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [language, setLanguage] = useState("");
   const [emailNotifications, setEmailNotifications] = useState(false);
+  const [pushNotifications, setPushNotifications] = useState(false);
   const { t, i18n } = useTranslation();
 
   // Track if any changes have been made
@@ -62,6 +67,9 @@ const ProfilePage: React.FC = () => {
       // Set email notifications from user data
       setEmailNotifications(user.emailNotifications || false);
 
+      // Set push notifications from user data
+      setPushNotifications(user.pushNotifications || false);
+
       // Initialize i18n with the user's language preference
       if (user.language) {
         i18n.changeLanguage(user.language.toLowerCase());
@@ -74,21 +82,164 @@ const ProfilePage: React.FC = () => {
     if (!user) return;
 
     const languageChanged = language !== user.language;
-    const notificationsChanged = emailNotifications !== user.emailNotifications;
+    const emailNotificationsChanged =
+      emailNotifications !== user.emailNotifications;
+    const pushNotificationsChanged =
+      pushNotifications !== user.pushNotifications;
 
-    setHasChanges(languageChanged || notificationsChanged);
-  }, [language, emailNotifications, user]);
+    setHasChanges(
+      languageChanged || emailNotificationsChanged || pushNotificationsChanged
+    );
+  }, [language, emailNotifications, pushNotifications, user]);
+
+  // Auto-register for push notifications if enabled
+  useEffect(() => {
+    const autoRegisterIfEnabled = async () => {
+      if (user?.pushNotifications) {
+        try {
+          await registerForNotifications();
+        } catch (error) {
+          console.error("Auto-registration failed:", error);
+        }
+      }
+    };
+
+    if (user) {
+      autoRegisterIfEnabled();
+    }
+  }, [user]);
+
+  const registerForNotifications = async (): Promise<string | null> => {
+    try {
+      let token: string;
+
+      if (Capacitor.isNativePlatform()) {
+        token = await registerCapacitorToken();
+      } else {
+        token = await registerWebToken();
+      }
+
+      await sendTokenToBackend(token);
+      return token;
+    } catch (error) {
+      console.error("Failed to register for notifications:", error);
+      throw error;
+    }
+  };
+
+  const registerCapacitorToken = async (): Promise<string> => {
+    const permissionResult = await PushNotifications.requestPermissions();
+
+    if (permissionResult.receive !== "granted") {
+      throw new Error("Push notification permission denied");
+    }
+
+    await PushNotifications.register();
+
+    return new Promise((resolve, reject) => {
+      PushNotifications.addListener("registration", (token: Token) => {
+        console.log("Capacitor token:", token.value);
+        resolve(token.value);
+      });
+
+      PushNotifications.addListener("registrationError", (error: any) => {
+        console.error("Capacitor registration error:", error);
+        reject(error);
+      });
+
+      setTimeout(() => reject(new Error("Token registration timeout")), 10000);
+    });
+  };
+
+  const registerWebToken = async (): Promise<string> => {
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      throw new Error("Push notification permission denied");
+    }
+
+    if ("serviceWorker" in navigator) {
+      const registration = await navigator.serviceWorker.register(
+        "/firebase-messaging-sw.js"
+      );
+
+      const token = await getToken(messaging, {
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration,
+      });
+
+      console.log("Firebase web token:", token);
+      return token;
+    } else {
+      throw new Error("Service Worker not supported");
+    }
+  };
+
+  const sendTokenToBackend = async (token: string): Promise<void> => {
+    const platform = Capacitor.isNativePlatform()
+      ? Capacitor.getPlatform()
+      : "web";
+
+    await axiosApi({
+      method: "POST",
+      url: `${API_BASE_URL}/notifications/token`,
+      data: {
+        token: token,
+        deviceType: platform,
+        deviceInfo: {
+          platform: platform,
+          isNative: Capacitor.isNativePlatform(),
+        },
+      },
+    });
+  };
+
+  const unregisterToken = async (token: string): Promise<void> => {
+    await axiosApi({
+      method: "DELETE",
+      url: `${API_BASE_URL}/api/notifications/unregister-token`,
+      data: { token },
+    });
+
+    if (Capacitor.isNativePlatform()) {
+      PushNotifications.removeAllListeners();
+    }
+  };
 
   const handleLanguageChange = (event: any) => {
     const newLanguage = event.target.value;
     setLanguage(newLanguage);
   };
 
-  const handleNotificationsChange = (
+  const handleEmailNotificationsChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newValue = event.target.checked;
     setEmailNotifications(newValue);
+  };
+
+  const handlePushNotificationsChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newValue = event.target.checked;
+
+    try {
+      if (newValue) {
+        console.log("Registering for push notifications...");
+        await registerForNotifications();
+        setPushNotifications(newValue);
+        toast.success("Push notifications enabled");
+      } else {
+        console.log("Unregistering push notifications...");
+        // We don't have the token stored locally, so we'll let the backend handle cleanup
+        // when the user setting is saved
+        setPushNotifications(newValue);
+        toast.success("Push notifications disabled");
+      }
+    } catch (error) {
+      console.error("Failed to update push notification settings:", error);
+      toast.error("Failed to update push notification settings");
+      // Don't update state on error
+    }
   };
 
   const handleSaveChanges = async () => {
@@ -109,6 +260,10 @@ const ProfilePage: React.FC = () => {
         updatedData.updatedEmailNotifications = emailNotifications;
       }
 
+      if (pushNotifications !== user.pushNotifications) {
+        updatedData.updatedPushNotifications = pushNotifications;
+      }
+
       await axiosApi({
         method: endpoint.method,
         url: `${API_BASE_URL}${endpoint.path}`,
@@ -126,6 +281,7 @@ const ProfilePage: React.FC = () => {
         ...user,
         language: language,
         emailNotifications: emailNotifications,
+        pushNotifications: pushNotifications,
       });
 
       toast.success(t("profile.settingsSaved"));
@@ -137,6 +293,7 @@ const ProfilePage: React.FC = () => {
       // Reset to original values on error
       setLanguage(user.language);
       setEmailNotifications(user.emailNotifications || false);
+      setPushNotifications(user.pushNotifications || false);
     } finally {
       setIsLoading(false);
     }
@@ -337,12 +494,12 @@ const ProfilePage: React.FC = () => {
 
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12}>
-                <Box>
+                <Box sx={{ mb: 2 }}>
                   <FormControlLabel
                     control={
                       <Switch
                         checked={emailNotifications}
-                        onChange={handleNotificationsChange}
+                        onChange={handleEmailNotificationsChange}
                         color="primary"
                       />
                     }
@@ -350,6 +507,24 @@ const ProfilePage: React.FC = () => {
                   />
                   <Typography variant="body2" color="textSecondary">
                     {t("profile.warrantyNotificationsDescription")}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Box>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={pushNotifications}
+                        onChange={handlePushNotificationsChange}
+                        color="primary"
+                      />
+                    }
+                    label={t("profile.pushNotifications")}
+                  />
+                  <Typography variant="body2" color="textSecondary">
+                    {t("profile.pushNotificationsDescription")}
                   </Typography>
                 </Box>
               </Grid>

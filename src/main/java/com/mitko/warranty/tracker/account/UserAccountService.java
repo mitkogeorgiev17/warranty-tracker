@@ -5,6 +5,7 @@ import com.mitko.warranty.tracker.account.model.request.UpdateUserCommand;
 import com.mitko.warranty.tracker.account.model.response.UserAccountResponse;
 import com.mitko.warranty.tracker.exception.custom.UserNotFoundException;
 import com.mitko.warranty.tracker.mapper.UserAccountMapper;
+import com.mitko.warranty.tracker.notification.push.UserDeviceTokenRepository;
 import com.mitko.warranty.tracker.warranty.repository.WarrantyCountsProjection;
 import com.mitko.warranty.tracker.warranty.repository.WarrantyRepository;
 import jakarta.transaction.Transactional;
@@ -28,6 +29,7 @@ public class UserAccountService {
     private final UserRepository userRepository;
     private final UserAccountMapper mapper;
     private final WarrantyRepository warrantyRepository;
+    private final UserDeviceTokenRepository userDeviceTokenRepository;
 
     public UserAccountResponse getUser(Authentication authentication) {
         log.info("Receiving user account for {}.", authentication.getName());
@@ -82,6 +84,16 @@ public class UserAccountService {
         user
                 .setLanguage(command.getUpdatedLanguage() != null ? command.getUpdatedLanguage() : user.getLanguage())
                 .setEmailNotifications(command.getUpdatedEmailNotifications() != null ? command.getUpdatedEmailNotifications() : user.isEmailNotifications());
+
+        if (command.getUpdatedPushNotifications() != null) {
+            var userDeviceTokens = userDeviceTokenRepository.findByUserIdAndIsActiveTrue(authentication.getName());
+
+            userDeviceTokens.forEach(udt -> udt.setIsActive(command.getUpdatedPushNotifications()));
+
+            userDeviceTokenRepository.saveAll(userDeviceTokens);
+
+            user.setPushNotifications(true);
+        }
 
         userRepository.save(user);
 

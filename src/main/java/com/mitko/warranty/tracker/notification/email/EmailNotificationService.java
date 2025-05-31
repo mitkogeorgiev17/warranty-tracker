@@ -1,4 +1,4 @@
-package com.mitko.warranty.tracker.notification;
+package com.mitko.warranty.tracker.notification.email;
 
 import com.mitko.warranty.tracker.config.properties.WarrantyVaultProperties;
 import com.mitko.warranty.tracker.warranty.model.Warranty;
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.mitko.warranty.tracker.account.model.Language.BG;
 import static com.mitko.warranty.tracker.account.model.Language.EN;
@@ -28,7 +30,7 @@ public class EmailNotificationService {
     private final WarrantyRepository warrantyRepository;
     private final JavaMailSender mailSender;
 
-    public void sendNotificationsForExpiringWarranties(LocalDate today) {
+    public Map<String, Warranty> sendNotificationsForExpiringWarranties(LocalDate today) {
         log.info("Sending notifications for expiring warranties. Today: {}", today);
 
         var allExpiringIn1Month = warrantyRepository.findAllByEndDate(today.plusMonths(1));
@@ -59,33 +61,12 @@ public class EmailNotificationService {
             }
         }
 
-        var allExpiringIn6Months = warrantyRepository.findAllByEndDate(today.plusMonths(6));
-
-        for (Warranty warranty : allExpiringIn1Month) {
-            if (warranty.getUser().isEmailNotifications()) {
-                if (warranty.getUser().getLanguage() == BG) {
-                    sendEmail(
-                            warranty.getUser().getEmail(),
-                            properties.emailTemplate().bg().subject(),
-                            properties.emailTemplate().bg().body()
-                                    .replace("${warrantyName}", warranty.getName())
-                                    .replace("${remaining}", "6 месеца")
-                                    .replace("${startDate}", warranty.getStartDate().format(DATE_FORMATTER))
-                                    .replace("${endDate}", warranty.getEndDate().format(DATE_FORMATTER))
-                    );
-                } else if (warranty.getUser().getLanguage() == EN) {
-                    sendEmail(
-                            warranty.getUser().getEmail(),
-                            properties.emailTemplate().bg().subject(),
-                            properties.emailTemplate().bg().body()
-                                    .replace("${warrantyName}", warranty.getName())
-                                    .replace("${remaining}", "6 months")
-                                    .replace("${startDate}", warranty.getStartDate().format(DATE_FORMATTER))
-                                    .replace("${endDate}", warranty.getEndDate().format(DATE_FORMATTER))
-                    );
-                }
-            }
-        }
+        return allExpiringIn1Month.stream()
+                .filter(warranty -> warranty.getUser().isPushNotifications())
+                .collect(Collectors.toMap(
+                        warranty -> warranty.getUser().getId(),
+                        warranty -> warranty
+                ));
     }
 
     public void sendEmail(

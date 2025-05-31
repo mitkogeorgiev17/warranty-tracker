@@ -41,7 +41,9 @@
     "notificationSettings": "Notification Settings",
     "warrantyNotifications": "Warranty Expiration Notifications",
     "warrantyNotificationsDescription": "Receive email notifications when your product warranties are about to expire.",
-    "settingsSaved": "Profile settings saved successfully"
+    "settingsSaved": "Profile settings saved successfully",
+    "pushNotifications": "Push Notifications",
+    "pushNotificationsDescription": "Receive push notifications on your device for expiring warranties."
   },
   "home": {
     "createWarranty": "Create Warranty",

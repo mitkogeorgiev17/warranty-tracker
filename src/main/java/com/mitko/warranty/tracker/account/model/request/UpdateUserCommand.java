@@ -13,4 +13,5 @@ import lombok.experimental.Accessors;
 public class UpdateUserCommand {
     private Language updatedLanguage;
     private Boolean updatedEmailNotifications;
+    private Boolean updatedPushNotifications;
 }

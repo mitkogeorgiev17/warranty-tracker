@@ -17,4 +17,5 @@ public class UserAccountResponse {
     private WarrantyCountsProjection warrantyCountsProjection;
     private Language language;
     private boolean emailNotifications;
+    private boolean pushNotifications;
 }

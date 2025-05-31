@@ -8,7 +8,8 @@ CREATE TABLE users (
     first_name          VARCHAR(64)         NOT NULL,
     last_name           VARCHAR(64)         NOT NULL,
     account_language    VARCHAR(2)          NOT NULL,
-    email_notifications BOOLEAN             NOT NULL
+    email_notifications BOOLEAN             NOT NULL,
+    push_notifications  BOOLEAN             NOT NULL
 );
 
 --changeset mitko:create_warranties_table
@@ -44,3 +45,22 @@ CREATE TABLE files (
 -- changeset mitko:create_user_warranty_name_index
 CREATE UNIQUE INDEX idx_user_warranty_name
 ON warranties (name, user_id);
+
+-- changeset mitko:create_push_notification_token_table
+CREATE TABLE user_device_tokens (
+    id                  BIGINT              PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id             VARCHAR(128)        NOT NULL,
+    device_token        VARCHAR(500)        NOT NULL,
+    device_type         VARCHAR(50),
+    created_at          TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_used           TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_active           BOOLEAN             NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT fk_user_device_token_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- changeset mitko:create_user_device_token_indexes
+CREATE UNIQUE INDEX idx_unique_device_token ON user_device_tokens (device_token);
+CREATE INDEX idx_user_device_tokens_user_id ON user_device_tokens (user_id);
+CREATE INDEX idx_user_device_tokens_active ON user_device_tokens (user_id, is_active);
+CREATE INDEX idx_user_device_tokens_device_type ON user_device_tokens (user_id, device_type, is_active);

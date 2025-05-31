@@ -41,7 +41,9 @@
     "notificationSettings": "Настройки за известия",
     "warrantyNotifications": "Известия за изтичане на гаранция",
     "warrantyNotificationsDescription": "Получавайте имейл известия, когато гаранциите на вашите продукти предстои да изтекат.",
-    "settingsSaved": "Настройките на профила са запазени успешно"
+    "settingsSaved": "Настройките на профила са запазени успешно",
+    "pushNotifications": "Известия на Устройството",
+  "pushNotificationsDescription": "Получавайте известия директно на устройството си за изтичащи гаранции."
   },
   "home": {
     "createWarranty": "Създаване на гаранция",

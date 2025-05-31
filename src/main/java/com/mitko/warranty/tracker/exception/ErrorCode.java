@@ -11,7 +11,8 @@ public enum ErrorCode {
     WARRANTY_NOT_FOUND("ERR003", "Warranty not found."),
     WARRANTY_BAD_REQUEST("ERR004", "Warranty bad request."),
     WARRANTY_FILE_NOT_FOUND("ERR005", "Warranty file not found."),
-    OCR_FAILED("ERR006", "OCR failed to execute.");
+    OCR_FAILED("ERR006", "OCR failed to execute."),
+    NOTIFICATION_ERROR("ERR007", "Notification error occurred.");
 
     private String value;
     private String message;
