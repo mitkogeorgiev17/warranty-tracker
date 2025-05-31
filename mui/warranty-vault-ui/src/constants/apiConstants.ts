@@ -29,6 +29,9 @@ const ENDPOINTS: Record<string, ApiEndpoint> = {
 
   // Advisor
   GET_ADVISOR_QUESTIONS: { path: '/warranties/{warrantyId}/advisor/', method: 'GET' },
-  ADVISOR_ANSWER_QUESTION: { path: '/warranties/{warrantyId}/advisor/answer/', method: 'GET' }
+  ADVISOR_ANSWER_QUESTION: { path: '/warranties/{warrantyId}/advisor/answer/', method: 'GET' },
+
+  // Push notifications
+  REGISTER_TOKEN: { path: '/notifications/token', method: 'POST' }
 };
 export { API_BASE_URL, ENDPOINTS };

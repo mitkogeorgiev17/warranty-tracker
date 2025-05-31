@@ -1,9 +1,11 @@
 package com.mitko.warranty.tracker.exception;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 @Getter
+@Slf4j
 public class CustomResponseStatusException extends RuntimeException {
     private final HttpStatus httpStatus;
     private final String errorCode;
@@ -16,5 +18,15 @@ public class CustomResponseStatusException extends RuntimeException {
         this.errorCode = errorCode;
         this.error = error;
         this.message = message;
+        log.error(details());
+    }
+
+    public String details() {
+        return "Error [" +
+                "httpStatus=" + httpStatus +
+                ", errorCode='" + errorCode + '\'' +
+                ", error='" + error + '\'' +
+                ", message='" + message + '\'' +
+                ']';
     }
 }
