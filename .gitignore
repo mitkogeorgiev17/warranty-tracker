@@ -122,6 +122,7 @@ dist-ssr
 *.sw?
 
 google-credentials.json
+google-services.json
 secrets.env
 
 /android

@@ -109,8 +109,8 @@ public class PushNotificationService {
 
             sendNotificationToUser(
                     userId,
-                    "Test Notification",
-                    "This is a test push notification from Warranty Vault!"
+                    "Warranty vault - Expiring warranty",
+                    "Your warranty is expiring in 1 month. Check out Warranty Vault for more information."
             );
 
             log.info("Test notification sent to {} device(s) for user: {}", activeTokenCount, userId);
