@@ -6,7 +6,6 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { User } from "../constants/User";
 import { useTranslation } from "react-i18next";
 import { Capacitor } from "@capacitor/core";
-
 // FCM imports
 import { getToken, isSupported } from "firebase/messaging";
 import { messaging, VAPID_KEY } from "../config/firebaseConfig";
@@ -31,6 +30,10 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
   >("info");
 
   const isNative = Capacitor.isNativePlatform();
+
+  // Check if notifications are supported in current environment
+  const notificationsSupported =
+    isNative || (typeof window !== "undefined" && "Notification" in window);
 
   // Show notification helper
   const showSnackbar = (
@@ -58,7 +61,6 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
         },
         data: { token, deviceType },
       });
-
       if (response.data) {
         showSnackbar("Push notifications enabled successfully!", "success");
       }
@@ -71,12 +73,19 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
   // Simplified FCM token registration
   const registerFCMToken = async (): Promise<void> => {
     try {
+      if (!notificationsSupported) {
+        showSnackbar(
+          "Push notifications not supported on this platform",
+          "error"
+        );
+        return;
+      }
+
       const deviceType: DeviceType = isNative ? "android" : "web";
 
       if (isNative) {
         // Native platform handling
         const permResult = await PushNotifications.requestPermissions();
-
         if (permResult.receive !== "granted") {
           showSnackbar("Push notification permission denied", "error");
           return;
@@ -94,6 +103,11 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
         });
       } else {
         // Web platform handling
+        if (!messaging) {
+          showSnackbar("Firebase messaging not available", "error");
+          return;
+        }
+
         if (!(await isSupported())) {
           showSnackbar(
             "Push notifications not supported in this browser",
@@ -108,13 +122,18 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
           await new Promise((resolve) => setTimeout(resolve, 500));
         }
 
-        // Check permission
-        if (Notification.permission !== "granted") {
-          const permission = await Notification.requestPermission();
-          if (permission !== "granted") {
-            showSnackbar("Notification permission denied", "error");
-            return;
+        // Check permission - only call Notification API if it exists
+        if (typeof window !== "undefined" && "Notification" in window) {
+          if (Notification.permission !== "granted") {
+            const permission = await Notification.requestPermission();
+            if (permission !== "granted") {
+              showSnackbar("Notification permission denied", "error");
+              return;
+            }
           }
+        } else {
+          showSnackbar("Notification API not available", "error");
+          return;
         }
 
         // Get FCM token
@@ -137,11 +156,35 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
   };
 
   const handleProfileClick = async () => {
-    // Only register if permission not yet granted or is granted but token not registered
-    if (Notification.permission !== "denied") {
-      await registerFCMToken();
+    // Only register if notifications are supported and permission not denied
+    if (notificationsSupported) {
+      if (isNative) {
+        // For native, always try to register
+        await registerFCMToken();
+      } else if (typeof window !== "undefined" && "Notification" in window) {
+        // For web, check permission first
+        if (Notification.permission !== "denied") {
+          await registerFCMToken();
+        }
+      }
     }
     navigate("/profile");
+  };
+
+  // Helper function to check if notifications are granted
+  const notificationsGranted = () => {
+    if (isNative) {
+      // For native, we'll assume granted if supported (actual check happens during registration)
+      return notificationsSupported;
+    } else {
+      // For web, check actual permission
+      return (
+        notificationsSupported &&
+        typeof window !== "undefined" &&
+        "Notification" in window &&
+        Notification.permission === "granted"
+      );
+    }
   };
 
   return (
@@ -190,7 +233,7 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
               {t("greeting.viewEditProfile")}
             </Typography>
           </Box>
-          {Notification.permission === "granted" && (
+          {notificationsGranted() && (
             <NotificationsIcon
               sx={{
                 color: "rgba(169, 133, 240, 0.7)",
@@ -201,7 +244,6 @@ const UserGreeting: React.FC<UserGreetingProps> = ({ user }) => {
           )}
         </Stack>
       </Box>
-
       <Snackbar
         open={showNotification}
         autoHideDuration={4000}

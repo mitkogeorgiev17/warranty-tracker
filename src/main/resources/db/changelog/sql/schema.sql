@@ -58,9 +58,3 @@ CREATE TABLE user_device_tokens (
 
     CONSTRAINT fk_user_device_token_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
--- changeset mitko:create_user_device_token_indexes
-CREATE UNIQUE INDEX idx_unique_device_token ON user_device_tokens (device_token);
-CREATE INDEX idx_user_device_tokens_user_id ON user_device_tokens (user_id);
-CREATE INDEX idx_user_device_tokens_active ON user_device_tokens (user_id, is_active);
-CREATE INDEX idx_user_device_tokens_device_type ON user_device_tokens (user_id, device_type, is_active);
