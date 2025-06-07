@@ -85,13 +85,6 @@ public class PushNotificationService {
                         // Android-specific configuration
                         AndroidConfig androidConfig = AndroidConfig.builder()
                                 .setPriority(AndroidConfig.Priority.HIGH)
-                                .setNotification(AndroidNotification.builder()
-                                        .setTitle(title)
-                                        .setBody(body)
-                                        .setIcon("ic_push_icon")
-                                        .setColor("#9797ff")
-                                        .setChannelId("default_channel")
-                                        .build())
                                 .build();
                         messageBuilder.setAndroidConfig(androidConfig);
                     }
