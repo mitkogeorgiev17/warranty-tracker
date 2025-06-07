@@ -125,7 +125,16 @@ google-credentials.json
 google-services.json
 secrets.env
 
-/android
+android/app/build/
+android/app/.cxx/
+android/build/
+android/.gradle/
+android/gradle/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/app/src/main/assets/public/
+android/app/capacitor.build.gradle
 
 # Exceptions - do NOT ignore these specific files
 !docker/keycloak-theme-for-kc-22-to-25.jar
