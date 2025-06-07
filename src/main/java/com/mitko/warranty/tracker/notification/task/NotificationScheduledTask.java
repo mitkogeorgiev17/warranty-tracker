@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +16,7 @@ public class NotificationScheduledTask {
     private final EmailNotificationService emailNotificationService;
     private final PushNotificationService pushNotificationService;
 
-    @Scheduled(cron = "0 41 18 * * *")
+    @Scheduled(cron = "0 30 16 * * *")
     public void sendNotificationsForExpiringWarranties() {
         var today = LocalDate.now();
         log.info("Checking for expired warranties... Date: {}", today);

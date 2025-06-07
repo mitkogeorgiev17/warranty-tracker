@@ -2,7 +2,7 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "AIzaSyCIgULn9aQ3kufQTNqG5xS4kXZqocupJa8",
+  apiKey: ${GOOGLE_API_KEY},
   authDomain: "supple-voyage-458619-j4.firebaseapp.com",
   projectId: "supple-voyage-458619-j4",
   storageBucket: "supple-voyage-458619-j4.appspot.com",

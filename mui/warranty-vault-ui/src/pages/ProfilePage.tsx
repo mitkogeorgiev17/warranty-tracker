@@ -32,7 +32,12 @@ import { API_BASE_URL, ENDPOINTS } from "../constants/apiConstants";
 import PageHeader from "../components/PageHeader.tsx";
 import { useTranslation } from "react-i18next";
 import { Capacitor } from "@capacitor/core";
-import { PushNotifications, Token } from "@capacitor/push-notifications";
+import {
+  PushNotifications,
+  Token,
+  ActionPerformed,
+  PushNotificationSchema,
+} from "@capacitor/push-notifications";
 import { getToken } from "firebase/messaging";
 import { messaging, VAPID_KEY } from "../config/firebaseConfig";
 
@@ -51,10 +56,21 @@ const ProfilePage: React.FC = () => {
   const [language, setLanguage] = useState("");
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [pushNotifications, setPushNotifications] = useState(false);
+  const [pushNotificationsSupported, setPushNotificationsSupported] =
+    useState(false);
   const { t, i18n } = useTranslation();
 
   // Track if any changes have been made
   const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+    // Check if push notifications are supported
+    const isSupported =
+      Capacitor.isNativePlatform() ||
+      (typeof window !== "undefined" && "Notification" in window);
+
+    setPushNotificationsSupported(isSupported);
+  }, []);
 
   useEffect(() => {
     // If user is not loaded yet, navigate to home to trigger the fetch
@@ -92,12 +108,50 @@ const ProfilePage: React.FC = () => {
     );
   }, [language, emailNotifications, pushNotifications, user]);
 
+  // Set up native notification listeners
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      // Handle notification received while app is in foreground
+      PushNotifications.addListener(
+        "pushNotificationReceived",
+        (notification: PushNotificationSchema) => {
+          console.log("Push notification received: ", notification);
+          toast.info(notification.body || "New notification received");
+        }
+      );
+
+      // Handle notification action (when user taps on notification)
+      PushNotifications.addListener(
+        "pushNotificationActionPerformed",
+        (notification: ActionPerformed) => {
+          console.log("Push notification action performed", notification);
+          // Navigate to specific page or handle the action
+          if (notification.notification.data?.warrantyId) {
+            navigate(`/warranty/${notification.notification.data.warrantyId}`);
+          }
+        }
+      );
+
+      // Clean up listeners on unmount
+      return () => {
+        PushNotifications.removeAllListeners();
+      };
+    }
+  }, [navigate]);
+
   // Auto-register for push notifications if enabled
   useEffect(() => {
     const autoRegisterIfEnabled = async () => {
       if (user?.pushNotifications) {
         try {
-          await registerForNotifications();
+          // Only auto-register in supported environments
+          if (pushNotificationsSupported) {
+            await registerForNotifications();
+          } else {
+            console.log(
+              "Push notifications not supported, skipping auto-registration"
+            );
+          }
         } catch (error) {
           console.error("Auto-registration failed:", error);
         }
@@ -107,15 +161,17 @@ const ProfilePage: React.FC = () => {
     if (user) {
       autoRegisterIfEnabled();
     }
-  }, [user]);
+  }, [user, pushNotificationsSupported]);
 
   const registerForNotifications = async (): Promise<string | null> => {
     try {
       let token: string;
 
       if (Capacitor.isNativePlatform()) {
+        console.log("Registering for native push notifications");
         token = await registerCapacitorToken();
       } else {
+        console.log("Registering for web push notifications");
         token = await registerWebToken();
       }
 
@@ -128,36 +184,56 @@ const ProfilePage: React.FC = () => {
   };
 
   const registerCapacitorToken = async (): Promise<string> => {
-    const permissionResult = await PushNotifications.requestPermissions();
+    // Check permissions first
+    const permissionStatus = await PushNotifications.checkPermissions();
 
-    if (permissionResult.receive !== "granted") {
+    if (permissionStatus.receive === "prompt") {
+      const permissionResult = await PushNotifications.requestPermissions();
+
+      if (permissionResult.receive !== "granted") {
+        throw new Error("Push notification permission denied");
+      }
+    } else if (permissionStatus.receive === "denied") {
       throw new Error("Push notification permission denied");
     }
 
     await PushNotifications.register();
 
     return new Promise((resolve, reject) => {
+      // Set up listeners
       PushNotifications.addListener("registration", (token: Token) => {
-        console.log("Capacitor token:", token.value);
+        console.log("Capacitor token received:", token.value);
         resolve(token.value);
       });
 
       PushNotifications.addListener("registrationError", (error: any) => {
         console.error("Capacitor registration error:", error);
-        reject(error);
+        reject(new Error(`Registration failed: ${error.error || error}`));
       });
 
-      setTimeout(() => reject(new Error("Token registration timeout")), 10000);
+      // Timeout after 10 seconds
+      setTimeout(() => {
+        reject(new Error("Token registration timeout"));
+      }, 10000);
     });
   };
 
   const registerWebToken = async (): Promise<string> => {
+    // Check if we're in a web environment that supports notifications
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      throw new Error("Notifications not supported in this environment");
+    }
+
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
       throw new Error("Push notification permission denied");
     }
 
-    if ("serviceWorker" in navigator) {
+    if (!("serviceWorker" in navigator)) {
+      throw new Error("Service Worker not supported");
+    }
+
+    try {
       const registration = await navigator.serviceWorker.register(
         "/firebase-messaging-sw.js"
       );
@@ -167,10 +243,15 @@ const ProfilePage: React.FC = () => {
         serviceWorkerRegistration: registration,
       });
 
+      if (!token) {
+        throw new Error("Failed to get Firebase token");
+      }
+
       console.log("Firebase web token:", token);
       return token;
-    } else {
-      throw new Error("Service Worker not supported");
+    } catch (error) {
+      console.error("Web token registration error:", error);
+      throw new Error(`Web registration failed: ${error}`);
     }
   };
 
@@ -193,18 +274,6 @@ const ProfilePage: React.FC = () => {
     });
   };
 
-  const unregisterToken = async (token: string): Promise<void> => {
-    await axiosApi({
-      method: "DELETE",
-      url: `${API_BASE_URL}/api/notifications/unregister-token`,
-      data: { token },
-    });
-
-    if (Capacitor.isNativePlatform()) {
-      PushNotifications.removeAllListeners();
-    }
-  };
-
   const handleLanguageChange = (event: any) => {
     const newLanguage = event.target.value;
     setLanguage(newLanguage);
@@ -224,20 +293,26 @@ const ProfilePage: React.FC = () => {
 
     try {
       if (newValue) {
-        console.log("Registering for push notifications...");
+        console.log("Enabling push notifications...");
+
+        // Check if we're in a supported environment
+        if (!pushNotificationsSupported) {
+          throw new Error("Push notifications not supported on this platform");
+        }
+
         await registerForNotifications();
         setPushNotifications(newValue);
         toast.success("Push notifications enabled");
       } else {
-        console.log("Unregistering push notifications...");
-        // We don't have the token stored locally, so we'll let the backend handle cleanup
-        // when the user setting is saved
+        console.log("Disabling push notifications...");
         setPushNotifications(newValue);
         toast.success("Push notifications disabled");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to update push notification settings:", error);
-      toast.error("Failed to update push notification settings");
+      toast.error(
+        `Failed to update push notification settings: ${error.message}`
+      );
       // Don't update state on error
     }
   };
@@ -519,12 +594,15 @@ const ProfilePage: React.FC = () => {
                         checked={pushNotifications}
                         onChange={handlePushNotificationsChange}
                         color="primary"
+                        disabled={!pushNotificationsSupported}
                       />
                     }
                     label={t("profile.pushNotifications")}
                   />
                   <Typography variant="body2" color="textSecondary">
-                    {t("profile.pushNotificationsDescription")}
+                    {pushNotificationsSupported
+                      ? t("profile.pushNotificationsDescription")
+                      : "Push notifications not supported on this platform"}
                   </Typography>
                 </Box>
               </Grid>
