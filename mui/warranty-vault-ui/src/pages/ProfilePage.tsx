@@ -25,6 +25,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import SaveIcon from "@mui/icons-material/Save";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LanguageIcon from "@mui/icons-material/Language";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useUser } from "../constants/UserContext.tsx";
 import { toast } from "sonner";
 import axiosApi from "../config/axiosApiConfig";
@@ -374,6 +375,27 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  const handleLogout = () => {
+    try {
+      // Clear localStorage
+      localStorage.clear();
+
+      // Clear sessionStorage
+      sessionStorage.clear();
+
+      // Show success message
+      toast.success(t("profile.loggedOutSuccessfully"));
+
+      // Navigate to root path
+      navigate("/");
+    } catch (error) {
+      console.error("Error during logout:", error);
+      toast.error(t("profile.logoutError"));
+      // Still navigate even if there's an error clearing storage
+      navigate("/");
+    }
+  };
+
   // Re-compute available languages each render to ensure translations are current
   const availableLanguages = [
     { value: "EN", label: t("languages.english"), flag: GB_FLAG },
@@ -603,6 +625,48 @@ const ProfilePage: React.FC = () => {
                     {pushNotificationsSupported
                       ? t("profile.pushNotificationsDescription")
                       : "Push notifications not supported on this platform"}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+
+        {/* Logout Section Card */}
+        <Card sx={cardStyle}>
+          <CardContent sx={{ pt: 2, pb: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <LogoutIcon sx={{ mr: 1, color: "rgba(244, 67, 54, 0.9)" }} />
+              <Typography variant="h6">
+                {t("profile.accountActions")}
+              </Typography>
+            </Box>
+            <Divider sx={{ mb: 2 }} />
+
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12}>
+                <Box sx={{ textAlign: "center" }}>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleLogout}
+                    startIcon={<LogoutIcon />}
+                    sx={{
+                      borderWidth: 2,
+                      "&:hover": {
+                        borderWidth: 2,
+                        backgroundColor: "rgba(244, 67, 54, 0.04)",
+                      },
+                    }}
+                  >
+                    {t("profile.logout")}
+                  </Button>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ mt: 1 }}
+                  >
+                    {t("profile.logoutDescription")}
                   </Typography>
                 </Box>
               </Grid>
