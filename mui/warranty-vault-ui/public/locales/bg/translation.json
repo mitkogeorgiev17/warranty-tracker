@@ -43,7 +43,12 @@
     "warrantyNotificationsDescription": "Получавайте имейл известия, когато гаранциите на вашите продукти предстои да изтекат.",
     "settingsSaved": "Настройките на профила са запазени успешно",
     "pushNotifications": "Известия на Устройството",
-  "pushNotificationsDescription": "Получавайте известия директно на устройството си за изтичащи гаранции."
+    "pushNotificationsDescription": "Получавайте известия директно на устройството си за изтичащи гаранции.",
+    "accountActions": "Действия с акаунта",
+    "logout": "Изход",
+    "logoutDescription": "Излезте от акаунта си.",
+    "loggedOutSuccessfully": "Успешно излязохте от акаунта",
+    "logoutError": "Грешка при излизане от акаунта"
   },
   "home": {
     "createWarranty": "Създаване на гаранция",
