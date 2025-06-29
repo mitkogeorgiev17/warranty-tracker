@@ -43,7 +43,12 @@
     "warrantyNotificationsDescription": "Receive email notifications when your product warranties are about to expire.",
     "settingsSaved": "Profile settings saved successfully",
     "pushNotifications": "Push Notifications",
-    "pushNotificationsDescription": "Receive push notifications on your device for expiring warranties."
+    "pushNotificationsDescription": "Receive push notifications on your device for expiring warranties.",
+    "accountActions": "Account Actions",
+    "logout": "Logout",
+    "logoutDescription": "Sign out of your account.",
+    "loggedOutSuccessfully": "Logged out successfully",
+    "logoutError": "Error during logout"
   },
   "home": {
     "createWarranty": "Create Warranty",

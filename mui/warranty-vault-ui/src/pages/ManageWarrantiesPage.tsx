@@ -59,6 +59,11 @@ function ManageWarrantiesPage() {
     useState<null | HTMLElement>(null);
   const [filtersVisible, setFiltersVisible] = useState(false);
 
+  // Check if any filters are active
+  const hasActiveFilters = useMemo(() => {
+    return expirationFilter !== null || selectedCategories.length > 0;
+  }, [expirationFilter, selectedCategories]);
+
   // Initial load of warranties only on mount
   useEffect(() => {
     fetchWarranties();
@@ -101,10 +106,8 @@ function ManageWarrantiesPage() {
     setAvailableCategories(categories);
   }, [warranties]);
 
-  // Apply filters to warranties - now with memoized filters
+  // Apply filters to warranties - Fixed to always filter based on current warranties
   useEffect(() => {
-    if (warranties.length === 0) return;
-
     let filtered = [...warranties];
     const now = new Date();
 
@@ -154,7 +157,9 @@ function ManageWarrantiesPage() {
     warranties,
     expirationFilter,
     selectedCategories,
-    EXPIRATION_FILTERS,
+    EXPIRATION_FILTERS.LESS_THAN_MONTH,
+    EXPIRATION_FILTERS.ONE_TO_TWELVE_MONTHS,
+    EXPIRATION_FILTERS.MORE_THAN_YEAR,
     UNCATEGORIZED,
   ]);
 
@@ -313,16 +318,13 @@ function ManageWarrantiesPage() {
           <Typography align="center" color="text.secondary">
             {t("manageWarranties.loadingWarranties")}
           </Typography>
-        ) : filteredWarranties.length === 0 &&
-          (expirationFilter || selectedCategories.length > 0) ? (
+        ) : hasActiveFilters && filteredWarranties.length === 0 ? (
           <Typography align="center" color="text.secondary">
             {t("manageWarranties.noMatchingWarranties")}
           </Typography>
         ) : (
           <WarrantyCardList
-            warranties={
-              filteredWarranties.length > 0 ? filteredWarranties : warranties
-            }
+            warranties={hasActiveFilters ? filteredWarranties : warranties}
             onWarrantyDeleted={fetchWarranties}
           />
         )}
