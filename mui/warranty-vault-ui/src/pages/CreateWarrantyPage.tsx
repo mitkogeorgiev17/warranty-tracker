@@ -35,6 +35,7 @@ function CreateWarrantyPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const warrantyNameRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
 
   const getDefaultStartDate = () => {
@@ -59,6 +60,39 @@ function CreateWarrantyPage() {
   const [note, setNote] = useState("");
   const [category, setCategory] = useState<string | null>("");
   const [files, setFiles] = useState<File[]>([]);
+
+  // Добавен useEffect за слушане на blur събитията
+  useEffect(() => {
+    const handleBlur = () => {
+      // Форсираме актуализация на състоянието при скриване на клавиатурата
+      if (warrantyNameRef.current) {
+        const currentValue = warrantyNameRef.current.value;
+        if (currentValue !== warrantyName) {
+          setWarrantyName(currentValue);
+        }
+      }
+    };
+
+    // Добавяме event listener за промяна на visibility
+    const handleVisibilityChange = () => {
+      if (!document.hidden && warrantyNameRef.current) {
+        const currentValue = warrantyNameRef.current.value;
+        if (currentValue !== warrantyName) {
+          setWarrantyName(currentValue);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("focus", handleBlur);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleBlur);
+    };
+  }, [warrantyName]);
 
   // Check if we have warranty data from the scan page
   useEffect(() => {
@@ -91,6 +125,22 @@ function CreateWarrantyPage() {
 
   const isFormValid = () => {
     return warrantyName.trim() !== "" && startDate !== "" && endDate !== "";
+  };
+
+  // Подобрен handler за промяна на текста
+  const handleWarrantyNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newValue = event.target.value;
+    setWarrantyName(newValue);
+  };
+
+  // Добавен handler за onBlur
+  const handleWarrantyNameBlur = (
+    event: React.FocusEvent<HTMLInputElement>
+  ) => {
+    const currentValue = event.target.value;
+    setWarrantyName(currentValue);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,8 +211,16 @@ function CreateWarrantyPage() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // Допълнителна проверка за актуалната стойност преди submit
+    if (warrantyNameRef.current) {
+      const currentValue = warrantyNameRef.current.value;
+      if (currentValue !== warrantyName) {
+        setWarrantyName(currentValue);
+      }
+    }
+
     const warrantyCommand: CreateWarrantyCommand = {
-      name: warrantyName,
+      name: warrantyNameRef.current?.value || warrantyName,
       startDate: startDate,
       endDate: endDate,
       category: category ? category : null,
@@ -285,7 +343,16 @@ function CreateWarrantyPage() {
               label={t("createWarranty.warrantyName")}
               name="name"
               value={warrantyName}
-              onChange={(e) => setWarrantyName(e.target.value)}
+              onChange={handleWarrantyNameChange}
+              onBlur={handleWarrantyNameBlur}
+              inputRef={warrantyNameRef}
+              // Добавени атрибути за по-добра мобилна поддръжка
+              autoComplete="off"
+              inputProps={{
+                autoCorrect: "off",
+                autoCapitalize: "none",
+                spellCheck: false,
+              }}
             />
             <TextField
               fullWidth

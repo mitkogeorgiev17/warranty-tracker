@@ -125,7 +125,63 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>(
     warranty.category || ""
   );
+
+  // Refs за всички input полета
+  const warrantyNameRef = useRef<HTMLInputElement>(null);
+  const startDateRef = useRef<HTMLInputElement>(null);
+  const endDateRef = useRef<HTMLInputElement>(null);
+  const noteRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Mobile keyboard handling effect
+  useEffect(() => {
+    const handleKeyboardHide = () => {
+      // Обновяване на всички полета при скриване на клавиатурата
+      if (
+        warrantyNameRef.current &&
+        warrantyNameRef.current.value !== currentWarranty.name
+      ) {
+        handleFieldChange("name", warrantyNameRef.current.value);
+      }
+
+      if (
+        startDateRef.current &&
+        startDateRef.current.value !== currentWarranty.startDate
+      ) {
+        handleFieldChange("startDate", startDateRef.current.value);
+      }
+
+      if (
+        endDateRef.current &&
+        endDateRef.current.value !== currentWarranty.endDate
+      ) {
+        handleFieldChange("endDate", endDateRef.current.value);
+      }
+
+      if (
+        noteRef.current &&
+        noteRef.current.value !== (currentWarranty.metadata?.note || "")
+      ) {
+        handleNoteChange(noteRef.current.value);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        handleKeyboardHide();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleKeyboardHide);
+    window.addEventListener("focus", handleKeyboardHide);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleKeyboardHide);
+      window.removeEventListener("focus", handleKeyboardHide);
+    };
+  }, [currentWarranty]);
 
   // Reset state when warranty prop changes
   useEffect(() => {
@@ -144,14 +200,30 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
     if (onSave) {
       setIsSaving(true);
       try {
+        // Актуализиране на стойностите от DOM преди запазване
+        if (warrantyNameRef.current) {
+          handleFieldChange("name", warrantyNameRef.current.value);
+        }
+        if (startDateRef.current) {
+          handleFieldChange("startDate", startDateRef.current.value);
+        }
+        if (endDateRef.current) {
+          handleFieldChange("endDate", endDateRef.current.value);
+        }
+        if (noteRef.current) {
+          handleNoteChange(noteRef.current.value);
+        }
+
         // Create an UpdateWarrantyCommand from the current state
         const updateCommand: UpdateWarrantyCommand = {
           warrantyId: Number(currentWarranty.id),
-          name: currentWarranty.name,
-          startDate: currentWarranty.startDate || "",
-          endDate: currentWarranty.endDate || "",
+          name: warrantyNameRef.current?.value || currentWarranty.name,
+          startDate:
+            startDateRef.current?.value || currentWarranty.startDate || "",
+          endDate: endDateRef.current?.value || currentWarranty.endDate || "",
           status: currentWarranty.status,
-          note: currentWarranty.metadata?.note || null,
+          note:
+            noteRef.current?.value || currentWarranty.metadata?.note || null,
           category: selectedCategory, // Use the selected category
           filesToAdd: newFiles,
           filesToDelete: filesToDelete,
@@ -205,6 +277,55 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
         note: value,
       },
     }));
+  };
+
+  // Подобрени handlers за input полетата
+  const handleWarrantyNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newValue = event.target.value;
+    handleFieldChange("name", newValue);
+  };
+
+  const handleWarrantyNameBlur = (
+    event: React.FocusEvent<HTMLInputElement>
+  ) => {
+    const currentValue = event.target.value;
+    handleFieldChange("name", currentValue);
+  };
+
+  const handleStartDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newValue = event.target.value;
+    handleFieldChange("startDate", newValue);
+  };
+
+  const handleStartDateBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const currentValue = event.target.value;
+    handleFieldChange("startDate", currentValue);
+  };
+
+  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    handleFieldChange("endDate", newValue);
+  };
+
+  const handleEndDateBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const currentValue = event.target.value;
+    handleFieldChange("endDate", currentValue);
+  };
+
+  const handleNoteInputChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const newValue = event.target.value;
+    handleNoteChange(newValue);
+  };
+
+  const handleNoteBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
+    const currentValue = event.target.value;
+    handleNoteChange(currentValue);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -305,13 +426,21 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             label={t("createWarranty.warrantyName")}
             fullWidth
             value={currentWarranty.name}
-            onChange={(e) => handleFieldChange("name", e.target.value)}
+            onChange={handleWarrantyNameChange}
+            onBlur={handleWarrantyNameBlur}
+            inputRef={warrantyNameRef}
             disabled={!isEditMode}
             slotProps={{
               inputLabel: { sx: { color: "primary.main" } },
             }}
             variant="outlined"
             size="medium"
+            autoComplete="off"
+            inputProps={{
+              autoCorrect: "off",
+              autoCapitalize: "none",
+              spellCheck: false,
+            }}
           />
         </Grid>
 
@@ -346,7 +475,9 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
               type="date"
               sx={{ flex: 1 }}
               value={formatDate(currentWarranty.startDate)}
-              onChange={(e) => handleFieldChange("startDate", e.target.value)}
+              onChange={handleStartDateChange}
+              onBlur={handleStartDateBlur}
+              inputRef={startDateRef}
               disabled={!isEditMode}
               slotProps={{
                 inputLabel: { sx: { color: "primary.main" } },
@@ -360,7 +491,9 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
               type="date"
               sx={{ flex: 1 }}
               value={formatDate(currentWarranty.endDate)}
-              onChange={(e) => handleFieldChange("endDate", e.target.value)}
+              onChange={handleEndDateChange}
+              onBlur={handleEndDateBlur}
+              inputRef={endDateRef}
               disabled={!isEditMode}
               slotProps={{
                 inputLabel: { sx: { color: "primary.main" } },
@@ -425,13 +558,21 @@ const WarrantyDetails: FC<WarrantyDetailsProps> = ({
             multiline
             rows={3}
             value={currentWarranty.metadata?.note || ""}
-            onChange={(e) => handleNoteChange(e.target.value)}
+            onChange={handleNoteInputChange}
+            onBlur={handleNoteBlur}
+            inputRef={noteRef}
             disabled={!isEditMode}
             slotProps={{
               inputLabel: { sx: { color: "primary.main" } },
             }}
             variant="outlined"
             size="medium"
+            autoComplete="off"
+            inputProps={{
+              autoCorrect: "off",
+              autoCapitalize: "none",
+              spellCheck: false,
+            }}
           />
         </Grid>
       </Grid>
